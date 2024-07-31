@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+	provider = "prisma-client-js"
+	previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+	provider = "sqlite"
+	url      = env("DATABASE_URL")
+}
+
+model User {
+	uuid       String    @id @unique @default(uuid())
+	discordId  String    @map("discord_id") @unique
+	createdAt  DateTime  @map("created_at") @default(now())
+
+	catcha  Catcha?
+
+	@@map("users")
+}
+
+model Catcha {
+	userUuid  String  @map("user_uuid") @unique @id
+
+	lastRollPeriod   Int?       @map("last_roll_period")
+	lastRollCount    Int?       @map("last_roll_count")
+	lastClaim        DateTime?  @map("last_claim")
+
+	lastTradedAt        DateTime?  @map("last_traded_at")
+	tradeBlocked        Boolean?   @map("trade_blocked")
+	tradeBlockedUntil   DateTime?  @map("trade_blocked_until")
+	tradeBlockedReason  String?    @map("trade_blocked_reason")
+
+	cards              CatchaCard[]
+	cardHistoryEvents  CatchaCardHistoryEvent[]
+
+	sentTrades      CatchaTrade[]  @relation("catcha_sent_trades")
+	receivedTrades  CatchaTrade[]  @relation("catcha_received_trades")
+
+	user  User  @relation(fields: [userUuid], references: [uuid], onDelete: Cascade)
+
+	@@map("catchas")
+}
+
+model CatchaCard {
+	uuid     String  @id @unique @default(uuid())
+	cardId   Int     @map("card_id")
+
+	ownerUuid  String  @map("owner_uuid")
+
+	obtainedAt    DateTime  @map("obtained_at")
+	obtainedFrom  String    @map("obtained_from")
+
+	isInverted  Boolean  @map("is_inverted")
+	variant     String?
+
+	pendingTradeUuid1  String?       @map("pending_trade_uuid_1")
+	pendingTradeSide1  CatchaTrade?  @relation("catcha_sender_cards", fields: [pendingTradeUuid1], references: [tradeUuid], onDelete: SetNull)
+
+	pendingTradeUuid2  String?       @map("pending_trade_uuid_2")
+	pendingTradeSide2  CatchaTrade?  @relation("catcha_recipient_cards", fields: [pendingTradeUuid2], references: [tradeUuid], onDelete: SetNull)
+
+    historyEvents  CatchaCardHistoryEvent[]
+
+	catcha  Catcha  @relation(fields: [ownerUuid], references: [userUuid], onDelete: Cascade)
+
+	@@map("catcha_cards")
+	@@index(fields: [ownerUuid, cardId])
+}
+
+model CatchaCardHistoryEvent {
+	cardUuid   String    @map("card_uuid")
+	timestamp  DateTime
+
+	event         String
+	eventDetails  String?  @map("event_details")
+
+	userUuid       String?  @map("user_uuid")
+
+	card     CatchaCard  @relation(fields: [cardUuid], references: [uuid], onDelete: Cascade)
+	catcha   Catcha?     @relation(fields: [userUuid], references: [userUuid], onDelete: SetNull)
+
+	@@id([cardUuid, timestamp])
+	@@map("catcha_card_history_events")
+	@@index(fields: [cardUuid])
+}
+
+model CatchaTrade {
+	tradeUuid  String   @id @unique @map("trade_uuid") @default(uuid())
+
+	createdAt           DateTime   @map("created_at")
+	updatedAt           DateTime   @map("updated_at")
+	tradeCompleted      Boolean    @map("trade_completed")
+	tradedCompletedAt   DateTime?  @map("trade_completed_at")
+
+	senderUserUuid  String        @map("sender_user_uuid")
+	sender          Catcha        @relation("catcha_sent_trades", fields: [senderUserUuid], references: [userUuid], onDelete: Cascade)
+	senderCards     CatchaCard[]  @relation("catcha_sender_cards")
+	senderSideSent  Boolean       @map("sender_side_sent")
+	senderAccepted  Boolean       @map("sender_accepted")
+
+	recipientUserUuid  String        @map("recipient_user_uuid")
+	recipient          Catcha        @relation("catcha_received_trades", fields: [recipientUserUuid], references: [userUuid], onDelete: Cascade)
+	recipientCards     CatchaCard[]  @relation("catcha_recipient_cards")
+	recipientSideSent  Boolean       @map("recipient_side_sent")
+	recipientAccepted  Boolean       @map("recipient_accepted")
+
+	@@map("catcha_trades")
+	@@index(fields: [senderUserUuid, recipientUserUuid])
+}

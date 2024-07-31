@@ -186,5 +186,6 @@ resources/.compiled
 resources/admin-servers.json
 
 # Extra Prisma schemas
-prisma
-!prisma/schema.prisma
+prisma/schema1.prisma
+prisma/schema2.prisma
+prisma/schema3.prisma
