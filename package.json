@@ -1,0 +1,50 @@
+{
+	"name": "puddleshine",
+	"version": "0.0.0",
+	"type": "module",
+	"private": true,
+	"license": "MIT",
+	"scripts": {
+		"build": "rm -rf ./dist && tsc && webpack",
+		"rc": "node scripts/rc.mjs",
+		"upload-art": "rclone copy ./resources/catcha-art puddleshine:puddleshine/catcha-art --exclude .DS_Store",
+		"application-commands": "TS_NODE_BASEURL=./dist/js ENV=dev node -r tsconfig-paths/register scripts/application-commands.mjs",
+		"application-commands-prod": "TS_NODE_BASEURL=./dist/js ENV=prod node -r tsconfig-paths/register scripts/application-commands.mjs",
+		"deploy": "node scripts/deploy.mjs",
+		"check": "prettier . --write && eslint --ignore-pattern \"dist/*\" src/",
+		"dev": "wrangler dev",
+		"start": "wrangler dev"
+	},
+	"devDependencies": {
+		"@bristlefrost/eslint-config": "^1.1.0",
+		"@bristlefrost/prettier-config": "^1.1.0",
+		"@cloudflare/workers-types": "^4.20240722.0",
+		"@eslint/js": "^9.8.0",
+		"@typescript-eslint/eslint-plugin": "^7.18.0",
+		"@typescript-eslint/parser": "^7.18.0",
+		"copy-webpack-plugin": "^12.0.2",
+		"dotenv": "^16.4.5",
+		"eslint": "^9.8.0",
+		"eslint-config-prettier": "^9.1.0",
+		"prettier": "3.3.3",
+		"prisma": "^5.17.0",
+		"ts-loader": "^9.5.1",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.4.5",
+		"webpack": "^5.93.0",
+		"webpack-cli": "^5.1.4",
+		"wrangler": "^3.66.0"
+	},
+	"dependencies": {
+		"@prisma/adapter-d1": "^5.15.0",
+		"@prisma/client": "^5.17.0",
+		"cron-schedule": "^5.0.1",
+		"discord-api-types": "^0.37.92",
+		"discord-interactions": "^3.4.0"
+	},
+	"imports": {
+		"#*": "./dist/src/*",
+		"#resources/*": "./dist/resources/*"
+	},
+	"packageManager": "yarn@3.6.1+sha512.de524adec81a6c3d7a26d936d439d2832e351cdfc5728f9d91f3fc85dd20b04391c038e9b4ecab11cae2b0dd9f0d55fd355af766bc5c1a7f8d25d96bb2a0b2ca"
+}
