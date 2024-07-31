@@ -2591,7 +2591,14 @@
 		"name": "Dewspots",
 		"group": "WindClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0232-dewspots/dewspots-cloudtuft.png",
+				"credit": "cloudtuft"
+			}
+		]
 	},
 	{
 		"id": 233,
