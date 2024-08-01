@@ -191,21 +191,28 @@ async function claimCard(
 			},
 			data: {
 				lastClaim: options.claimTime,
+				rollCache: null,
 			},
 		}),
 	]);
 }
 
-async function burnCardUuids(prisma: D1PrismaClient, cardUuids: string[]) {
-	const result = await prisma.catchaCard.deleteMany({
-		where: {
-			OR: cardUuids.map((cardUuid) => {
-				return { uuid: cardUuid };
-			}),
-		},
-	});
-
-	return result;
+async function burnCardUuids(prisma: D1PrismaClient, userUuid: string, cardUuids: string[]) {
+	await prisma.$transaction([
+		prisma.catchaCard.deleteMany({
+			where: {
+				OR: cardUuids.map((cardUuid) => {
+					return { uuid: cardUuid };
+				}),
+			},
+		}),
+		prisma.catcha.update({
+			where: {
+				userUuid: userUuid,
+			},
+			data: { rollCache: null },
+		}),
+	]);
 }
 
 async function getCardCollection(prisma: D1PrismaClient, discordId: string) {
@@ -216,6 +223,17 @@ async function getCardCollection(prisma: D1PrismaClient, discordId: string) {
 					discordId: discordId,
 				},
 			},
+		},
+	});
+
+	return result;
+}
+
+async function findUserCardsWithCardId(prisma: D1PrismaClient, userUuid: string, cardId: number) {
+	const result = await prisma.catchaCard.findMany({
+		where: {
+			cardId,
+			ownerUuid: userUuid,
 		},
 	});
 
@@ -521,7 +539,7 @@ async function trade(
 					return { userUuid: uuid };
 				}),
 			},
-			data: { lastTradedAt: options.tradeDate },
+			data: { lastTradedAt: options.tradeDate, rollCache: null },
 		}),
 		// Mark the trade as complete
 		prisma.catchaTrade.update({
@@ -544,6 +562,7 @@ export {
 	updateCatcha,
 	updateCatchas,
 	findCardByUuid,
+	findUserCardsWithCardId,
 	insertCard,
 	inserCardHistoryEvent,
 	burnCardUuids,

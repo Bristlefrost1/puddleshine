@@ -7,6 +7,20 @@ type Card = Awaited<ReturnType<typeof catchaDB.getCardCollection>>[0];
 type CollectionCard = { position: number; card: Card };
 type Collection = CollectionCard[];
 
+function getCardKey(cardId: number, inverted?: boolean, variant?: string) {
+	return `${cardId}:${variant !== undefined ? variant : ''}:${inverted ? '1' : '0'}`;
+}
+
+function parseCardKey(cardKey: string): { cardId: number; inverted: boolean; variant?: string } {
+	const splitKey = cardKey.split(':');
+
+	const cardId = Number.parseInt(splitKey[0]);
+	const variant = splitKey[1].length > 0 ? splitKey[1] : undefined;
+	const inverted = splitKey[2] === '1' ? true : false;
+
+	return { cardId, variant, inverted };
+}
+
 async function getCollection(
 	discordId: string,
 	env: Env,
@@ -80,5 +94,38 @@ async function getCollection(
 	return collection;
 }
 
-export { getCollection };
+async function getCardCounts(
+	discordId: string,
+	env: Env,
+	searchOptions?: {
+		rarity?: number;
+		onlyInverted?: boolean;
+		onlyVariant?: boolean;
+		onlyVariantIds?: string[];
+		onlyCardIds?: number[];
+	},
+) {
+	const cardCounts = new Map<string, number>();
+	const userCollection = await getCollection(discordId, env, searchOptions);
+
+	for (const collectionCard of userCollection) {
+		const cardData = collectionCard.card;
+		const cardKey = getCardKey(cardData.cardId, cardData.isInverted, cardData.variant ?? undefined);
+
+		const oldCardCount = cardCounts.get(cardKey);
+		let newCount: number;
+
+		if (oldCardCount !== undefined) {
+			newCount = oldCardCount + 1;
+		} else {
+			newCount = 1;
+		}
+
+		cardCounts.set(cardKey, newCount);
+	}
+
+	return cardCounts;
+}
+
+export { getCardKey, parseCardKey, getCollection, getCardCounts };
 export type { Card, CollectionCard, Collection };

@@ -45,41 +45,26 @@ async function listDuplicates(
 		onlyVariant?: boolean;
 	},
 ): Promise<string[]> {
-	const userCollection = await collection.getCollection(options.userId, env, {
+	const cardCounts = await collection.getCardCounts(options.userId, env, {
 		rarity: options.onlyRarity,
 		onlyInverted: options.onlyInverted,
 		onlyVariant: options.onlyVariant,
 	});
 
-	if (userCollection.length === 0) return [];
+	if (cardCounts.size === 0) return [];
 
-	const cardCounts = new Map<string, CardCount>();
-	const duplicates: CardCount[] = [];
-
-	for (const collectionCard of userCollection) {
-		const cardData = collectionCard.card;
-		const cardKey = `${cardData.cardId}${cardData.isInverted ? ',i' : ''}${cardData.variant ? ',' + cardData.variant : ''}`;
-
-		const oldCardCount = cardCounts.get(cardKey);
-		let count: number;
-
-		if (oldCardCount) {
-			count = oldCardCount.count + 1;
-		} else {
-			count = 1;
-		}
-
-		cardCounts.set(cardKey, {
-			cardId: cardData.cardId,
-			isInverted: cardData.isInverted,
-			variant: cardData.variant,
-			count: count,
-		});
-	}
+	const duplicates: { cardId: number; isInverted: boolean; variant?: string; count: number }[] = [];
 
 	for (const [key, value] of cardCounts) {
-		if (value.count > 1) {
-			duplicates.push(value);
+		if (value > 1) {
+			const cardKeyDetails = collection.parseCardKey(key);
+
+			duplicates.push({
+				cardId: cardKeyDetails.cardId,
+				isInverted: cardKeyDetails.inverted,
+				variant: cardKeyDetails.variant,
+				count: value,
+			});
 		}
 	}
 
@@ -111,7 +96,7 @@ async function listDuplicates(
 		const rarity = cardDetails.rarity;
 
 		duplicatesList.push(
-			`[#${cardId}] x${card.count}  ${archive.getCardFullName(cardId, isInverted)} ${createStarString(rarity, isInverted)}`,
+			`[#${cardId}] x${card.count}  ${archive.getCardFullName(cardId, isInverted, card.variant)} ${createStarString(rarity, isInverted)}`,
 		);
 	});
 

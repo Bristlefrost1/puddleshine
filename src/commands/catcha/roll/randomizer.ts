@@ -63,9 +63,7 @@ function randomizeCardId(rarity: number, event: Event) {
 	}
 }
 
-async function randomizeCard(env: Env): Promise<RandomCard> {
-	const currentEvent = await getCurrentEvent(env);
-
+function randomizeCard(currentEvent: Event): RandomCard {
 	let rarity;
 
 	if (currentEvent && currentEvent.increaseRarity) {
@@ -82,8 +80,7 @@ async function randomizeCard(env: Env): Promise<RandomCard> {
 		rarity = randomizeRarity();
 	}
 
-	let randomCardId = randomizeCardId(rarity, currentEvent);
-	// Change it for testing here // if (env.ENV === 'dev') randomCardId = randomCardId;
+	const randomCardId = randomizeCardId(rarity, currentEvent);
 
 	const randomCardDetails = archive.getCardDetailsById(randomCardId);
 
@@ -111,12 +108,11 @@ async function randomizeCard(env: Env): Promise<RandomCard> {
 	};
 }
 
-function randomizeInverted(duplicates: number) {
-	if (duplicates === 0) return false;
+function randomizeInverted(cardCount: number) {
+	if (cardCount === 0) return false;
 
 	let invertedChance =
-		config.CATCHA_INVERTED_BASE_CHANCE +
-		(duplicates === 1 ? 0 : duplicates * config.CATCHA_INVERTED_CHANCE_INCREASE);
+		config.CATCHA_INVERTED_BASE_CHANCE + (cardCount === 1 ? 0 : cardCount * config.CATCHA_INVERTED_CHANCE_INCREASE);
 
 	if (config.CATCHA_INVERTED_CHANCE_MAX > 0 && invertedChance > config.CATCHA_INVERTED_CHANCE_MAX) {
 		invertedChance = config.CATCHA_INVERTED_CHANCE_MAX;

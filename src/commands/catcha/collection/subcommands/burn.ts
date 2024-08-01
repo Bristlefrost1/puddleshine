@@ -65,14 +65,17 @@ async function handleBurnMessageComponent(
 	}
 
 	if (yesOrNo === 'y') {
+		const userCatcha = await catchaDB.findCatcha(env.PRISMA, user.id);
 		const userCollection = await collection.getCollection(user.id, env);
-		if (!userCollection || userCollection.length === 0)
+
+		if (!userCatcha || !userCollection || userCollection.length === 0) {
 			return messageResponse({
 				content: 'Your collection is empty.',
 				embeds: [resetEmbed(confirmationEmbed)],
 				components: [],
 				update: true,
 			});
+		}
 
 		const collectionString = confirmationEmbed.description!.slice(8, -3);
 		const collectionLines = collectionString.split('\n');
@@ -98,7 +101,7 @@ async function handleBurnMessageComponent(
 			cardUuidsToBurn.push(userCollection[cardIndex].card.uuid);
 		}
 
-		await catchaDB.burnCardUuids(env.PRISMA, cardUuidsToBurn);
+		await catchaDB.burnCardUuids(env.PRISMA, userCatcha.userUuid, cardUuidsToBurn);
 
 		return messageResponse({
 			content: 'Cards successfully burned.',

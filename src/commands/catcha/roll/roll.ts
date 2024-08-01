@@ -2,10 +2,11 @@ import * as DAPI from 'discord-api-types/v10';
 
 import { errorEmbed, embedMessageResponse } from '#discord/responses.js';
 import * as archive from '#commands/catcha/archive/archive.js';
-import * as collection from '#commands/catcha/collection/collection.js';
 import * as catchaDB from '#commands/catcha/db/catcha-db.js';
+import { getCurrentEvent } from '#commands/catcha/event/event.js';
 import * as rollPeriod from './roll-period.js';
 import * as randomizer from './randomizer.js';
+import * as rollCache from './roll-cache.js';
 import { randomArt } from '../art/art.js';
 import { createStarString } from '#commands/catcha/utils/star-string.js';
 
@@ -93,37 +94,75 @@ async function onRoll(
 	const currentRoll = userCatcha.lastRollPeriod === currentRollPeriod ? (userCatcha.lastRollCount ?? 0) + 1 : 1;
 
 	// Alright, the user can roll. Let's randomize a card for them
-	const { cardId: randomCardId, variant, variantIndex } = await randomizer.randomizeCard(env);
+	let randomCardId: number;
+	let variant: string | undefined;
+	let variantDataIndex: number | undefined;
+	let isInverted: boolean;
+	let alreadyInCollection: number;
 
-	const cardsAlreadyInCollection = await collection.getCollection(user.id, env, {
-		onlyVariant: variant !== undefined,
-		onlyVariantIds: variant !== undefined ? [variant] : undefined,
-		onlyCardIds: [randomCardId],
-	});
+	let setRollCache: string | undefined;
 
-	const normalCardsAlreadyInCollection: typeof cardsAlreadyInCollection = [];
-	const invertedCardsAlreadyInCollection: typeof cardsAlreadyInCollection = [];
+	const rollFromCache = rollCache.getRollFromCache(userCatcha, currentRoll); // First, check the cache
 
-	cardsAlreadyInCollection.forEach((card) => {
-		if (card.card.isInverted) {
-			invertedCardsAlreadyInCollection.push(card);
+	if (rollFromCache) {
+		randomCardId = rollFromCache.randomCardId;
+		variant = rollFromCache.variant;
+		variantDataIndex = rollFromCache.variantDataIndex;
+		isInverted = rollFromCache.isInverted;
+		alreadyInCollection = rollFromCache.alreadyInCollection;
+	} else {
+		const rebuiltCache = await rollCache.generateCache(user.id, userCatcha.userUuid, env);
+		const rollFromRebultCache = rebuiltCache.rolls[currentRoll - 1];
+
+		if (rollFromRebultCache) {
+			randomCardId = rollFromRebultCache.randomCardId;
+			variant = rollFromRebultCache.variant;
+			variantDataIndex = rollFromRebultCache.variantDataIndex;
+			isInverted = rollFromRebultCache.isInverted;
+			alreadyInCollection = rollFromRebultCache.alreadyInCollection;
+
+			setRollCache = JSON.stringify(rebuiltCache);
 		} else {
-			normalCardsAlreadyInCollection.push(card);
+			const currentEvent = await getCurrentEvent(env);
+			const randomCard = randomizer.randomizeCard(currentEvent);
+
+			let alreadyHasCards = await catchaDB.findUserCardsWithCardId(
+				env.PRISMA,
+				userCatcha.userUuid,
+				randomCard.cardId,
+			);
+
+			if (randomCard.variant) {
+				alreadyHasCards = alreadyHasCards.filter((card) => card.variant === randomCard.variant);
+			} else {
+				alreadyHasCards = alreadyHasCards.filter((card) => card.variant === null);
+			}
+
+			const alreadyHasNormal = alreadyHasCards.filter((card) => card.isInverted === false).length;
+			const alreadyHasInverted = alreadyHasCards.filter((card) => card.isInverted === true).length;
+
+			const inverted = randomizer.randomizeInverted(alreadyHasNormal);
+
+			randomCardId = randomCard.cardId;
+			variant = randomCard.variant;
+			variantDataIndex = randomCard.variantIndex;
+
+			if (inverted) {
+				isInverted = true;
+				alreadyInCollection = alreadyHasInverted;
+			} else {
+				isInverted = false;
+				alreadyInCollection = alreadyHasNormal;
+			}
 		}
-	});
-
-	const normalDuplicates = normalCardsAlreadyInCollection.length;
-	const invertedDuplicates = invertedCardsAlreadyInCollection.length;
-
-	const isInverted = randomizer.randomizeInverted(normalDuplicates);
-	const duplicates = isInverted ? invertedDuplicates : normalDuplicates;
+	}
 
 	// Construct a roll embed
 	const cardDetails = archive.getCardDetailsById(randomCardId)!;
-	const cardFullName = archive.getCardFullName(randomCardId, isInverted, variantIndex);
-	const cardShortName = archive.getCardShortName(randomCardId, isInverted, variantIndex, true);
+	const cardFullName = archive.getCardFullName(randomCardId, isInverted, variantDataIndex);
+	const cardShortName = archive.getCardShortName(randomCardId, isInverted, variantDataIndex, true);
 	const starString = createStarString(cardDetails.rarity, isInverted);
-	const art = randomArt(randomCardId, isInverted, variantIndex);
+	const art = randomArt(randomCardId, isInverted, variantDataIndex);
 
 	const descriptionLines: string[] = [];
 
@@ -136,11 +175,11 @@ async function onRoll(
 		);
 	}
 
-	if (duplicates > 0) {
-		if (duplicates === 1) {
+	if (alreadyInCollection > 0) {
+		if (alreadyInCollection === 1) {
 			descriptionLines.push(`> You already have ${cardShortName} in your collection.`);
 		} else {
-			descriptionLines.push(`> You already have ${duplicates} ${cardShortName}s in your collection.`);
+			descriptionLines.push(`> You already have ${alreadyInCollection} ${cardShortName}s in your collection.`);
 		}
 	}
 
@@ -148,18 +187,18 @@ async function onRoll(
 		descriptionLines.push(`> **A rare inverted (flipped) card!**`);
 	}
 
-	if (variantIndex !== undefined) {
+	if (variantDataIndex !== undefined) {
 		descriptionLines.push(
 			`> **A rare ${variant} variant of ${archive.getCardShortName(randomCardId, false, undefined, true)}!**`,
 		);
 
-		if (cardDetails.variants![variantIndex].description) {
+		if (cardDetails.variants![variantDataIndex].description) {
 			descriptionLines.push('\n');
-			descriptionLines.push(cardDetails.variants![variantIndex].description);
+			descriptionLines.push(cardDetails.variants![variantDataIndex].description);
 		}
 	}
 
-	const embedColor = archive.getCardColor(isInverted, variantIndex !== undefined);
+	const embedColor = archive.getCardColor(isInverted, variantDataIndex !== undefined);
 	const timestamp = new Date().toISOString();
 
 	// Set up the message components
@@ -169,7 +208,7 @@ async function onRoll(
 		type: DAPI.ComponentType.Button,
 		label: '❤️ Claim',
 		style: DAPI.ButtonStyle.Primary,
-		custom_id: `catcha/claim/${user.id},${randomCardId},${isInverted ? '1' : '0'},${variantIndex ?? ''}`, // userId,cardId,inverted,variant
+		custom_id: `catcha/claim/${user.id},${randomCardId},${isInverted ? '1' : '0'},${variantDataIndex ?? ''}`, // userId,cardId,inverted,variant
 	});
 
 	if (currentRoll < config.CATCHA_MAX_ROLLS || env.ENV === 'dev') {
@@ -185,6 +224,7 @@ async function onRoll(
 	await catchaDB.updateCatcha(env.PRISMA, userCatcha.userUuid, {
 		lastRollPeriod: currentRollPeriod,
 		lastRollCount: currentRoll,
+		rollCache: setRollCache,
 	});
 
 	return {
