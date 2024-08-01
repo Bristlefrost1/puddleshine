@@ -7085,7 +7085,14 @@
 		"name": "Pancakes",
 		"group": "Kittypet",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0711-pancakes/pancakes-cloudtuft.png",
+				"credit": "cloudtuft"
+			}
+		]
 	},
 	{
 		"id": 712,
@@ -7220,7 +7227,14 @@
 		"name": "Eggs",
 		"group": "Kittypet",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0726-eggs/eggs-cloudtuft.png",
+				"credit": "cloudtuft"
+			}
+		]
 	},
 	{
 		"id": 727,
@@ -7335,7 +7349,14 @@
 		"name": "Bacon",
 		"group": "Kittypet",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0739-bacon/bacon-cloudtuft.png",
+				"credit": "cloudtuft"
+			}
+		]
 	},
 	{
 		"id": 740,
