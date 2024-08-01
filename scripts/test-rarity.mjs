@@ -13,6 +13,11 @@ function gaussianRandom() {
 	return num;
 }
 
+const CATCHA_1S_MAX_STDEV = 1;
+const CATCHA_2S_MAX_STDEV = 1.7;
+const CATCHA_3S_MAX_STDEV = 2.1;
+const CATCHA_4S_MAX_STDEV = 2.605;
+
 let oneStars = 0;
 let twoStars = 0;
 let threeStars = 0;
@@ -22,13 +27,13 @@ let fiveStars = 0;
 for (let i = 1; i <= 1000000; i++) {
 	const rarity = Math.abs(5 - gaussianRandom() * 10);
 
-	if (rarity <= 1) {
+	if (rarity <= CATCHA_1S_MAX_STDEV) {
 		oneStars++;
-	} else if (rarity <= 1.705) {
+	} else if (rarity <= CATCHA_2S_MAX_STDEV) {
 		twoStars++;
-	} else if (rarity <= 2.105) {
+	} else if (rarity <= CATCHA_3S_MAX_STDEV) {
 		threeStars++;
-	} else if (rarity <= 2.62) {
+	} else if (rarity <= CATCHA_4S_MAX_STDEV) {
 		fourStars++;
 	} else {
 		fiveStars++;

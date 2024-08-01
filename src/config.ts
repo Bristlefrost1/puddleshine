@@ -31,9 +31,9 @@ Total: 1000000
 5s: 8757 (0.8756999999999999)
 */
 const CATCHA_1S_MAX_STDEV = 1;
-const CATCHA_2S_MAX_STDEV = 1.705;
-const CATCHA_3S_MAX_STDEV = 2.105;
-const CATCHA_4S_MAX_STDEV = 2.62;
+const CATCHA_2S_MAX_STDEV = 1.7;
+const CATCHA_3S_MAX_STDEV = 2.1;
+const CATCHA_4S_MAX_STDEV = 2.605;
 // No 5s needed, it's a 5s if the stdev is more than the 4s one
 
 // Catcha inverted odds
