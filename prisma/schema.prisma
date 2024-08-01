@@ -16,9 +16,25 @@ model User {
 	discordId  String    @map("discord_id") @unique
 	createdAt  DateTime  @map("created_at") @default(now())
 
-	catcha  Catcha?
+	profile  Profile?
+	catcha   Catcha?
 
 	@@map("users")
+}
+
+model Profile {
+	userUuid  String  @map("user_uuid") @unique @id
+
+	name       String?
+	pronouns   String?
+	birthday   String?
+
+	group  String?
+	rank   String?
+
+	user  User  @relation(fields: [userUuid], references: [uuid], onDelete: Cascade)
+
+	@@map("profiles")
 }
 
 model Catcha {
