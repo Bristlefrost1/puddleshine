@@ -51,8 +51,9 @@ const CATCHA_TRADE_MAX_CARDS = 50; // The maximum number of cards per side per t
 const CATCHA_TRADE_COOLDOWN = 0; // 1h. The trade cooldown **in seconds**. 21600 would be 6 hours
 const CATCHA_TRADE_MAX_STAR_VALUE_DIFFERENCE = 6; // Block trades that are more unbalanced than this in terms of star value
 
-// Catcha events
-const CATCHA_NEW_EVENT_CRON = '0 0 * * MON'; // At midnight UTC on Monday
+// Crons
+const DAILY_CRON = '0 0 * * *'; // Every day at midnight UTC
+const WEEKLY_CRON = '0 0 * * MON'; // At midnight UTC every Monday
 
 export {
 	ERROR_COLOR,
@@ -76,5 +77,6 @@ export {
 	CATCHA_TRADE_MAX_CARDS,
 	CATCHA_TRADE_COOLDOWN,
 	CATCHA_TRADE_MAX_STAR_VALUE_DIFFERENCE,
-	CATCHA_NEW_EVENT_CRON,
+	DAILY_CRON,
+	WEEKLY_CRON,
 };

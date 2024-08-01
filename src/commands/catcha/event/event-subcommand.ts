@@ -26,7 +26,7 @@ async function handleEventSubcommand(
 	const nextRollPeriodTimestamp = nextRollPeriod * 60 * 60 + rollPeriod.ROLL_PERIOD_EPOCH;
 
 	const currentEvent = await getCurrentEvent(env);
-	const nextEventStarts = parseCronExpression(config.CATCHA_NEW_EVENT_CRON).getNextDate(currentDate);
+	const nextEventStarts = parseCronExpression(config.WEEKLY_CRON).getNextDate(currentDate);
 	const nextEventStartsTimestamp = Math.floor(nextEventStarts.getTime() / 1000);
 
 	const descriptionLines: string[] = [];

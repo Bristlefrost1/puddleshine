@@ -90,10 +90,32 @@ export default {
 	},
 
 	async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
+		// Initialize Prisma ORM
+		const adapter = new PrismaD1(env.DB);
+		const prisma = new PrismaClient({ adapter });
+
+		// Make it available globally in the env
+		env.PRISMA = prisma;
+
 		switch (controller.cron) {
-			case config.CATCHA_NEW_EVENT_CRON:
+			case config.DAILY_CRON:
+				// Purge the caches daily
+				await env.PRISMA.catcha.updateMany({
+					where: {
+						NOT: {
+							rollCache: null,
+						},
+					},
+					data: {
+						rollCache: null,
+					},
+				});
+				break;
+
+			case config.WEEKLY_CRON:
 				await randomizeNewEvent(env);
 				break;
+
 			default:
 				console.warn(`[WARN] Ignoring unrecognized cron trigger ${controller.cron}`);
 				break;

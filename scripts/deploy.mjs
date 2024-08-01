@@ -40,7 +40,7 @@ compatibility_flags = ["nodejs_compat"]
 mode = "smart"
 
 [triggers]
-crons = [ "${config.CATCHA_NEW_EVENT_CRON}" ]
+crons = [ "${config.DAILY_CRON}", "${config.WEEKLY_CRON}" ]
 
 [vars]
 DISCORD_APPLICATION_ID = "${discordApplicationId}"
