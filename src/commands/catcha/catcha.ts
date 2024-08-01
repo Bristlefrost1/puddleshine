@@ -81,6 +81,15 @@ const CatchaCommand: Command = {
 				type: DAPI.ApplicationCommandOptionType.Subcommand,
 				name: enums.Subcommand.Roll,
 				description: 'Roll a new card.',
+
+				options: [
+					{
+						type: DAPI.ApplicationCommandOptionType.Integer,
+						name: 'cached',
+						description: "The number of the roll to send from the bot's cache",
+						required: false,
+					},
+				],
 			},
 			{
 				type: DAPI.ApplicationCommandOptionType.Subcommand,
@@ -280,7 +289,13 @@ const CatchaCommand: Command = {
 		// All of the ungrouped subcommands
 		switch (subcommand.name) {
 			case enums.Subcommand.Roll:
-				return await roll.onRoll(interaction, user, env, ctx);
+				if (options && options.length > 0 && options[0].type === DAPI.ApplicationCommandOptionType.Integer) {
+					const cachedRollNumber = options[0].value;
+
+					return await roll.showCachedRoll(interaction, user, cachedRollNumber, env, ctx);
+				}
+
+				return await roll.rollCard(interaction, user, env, ctx);
 			case enums.Subcommand.List:
 				return await list.handleListSubcommand(interaction, options, user, env, ctx);
 			case enums.Subcommand.Locate:
@@ -309,7 +324,7 @@ const CatchaCommand: Command = {
 
 		switch (action) {
 			case 'roll':
-				return await roll.onRoll(interaction, user, env, ctx);
+				return await roll.rollCard(interaction, user, env, ctx);
 			case 'claim':
 				return await claim.onClaim(interaction, user, parsedCustomId, env, ctx);
 			case 'list':
