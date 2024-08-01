@@ -33,6 +33,8 @@ model Catcha {
 	tradeBlockedUntil   DateTime?  @map("trade_blocked_until")
 	tradeBlockedReason  String?    @map("trade_blocked_reason")
 
+	rollCache  String?  @map("roll_cache")
+
 	cards              CatchaCard[]
 	cardHistoryEvents  CatchaCardHistoryEvent[]
 
