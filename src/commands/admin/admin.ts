@@ -7,7 +7,7 @@ import * as catchaAdminCommands from './catcha/catcha-admin.js';
 
 import type { Command } from '../command.js';
 
-import adminServers from '#resources/admin-servers.json' assert { type: 'json' };
+import adminServers from '#resources/admin-servers.json' with { type: 'json' };
 
 enum AdminAccessLevel {
 	SuperAdmin = 'SuperAdmin',

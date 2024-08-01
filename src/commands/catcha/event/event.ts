@@ -1,4 +1,4 @@
-import events from '#resources/.compiled/events.compiled.json' assert { type: 'json' };
+import events from '#resources/.compiled/events.compiled.json' with { type: 'json' };
 
 const EVENT_KV_KEY = 'CatchaEvent';
 

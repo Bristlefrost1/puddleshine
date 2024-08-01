@@ -1,4 +1,4 @@
-import cards from '#resources/.compiled/cards.compiled.json' assert { type: 'json' };
+import cards from '#resources/.compiled/cards.compiled.json' with { type: 'json' };
 
 import * as config from '#config.js';
 

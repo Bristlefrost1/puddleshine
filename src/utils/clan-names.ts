@@ -5,7 +5,7 @@
  *
  */
 
-import clanNames from '#resources/clan/names.json' assert { type: 'json' };
+import clanNames from '#resources/clan/names.json' with { type: 'json' };
 
 /**
  * Checks if the specified string is a valid Clan name
