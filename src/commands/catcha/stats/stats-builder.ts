@@ -163,11 +163,11 @@ async function buildUserStats(discordId: string, env: Env): Promise<Stats | void
 	const fiveStarsInArchive = archive.getCardIdsWithRarity(5).length;
 
 	const normalCardsProgress = (hasNormalCardId.size / cardsInArchive) * 100;
-	const normalStarsProgress = (normalStars / starsInArchive) * 100;
+	const normalStarsProgress = (uniqueNormalStars / starsInArchive) * 100;
 	const totalProgress = (normalCardsProgress + normalStarsProgress) / 2;
 
 	const invertedCardsProgress = (hasInvertedCardId.size / cardsInArchive) * 100;
-	const invertedStarsProgress = (invertedStars / starsInArchive) * 100;
+	const invertedStarsProgress = (uniqueInvertedStars / starsInArchive) * 100;
 	const bonusProgress = (invertedCardsProgress + invertedStarsProgress) / 2;
 
 	return {
