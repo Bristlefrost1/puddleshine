@@ -13,7 +13,8 @@
 		"deploy": "node scripts/deploy.mjs",
 		"check": "prettier . --write && eslint --ignore-pattern \"dist/*\" src/",
 		"dev": "wrangler dev",
-		"start": "wrangler dev"
+		"start": "wrangler dev",
+		"migrate": "prisma migrate diff --from-schema-datamodel ./prisma/schema_from.prisma --to-schema-datamodel ./prisma/schema.prisma --script"
 	},
 	"devDependencies": {
 		"@bristlefrost/eslint-config": "^1.1.0",
