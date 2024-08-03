@@ -8,6 +8,7 @@
 import AdminCommand from './admin/admin.js';
 import CatchaCommand from './catcha/catcha.js';
 import NameCommand from './name/name.js';
+import ProfileCommand from './profile/profile.js';
 
 /**
  * Command name -> command object mapping object.
@@ -19,6 +20,7 @@ const commands = {
 	[AdminCommand.name]: AdminCommand,
 	[CatchaCommand.name]: CatchaCommand,
 	[NameCommand.name]: NameCommand,
+	[ProfileCommand.name]: ProfileCommand,
 };
 
 export { commands };

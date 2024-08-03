@@ -126,7 +126,14 @@ async function handleBurn(
 	env: Env,
 	ctx: ExecutionContext,
 ) {
-	const { cards: cardsString } = parseCommandOptions(commandOptions);
+	const { cards: cardsOption } = parseCommandOptions(commandOptions);
+
+	let cardsString = '';
+
+	if (!cardsOption || cardsOption.type !== DAPI.ApplicationCommandOptionType.String)
+		return simpleEphemeralResponse("You haven't provided the cards option.");
+
+	cardsString = cardsOption.value;
 
 	if (!cardsString || typeof cardsString !== 'string' || cardsString.trim() === '')
 		return simpleEphemeralResponse("You haven't provided the cards option.");

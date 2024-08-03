@@ -1,8 +1,250 @@
 import * as DAPI from 'discord-api-types/v10';
 
-import { ClanRank } from '#utils/clans.js';
+import { messageResponse, simpleEphemeralResponse, simpleMessageResponse } from '#discord/responses.js';
+import { parseCommandOptions } from '#discord/parse-options.js';
+import * as clanNames from '#utils/clan-names.js';
+import * as db from '#db/database.js';
 
 import type { Command } from '../command.js';
+import { discordGetUser } from '#discord/api/discord-user.js';
+
+const months = [
+	'January',
+	'February',
+	'March',
+	'April',
+	'May',
+	'June',
+	'July',
+	'August',
+	'September',
+	'October',
+	'November',
+	'December',
+];
+
+function isDateValid(day: number, month: number) {
+	const monthsWith31Days = [1, 3, 5, 7, 8, 10, 12];
+
+	if (month < 1 || month > 12) return false;
+
+	if (month === 2) {
+		return day <= 29; // We don't know the year, assume it's a leap one
+	} else if (monthsWith31Days.includes(month)) {
+		return day <= 31;
+	} else {
+		return day <= 30;
+	}
+}
+
+async function getProfile(
+	interaction: DAPI.APIApplicationCommandInteraction,
+	commandOptions: DAPI.APIApplicationCommandInteractionDataBasicOption[] | undefined,
+	user: DAPI.APIUser,
+	env: Env,
+	ctx: ExecutionContext,
+): Promise<DAPI.APIInteractionResponse> {
+	const { user: userIdOption } = parseCommandOptions(commandOptions);
+	const lookupDiscordId = (userIdOption?.value as string) ?? user.id;
+
+	const profileQueryResult = await db.findProfileWithDiscordId(env.PRISMA, lookupDiscordId);
+
+	let name: string | undefined;
+	let birthday: string | undefined;
+
+	if (profileQueryResult) {
+		name = profileQueryResult.name ?? undefined;
+
+		if (profileQueryResult.birthday) {
+			const splitBirthday = profileQueryResult.birthday.split('-');
+
+			const month = months[Number.parseInt(splitBirthday[0]) - 1];
+			const day = Number.parseInt(splitBirthday[1]);
+
+			birthday = `${day} ${month}`;
+		}
+	}
+
+	let username = lookupDiscordId;
+
+	if (lookupDiscordId === user.id) {
+		username = user.username;
+	} else {
+		const discordUser = await discordGetUser(env.DISCORD_TOKEN, lookupDiscordId);
+
+		if (discordUser) username = discordUser.username;
+	}
+
+	const embedDescription = `
+Name: ${name ?? 'Not set'}
+Birthday: ${birthday ?? 'Not set'}
+`;
+
+	return messageResponse({
+		embeds: [
+			{
+				title: `${username}'s profile`,
+				description: '```' + embedDescription + '```',
+			},
+		],
+	});
+}
+
+async function setName(
+	interaction: DAPI.APIApplicationCommandInteraction,
+	commandOptions: DAPI.APIApplicationCommandInteractionDataBasicOption[],
+	user: DAPI.APIUser,
+	env: Env,
+	ctx: ExecutionContext,
+): Promise<DAPI.APIInteractionResponse> {
+	const { name: nameOption } = parseCommandOptions(commandOptions);
+
+	if (!nameOption || nameOption.type !== DAPI.ApplicationCommandOptionType.String)
+		return simpleEphemeralResponse('No name option provided.');
+
+	const firstCharacter = nameOption.value.slice(undefined, 1).toLocaleUpperCase('en');
+	const rest = nameOption.value.slice(1).toLocaleLowerCase('en');
+
+	const newName = firstCharacter + rest;
+
+	if (!clanNames.validateName(newName)) {
+		return simpleMessageResponse(`${newName} is not a valid Clan name.`);
+	}
+
+	let userUuid: string;
+
+	const profile = await db.findProfileWithDiscordId(env.PRISMA, user.id);
+
+	if (profile) {
+		userUuid = profile.userUuid;
+	} else {
+		const newProfile = await db.initializeProfile(env.PRISMA, user.id);
+		userUuid = newProfile.userUuid;
+	}
+
+	await db.setProfileName(env.PRISMA, userUuid, newName);
+
+	return simpleMessageResponse(`${newName} is your new warrior name.`);
+}
+
+async function setBirthday(
+	interaction: DAPI.APIApplicationCommandInteraction,
+	commandOptions: DAPI.APIApplicationCommandInteractionDataBasicOption[],
+	user: DAPI.APIUser,
+	env: Env,
+	ctx: ExecutionContext,
+): Promise<DAPI.APIInteractionResponse> {
+	const { day: dayOption, month: monthOption } = parseCommandOptions(commandOptions);
+
+	if (!dayOption || dayOption.type !== DAPI.ApplicationCommandOptionType.Integer)
+		return simpleEphemeralResponse('No day option provided.');
+
+	if (!monthOption || monthOption.type !== DAPI.ApplicationCommandOptionType.Integer)
+		return simpleEphemeralResponse('No month option provided.');
+
+	if (!isDateValid(dayOption.value, monthOption.value))
+		return simpleEphemeralResponse('The date provided is invalid.');
+
+	const profile = await db.findProfileWithDiscordId(env.PRISMA, user.id);
+
+	if (profile && profile.birthday !== null)
+		return simpleEphemeralResponse("You've already entered a birthday and it cannot be changed.");
+
+	let monthString = monthOption.value.toString();
+	let dayString = dayOption.value.toString();
+
+	if (monthString.length === 1) monthString = `0${monthString}`;
+	if (dayString.length === 1) dayString = `0${dayString}`;
+
+	const birthdayString = `${monthString}-${dayString}`;
+
+	return messageResponse({
+		ephemeral: true,
+		embeds: [
+			{
+				title: 'Confirmation',
+				description: `Are you sure you want to set **${dayOption.value} ${months[monthOption.value - 1]}** as your birthday? Your birthday **cannot be changed** later once entered.`,
+			},
+		],
+		components: [
+			{
+				type: DAPI.ComponentType.ActionRow,
+				components: [
+					{
+						type: DAPI.ComponentType.Button,
+						custom_id: `profile/birthday/y/${user.id},${birthdayString}`,
+						style: DAPI.ButtonStyle.Success,
+						label: '✅ Confirm',
+					},
+					{
+						type: DAPI.ComponentType.Button,
+						custom_id: `profile/birthday/n/${user.id},${birthdayString}`,
+						style: DAPI.ButtonStyle.Danger,
+						label: '❌ Cancel',
+					},
+				],
+			},
+		],
+	});
+}
+
+async function handleBirthdayMessageComponent(
+	interaction: DAPI.APIMessageComponentInteraction,
+	parsedCustomId: string[],
+	user: DAPI.APIUser,
+	env: Env,
+	ctx: ExecutionContext,
+): Promise<DAPI.APIInteractionResponse> {
+	const yesOrNo = parsedCustomId[2] as 'y' | 'n';
+
+	const data = parsedCustomId[3].split(',');
+	const userId = data[0];
+	const birthdayString = data[1];
+
+	if (user.id !== userId) return simpleEphemeralResponse('This is not your confirmation.');
+
+	if (yesOrNo === 'y') {
+		const splitBirtday = birthdayString.split('-');
+
+		const month = Number.parseInt(splitBirtday[0]);
+		const day = Number.parseInt(splitBirtday[1]);
+
+		let userUuid: string;
+		const profile = await db.findProfileWithDiscordId(env.PRISMA, user.id);
+
+		if (profile) {
+			if (profile.birthday) {
+				return messageResponse({
+					content: 'Setting a birthday canceled: you already have a birthday set.',
+					embeds: [],
+					components: [],
+					update: true,
+				});
+			}
+
+			userUuid = profile.userUuid;
+		} else {
+			const newProfile = await db.initializeProfile(env.PRISMA, user.id);
+			userUuid = newProfile.userUuid;
+		}
+
+		await db.setProfileBirthday(env.PRISMA, userUuid, month, day);
+
+		return messageResponse({
+			content: `Your birthday has been set to **${day} ${months[month - 1]}**. You cannot change this later.`,
+			embeds: [],
+			components: [],
+			update: true,
+		});
+	} else {
+		return messageResponse({
+			content: 'Setting a birthday canceled.',
+			embeds: [],
+			components: [],
+			update: true,
+		});
+	}
+}
 
 const ProfileCommand: Command = {
 	name: 'profile',
@@ -89,69 +331,43 @@ const ProfileCommand: Command = {
 							},
 						],
 					},
-					{
-						type: DAPI.ApplicationCommandOptionType.Subcommand,
-						name: 'clan',
-						description: 'Set your Clan.',
-
-						options: [
-							{
-								type: DAPI.ApplicationCommandOptionType.String,
-								name: 'clan',
-								description: 'Your new Clan',
-								required: true,
-								autocomplete: true,
-							},
-						],
-					},
-					{
-						type: DAPI.ApplicationCommandOptionType.Subcommand,
-						name: 'rank',
-						description: 'Set your rank within a Clan.',
-
-						options: [
-							{
-								type: DAPI.ApplicationCommandOptionType.String,
-								name: 'rank',
-								description: 'Your new rank',
-								required: true,
-
-								choices: [
-									{ name: 'Kit', value: ClanRank.Kit },
-									{
-										name: 'Warrior Apprentice',
-										value: ClanRank.WarriorApprentice,
-									},
-									{
-										name: 'Medicine Cat Apprentice',
-										value: ClanRank.MedicineCatApprentice,
-									},
-									{
-										name: 'Warrior',
-										value: ClanRank.Warrior,
-									},
-									{ name: 'Queen', value: ClanRank.Queen },
-									{ name: 'Elder', value: ClanRank.Elder },
-									{
-										name: 'Medicine Cat',
-										value: ClanRank.MedicineCat,
-									},
-									{
-										name: 'Mediator',
-										value: ClanRank.Mediator,
-									},
-									{ name: 'Deputy', value: ClanRank.Deputy },
-									{ name: 'Leader', value: ClanRank.Leader },
-								],
-							},
-						],
-					},
 				],
 			},
 		],
 	},
 
-	async execute({ interaction, user, subcommandGroup, subcommand, options, env, ctx }) {},
+	async execute({ interaction, user, subcommandGroup, subcommand, options, env, ctx }) {
+		if (!subcommand) throw 'No subcommand provided';
+
+		if (subcommandGroup?.name === 'set') {
+			switch (subcommand.name) {
+				case 'name':
+					return await setName(interaction, options!, user, env, ctx);
+				case 'birthday':
+					return await setBirthday(interaction, options!, user, env, ctx);
+				default:
+					return simpleEphemeralResponse('No subcommand handler found.');
+			}
+		}
+
+		switch (subcommand.name) {
+			case 'get':
+				return await getProfile(interaction, options, user, env, ctx);
+			default:
+				return simpleEphemeralResponse('No subcommand handler found.');
+		}
+	},
+
+	async onMessageComponent({ interaction, user, componentType, customId, parsedCustomId, values, env, ctx }) {
+		const action = parsedCustomId[1];
+
+		switch (action) {
+			case 'birthday':
+				return await handleBirthdayMessageComponent(interaction, parsedCustomId, user, env, ctx);
+			default:
+				return simpleEphemeralResponse('No interaction handler found.');
+		}
+	},
 };
 
 export default ProfileCommand;
