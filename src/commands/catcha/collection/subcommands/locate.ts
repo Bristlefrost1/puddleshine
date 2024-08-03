@@ -31,7 +31,8 @@ async function getTitle(requestedBy: DAPI.APIUser, userId: string, searchingFor:
 async function search(
 	env: Env,
 	options: {
-		searchTerm: string | number;
+		searchString: string;
+		searchTerms: string[];
 		userId: string;
 
 		onlyRarity?: number;
@@ -39,13 +40,20 @@ async function search(
 		onlyVariant?: boolean;
 	},
 ): Promise<string[]> {
-	const searchTerm = options.searchTerm;
-	let onlyCardIds: number[] = [];
+	const onlyCardIds: number[] = [];
 
-	if (typeof searchTerm === 'string') {
-		onlyCardIds = archive.searchForCardIds(searchTerm);
-	} else {
-		onlyCardIds.push(searchTerm);
+	for (const searchTerm of options.searchTerms) {
+		const trimmedSearchTerm = searchTerm.trim();
+		const locateCardId = Number.parseInt(trimmedSearchTerm);
+
+		if (!isNaN(locateCardId)) {
+			onlyCardIds.push(locateCardId);
+			continue;
+		}
+
+		const cardIdsFromArchive = archive.searchForCardIds(searchTerm);
+
+		cardIdsFromArchive.forEach((cardId) => onlyCardIds.push(cardId));
 	}
 
 	const userCollection = await collection.getCollection(options.userId, env, {
@@ -75,15 +83,11 @@ async function handleLocateScroll(
 
 	if (interaction.message.embeds[0] && interaction.message.embeds[0].title) {
 		const embedTitle = interaction.message.embeds[0].title;
-		const searchTerm = embedTitle.split('"')[1];
-
-		let locateCardId: number | undefined = Number.parseInt(searchTerm);
-		if (isNaN(locateCardId)) {
-			locateCardId = undefined;
-		}
+		const searchString = embedTitle.split(': "')[1].slice(undefined, -1);
 
 		const searchResults = await search(env, {
-			searchTerm: locateCardId ?? searchTerm,
+			searchString: searchString,
+			searchTerms: searchString.split(','),
 			userId: listData.userId,
 
 			onlyRarity: listData.onlyRarity,
@@ -132,7 +136,7 @@ async function handleLocateSubcommand(
 	env: Env,
 	ctx: ExecutionContext,
 ): Promise<DAPI.APIInteractionResponse> {
-	const searchTerm = commandOptions[0].value as string;
+	const searchString = commandOptions[0].value as string;
 
 	// Set the defaults
 	let listUserId = user.id;
@@ -152,15 +156,11 @@ async function handleLocateSubcommand(
 		onlyVariant = searchOptions.onlyVariant;
 	}
 
-	let locateCardId: number | undefined = Number.parseInt(searchTerm);
-	if (isNaN(locateCardId)) {
-		locateCardId = undefined;
-	}
-
 	if (pageNumber < 1) return simpleEphemeralResponse('The page number cannot be less than 1.');
 
 	const searchResults = await search(env, {
-		searchTerm: locateCardId ?? searchTerm,
+		searchString: searchString,
+		searchTerms: searchString.split(','),
 		userId: listUserId,
 
 		onlyRarity,
@@ -172,7 +172,7 @@ async function handleLocateSubcommand(
 		return embedMessageResponse(
 			errorEmbed(
 				'No cards found.',
-				await getTitle(user, listUserId, searchTerm, env),
+				await getTitle(user, listUserId, searchString, env),
 				listUtils.getRequestedByAuthor(user, listUserId),
 			),
 		);
@@ -185,7 +185,7 @@ async function handleLocateSubcommand(
 		items: searchResults,
 		pageNumber,
 
-		title: await getTitle(user, listUserId, searchTerm, env),
+		title: await getTitle(user, listUserId, searchString, env),
 		author: listUtils.getRequestedByAuthor(user, listUserId),
 	});
 
