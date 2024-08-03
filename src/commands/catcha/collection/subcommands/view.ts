@@ -150,6 +150,9 @@ async function viewCardHistory(cardUuid: string, env: Env): Promise<DAPI.APIInte
 			case 'TRADE':
 				historyEventRows.push(`<t:${eventTimestamp}:f> - Traded to <@${discordUserId}>`);
 				break;
+			case 'I':
+				historyEventRows.push(`<t:${eventTimestamp}:f> - Imported for <@${discordUserId}>`);
+				break;
 			default:
 			// Nothing
 		}
@@ -273,6 +276,9 @@ async function viewCard(
 			break;
 		case 'TRADE':
 			obtainedFrom = 'Trading';
+			break;
+		case 'I':
+			obtainedFrom = 'Imported';
 			break;
 		default:
 			obtainedFrom = cardToView.obtainedFrom;
