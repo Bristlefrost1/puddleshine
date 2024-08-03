@@ -5612,7 +5612,14 @@
 		"name": "Lilyflower",
 		"group": "RiverClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0548-lilyflower/lilyflower-falloutragez.png",
+				"credit": "falloutragez"
+			}
+		]
 	},
 	{
 		"id": 549,
