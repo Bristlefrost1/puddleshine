@@ -49,6 +49,8 @@ model Catcha {
 	tradeBlockedUntil   DateTime?  @map("trade_blocked_until")
 	tradeBlockedReason  String?    @map("trade_blocked_reason")
 
+	lastBirthdayCardClaimed  Int?  @map("last_birthday_card_claimed")
+
 	rollCache  String?  @map("roll_cache")
 
 	cards              CatchaCard[]
@@ -73,6 +75,8 @@ model CatchaCard {
 
 	isInverted  Boolean  @map("is_inverted")
 	variant     String?
+
+	untradeable  Boolean?
 
 	pendingTradeUuid1  String?       @map("pending_trade_uuid_1")
 	pendingTradeSide1  CatchaTrade?  @relation("catcha_sender_cards", fields: [pendingTradeUuid1], references: [tradeUuid], onDelete: SetNull)
