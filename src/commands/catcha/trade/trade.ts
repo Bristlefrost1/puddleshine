@@ -94,6 +94,7 @@ async function processTrade(interaction: DAPI.APIMessageComponentInteraction, tr
 	// The difference
 	const starValueDifference = Math.abs(senderSideStarValue - recipientSideStarValue);
 
+	/*
 	// Decline if the trade is unfair
 	if (starValueDifference > config.CATCHA_TRADE_MAX_STAR_VALUE_DIFFERENCE) {
 		await catchaDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
@@ -105,6 +106,7 @@ async function processTrade(interaction: DAPI.APIMessageComponentInteraction, tr
 
 		return;
 	}
+	*/
 
 	// Get the card UUIDs to trade
 	const senderCardUuidsToTrade = trade.senderCards.map((card) => card.uuid);
