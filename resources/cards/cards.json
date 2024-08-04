@@ -1022,7 +1022,14 @@
 		"name": "Blade",
 		"group": "Kittypet",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0071-blade/blade-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 72,
@@ -6311,7 +6318,14 @@
 		"name": "Mistlekit",
 		"group": "ThunderClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0625-mistlekit/mistlekit-falloutragez.png",
+				"credit": "falloutragez"
+			}
+		]
 	},
 	{
 		"id": 626,
@@ -7602,8 +7616,15 @@
 		"rarity": 1,
 		"name": "Perchpaw",
 		"group": "RiverClan",
-		"gender": "",
-		"disambiguator": ""
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0765-perchpaw/perchpaw-blyth3xd.png",
+				"credit": "blyth3xd"
+			}
+		]
 	},
 	{
 		"id": 766,
@@ -8136,7 +8157,14 @@
 		"name": "Rabbitfur",
 		"group": "ThunderClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0825-rabbitfur/rabbitfur-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 826,
@@ -11956,7 +11984,14 @@
 		"name": "Wavepaw",
 		"group": "RiverClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/1226-wavepaw/wavepaw-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 1227,
