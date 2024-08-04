@@ -6846,7 +6846,14 @@
 		"name": "Mudthorn",
 		"group": "RiverClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0679-mudthorn/mudthorn-cloudtuft.png",
+				"credit": "cloudtuft"
+			}
+		]
 	},
 	{
 		"id": 680,
