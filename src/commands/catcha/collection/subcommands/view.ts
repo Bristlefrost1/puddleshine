@@ -263,7 +263,7 @@ async function viewCard(
 	if (variant) {
 		variantDataIndex = getVariantDataIndex(cardDetails, variant);
 
-		if (variantDataIndex && cardDetails.variants && cardDetails.variants.length > 0) {
+		if (variantDataIndex !== undefined && cardDetails.variants && cardDetails.variants.length > 0) {
 			if (cardDetails.variants[variantDataIndex])
 				variantDescription = cardDetails.variants[variantDataIndex].description;
 		}
