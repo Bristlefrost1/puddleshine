@@ -6613,7 +6613,14 @@
 		"name": "Mosskit",
 		"group": "ThunderClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0657-mosskit/mosskit-blyth3xd.png",
+				"credit": "blyth3xd"
+			}
+		]
 	},
 	{
 		"id": 658,
