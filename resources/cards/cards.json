@@ -5713,6 +5713,10 @@
 
 		"art": [
 			{
+				"url": "$ART_URL_BASE$/0557-lionheart/lionheart-falloutragez.png",
+				"credit": "falloutragez"
+			},
+			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/8/8e/Lionheart.star.png/revision/latest?cb=20240401200717",
 				"credit": "Warriors Wiki"
 			}
