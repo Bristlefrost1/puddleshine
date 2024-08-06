@@ -51,7 +51,7 @@ async function search(
 			continue;
 		}
 
-		const cardIdsFromArchive = archive.searchForCardIds(searchTerm);
+		const cardIdsFromArchive = archive.searchForCardIds(trimmedSearchTerm);
 
 		cardIdsFromArchive.forEach((cardId) => onlyCardIds.push(cardId));
 	}
