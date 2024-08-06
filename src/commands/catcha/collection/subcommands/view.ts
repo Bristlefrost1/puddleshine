@@ -32,6 +32,8 @@ function buildCardEmbed(options: {
 	obtainedFrom?: string;
 	obtainedAtUnixTime?: number;
 
+	untradeable?: boolean;
+
 	artUrl?: string;
 	artText: string;
 }): DAPI.APIEmbed {
@@ -70,7 +72,7 @@ function buildCardEmbed(options: {
 
 	embedFields.push({
 		name: 'Card',
-		value: `Card ID: ${options.cardId}${options.cardUuid !== undefined ? `\nCard UUID: ${options.cardUuid}` : ''}`,
+		value: `Card ID: ${options.cardId}${options.cardUuid !== undefined ? `\nCard UUID: ${options.cardUuid}` : ''}${options.untradeable ? '\nThis card cannot be traded.' : ''}`,
 		inline: false,
 	});
 
@@ -152,6 +154,9 @@ async function viewCardHistory(cardUuid: string, env: Env): Promise<DAPI.APIInte
 				break;
 			case 'I':
 				historyEventRows.push(`<t:${eventTimestamp}:f> - Imported for <@${discordUserId}>`);
+				break;
+			case 'BIRTHDAY':
+				historyEventRows.push(`<t:${eventTimestamp}:f> - Claimed as a birthday card by <@${discordUserId}>`);
 				break;
 			default:
 			// Nothing
@@ -280,6 +285,9 @@ async function viewCard(
 		case 'I':
 			obtainedFrom = 'Imported';
 			break;
+		case 'BIRTHDAY':
+			obtainedFrom = 'Claimed as a birthday card';
+			break;
 		default:
 			obtainedFrom = cardToView.obtainedFrom;
 	}
@@ -322,6 +330,8 @@ async function viewCard(
 
 				obtainedFrom,
 				obtainedAtUnixTime,
+
+				untradeable: cardToView.untradeable ?? undefined,
 
 				artUrl: art.artUrl,
 				artText: art.artText,

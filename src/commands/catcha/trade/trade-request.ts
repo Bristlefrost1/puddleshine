@@ -147,6 +147,14 @@ async function processTradeRequest(
 			return;
 		}
 
+		if (card.card.untradeable) {
+			await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+				embeds: [errorEmbed(`The card at position ${cardPosition} cannot be traded.`)],
+			});
+
+			return;
+		}
+
 		cardsToTrade.push(card.card);
 	}
 
