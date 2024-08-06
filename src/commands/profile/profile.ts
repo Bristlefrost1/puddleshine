@@ -3,39 +3,11 @@ import * as DAPI from 'discord-api-types/v10';
 import { messageResponse, simpleEphemeralResponse, simpleMessageResponse } from '#discord/responses.js';
 import { parseCommandOptions } from '#discord/parse-options.js';
 import * as clanNames from '#utils/clan-names.js';
+import * as dateTimeUtils from '#utils/date-time-utils.js';
 import * as db from '#db/database.js';
 
 import type { Command } from '../command.js';
 import { discordGetUser } from '#discord/api/discord-user.js';
-
-const months = [
-	'January',
-	'February',
-	'March',
-	'April',
-	'May',
-	'June',
-	'July',
-	'August',
-	'September',
-	'October',
-	'November',
-	'December',
-];
-
-function isDateValid(day: number, month: number) {
-	const monthsWith31Days = [1, 3, 5, 7, 8, 10, 12];
-
-	if (month < 1 || month > 12) return false;
-
-	if (month === 2) {
-		return day <= 29; // We don't know the year, assume it's a leap one
-	} else if (monthsWith31Days.includes(month)) {
-		return day <= 31;
-	} else {
-		return day <= 30;
-	}
-}
 
 async function getProfile(
 	interaction: DAPI.APIApplicationCommandInteraction,
@@ -58,7 +30,7 @@ async function getProfile(
 		if (profileQueryResult.birthday) {
 			const splitBirthday = profileQueryResult.birthday.split('-');
 
-			const month = months[Number.parseInt(splitBirthday[0]) - 1];
+			const month = dateTimeUtils.months[Number.parseInt(splitBirthday[0]) - 1];
 			const day = Number.parseInt(splitBirthday[1]);
 
 			birthday = `${day} ${month}`;
@@ -142,12 +114,12 @@ async function setBirthday(
 	if (!monthOption || monthOption.type !== DAPI.ApplicationCommandOptionType.Integer)
 		return simpleEphemeralResponse('No month option provided.');
 
-	if (!isDateValid(dayOption.value, monthOption.value))
+	if (!dateTimeUtils.isDateValid(dayOption.value, monthOption.value))
 		return simpleEphemeralResponse('The date provided is invalid.');
 
 	const profile = await db.findProfileWithDiscordId(env.PRISMA, user.id);
 
-	if (profile && profile.birthday !== null)
+	if (profile && profile.birthday !== null && env.ENV !== 'dev')
 		return simpleEphemeralResponse("You've already entered a birthday and it cannot be changed.");
 
 	let monthString = monthOption.value.toString();
@@ -163,7 +135,7 @@ async function setBirthday(
 		embeds: [
 			{
 				title: 'Confirmation',
-				description: `Are you sure you want to set **${dayOption.value} ${months[monthOption.value - 1]}** as your birthday? Your birthday **cannot be changed** later once entered.`,
+				description: `Are you sure you want to set **${dayOption.value} ${dateTimeUtils.months[monthOption.value - 1]}** as your birthday? Your birthday **cannot be changed** later once entered.`,
 			},
 		],
 		components: [
@@ -213,7 +185,7 @@ async function handleBirthdayMessageComponent(
 		const profile = await db.findProfileWithDiscordId(env.PRISMA, user.id);
 
 		if (profile) {
-			if (profile.birthday) {
+			if (profile.birthday && env.ENV !== 'dev') {
 				return messageResponse({
 					content: 'Setting a birthday canceled: you already have a birthday set.',
 					embeds: [],
@@ -231,7 +203,7 @@ async function handleBirthdayMessageComponent(
 		await db.setProfileBirthday(env.PRISMA, userUuid, month, day);
 
 		return messageResponse({
-			content: `Your birthday has been set to **${day} ${months[month - 1]}**. You cannot change this later.`,
+			content: `Your birthday has been set to **${day} ${dateTimeUtils.months[month - 1]}**. You cannot change this later.`,
 			embeds: [],
 			components: [],
 			update: true,
