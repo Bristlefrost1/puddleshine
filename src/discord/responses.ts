@@ -36,6 +36,63 @@ function messageResponse(options: {
 	}
 }
 
+function confirmationResponse(options: {
+	action: string;
+	actionData?: string;
+
+	question: string;
+
+	allowedMentions?: DAPI.APIAllowedMentions;
+	ephemeral?: boolean;
+}): DAPI.APIInteractionResponse {
+	return {
+		type: DAPI.InteractionResponseType.ChannelMessageWithSource,
+		data: {
+			flags: options.ephemeral ? DAPI.MessageFlags.Ephemeral : undefined,
+			embeds: [
+				{
+					title: 'Confirmation',
+					description: options.question,
+				},
+			],
+			components: [
+				{
+					type: DAPI.ComponentType.ActionRow,
+					components: [
+						{
+							type: DAPI.ComponentType.Button,
+							custom_id: `${options.action}/y${options.actionData ? '/' + options.actionData : ''}`,
+							style: DAPI.ButtonStyle.Success,
+							label: '✅ Confirm',
+						},
+						{
+							type: DAPI.ComponentType.Button,
+							custom_id: `${options.action}/n${options.actionData ? '/' + options.actionData : ''}`,
+							style: DAPI.ButtonStyle.Danger,
+							label: '❌ Cancel',
+						},
+					],
+				},
+			],
+			allowed_mentions: options.allowedMentions,
+		},
+	};
+}
+
+function cancelConfirmationResponse(
+	reason?: string,
+	additionalOptions?: { oldEmbed?: DAPI.APIEmbed },
+): DAPI.APIInteractionResponse {
+	return {
+		type: DAPI.InteractionResponseType.UpdateMessage,
+		data: {
+			content: `Confirmation canceled${reason ? ': ' + reason : '.'}`,
+			embeds: additionalOptions && additionalOptions.oldEmbed ? [additionalOptions.oldEmbed] : undefined,
+			components: [],
+		},
+	};
+}
+
 /**
  * Constructs a simple message API interaction response.
  *
@@ -98,4 +155,12 @@ function embedMessageResponse(
 	};
 }
 
-export { messageResponse, simpleMessageResponse, simpleEphemeralResponse, errorEmbed, embedMessageResponse };
+export {
+	messageResponse,
+	confirmationResponse,
+	cancelConfirmationResponse,
+	simpleMessageResponse,
+	simpleEphemeralResponse,
+	errorEmbed,
+	embedMessageResponse,
+};
