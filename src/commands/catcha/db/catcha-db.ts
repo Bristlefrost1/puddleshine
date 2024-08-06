@@ -35,6 +35,8 @@ async function initializeCatchaForUser(prisma: D1PrismaClient, discordId: string
 			},
 		},
 	});
+
+	return result;
 }
 
 async function updateCatcha(prisma: D1PrismaClient, userUuid: string, data: Prisma.CatchaUpdateInput) {
@@ -191,6 +193,66 @@ async function claimCard(
 			},
 			data: {
 				lastClaim: options.claimTime,
+				rollCache: null,
+			},
+		}),
+	]);
+}
+
+async function claimBirthdayCard(prisma: D1PrismaClient, userUuid: string, birthdayYear: number, cardId: number) {
+	const cardUuid = crypto.randomUUID();
+	const currentDate = new Date();
+
+	await prisma.$transaction([
+		// Insert the card itself into the DB
+		prisma.catchaCard.create({
+			data: {
+				uuid: cardUuid,
+				cardId,
+
+				obtainedAt: currentDate,
+				obtainedFrom: 'BIRTHDAY', // Obtained from rolling
+
+				isInverted: false,
+				variant: null,
+
+				untradeable: true,
+
+				catcha: {
+					connect: {
+						userUuid: userUuid,
+					},
+				},
+			},
+		}),
+		// Insert the card history event
+		prisma.catchaCardHistoryEvent.create({
+			data: {
+				timestamp: currentDate,
+
+				event: 'BIRTHDAY',
+				eventDetails: birthdayYear.toString(),
+
+				card: {
+					connect: {
+						uuid: cardUuid,
+					},
+				},
+
+				catcha: {
+					connect: {
+						userUuid: userUuid,
+					},
+				},
+			},
+		}),
+		// Set the last birthday claim year
+		prisma.catcha.update({
+			where: {
+				userUuid: userUuid,
+			},
+			data: {
+				lastBirthdayCardClaimed: birthdayYear,
 				rollCache: null,
 			},
 		}),
@@ -569,6 +631,7 @@ export {
 	getCardCollection,
 	getCardHistoryEvents,
 	claimCard,
+	claimBirthdayCard,
 	getTrade,
 	findUserPendingTrades,
 	findTradesBetweenUsers,

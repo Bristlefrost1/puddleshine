@@ -12,6 +12,7 @@ import * as tradeInteractions from './trade/trade-interactions.js';
 import * as statsSubcommand from './stats/stats-subcommand.js';
 import * as eventSubcommand from './event/event-subcommand.js';
 import * as burn from './collection/subcommands/burn.js';
+import * as birthday from './birthday/birthday.js';
 import { onArtScroll } from './art/art-scroll.js';
 import * as enums from './catcha-enums.js';
 import { getAutocompleteChoices } from './archive/autocomplete-card.js';
@@ -266,6 +267,21 @@ const CatchaCommand: Command = {
 					},
 				],
 			},
+			{
+				type: DAPI.ApplicationCommandOptionType.Subcommand,
+				name: enums.Subcommand.Birthday,
+				description: 'Claim a free card as your birthday present.',
+
+				options: [
+					{
+						type: DAPI.ApplicationCommandOptionType.String,
+						name: 'card',
+						description: 'The card to claim',
+						required: true,
+						autocomplete: true,
+					},
+				],
+			},
 		],
 	},
 
@@ -314,6 +330,8 @@ const CatchaCommand: Command = {
 				return await eventSubcommand.handleEventSubcommand(interaction, options, user, env, ctx);
 			case enums.Subcommand.Burn:
 				return await burn.handleBurn(interaction, options!, user, env, ctx);
+			case enums.Subcommand.Birthday:
+				return await birthday.handleBirthdaySubcommand(interaction, options!, user, env, ctx);
 			default:
 			// Do nothing
 		}
@@ -343,6 +361,8 @@ const CatchaCommand: Command = {
 				return await burn.handleBurnMessageComponent(interaction, user, parsedCustomId, env, ctx);
 			case 'view':
 				return await view.handleViewMessageComponent(interaction, user, parsedCustomId, env, ctx);
+			case 'birthday':
+				return await birthday.handleBirthdayMessageComponent(interaction, parsedCustomId, user, env, ctx);
 			default:
 			// Do nothing
 		}

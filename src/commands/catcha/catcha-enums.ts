@@ -9,6 +9,7 @@ enum Subcommand {
 	Stats = 'stats',
 	Event = 'event',
 	Burn = 'burn',
+	Birthday = 'birthday',
 
 	Trade = 'trade',
 	TradeRequest = 'request',
