@@ -16,6 +16,7 @@ import * as birthday from './birthday/birthday.js';
 import { onArtScroll } from './art/art-scroll.js';
 import * as enums from './catcha-enums.js';
 import { getAutocompleteChoices } from './archive/autocomplete-card.js';
+import { CollectionSort } from './utils/sort.js';
 
 import type { Command } from '../command.js';
 
@@ -104,6 +105,47 @@ const CatchaCommand: Command = {
 						name: enums.ListSubcommandOption.OnlyVariant,
 						description: 'Only show variant cards',
 						required: false,
+					},
+					{
+						type: DAPI.ApplicationCommandOptionType.String,
+						name: enums.ListSubcommandOption.Sort,
+						description: 'Choose how to sort the cards',
+						required: false,
+
+						choices: [
+							{
+								name: 'Default - Claim Time (Ascending)',
+								value: CollectionSort.ClaimTimeAsc,
+							},
+							{
+								name: 'Claim Time (Descending)',
+								value: CollectionSort.ClaimTimeDesc,
+							},
+							{
+								name: 'Alphabetical (Ascending)',
+								value: CollectionSort.AlphabeticalAsc,
+							},
+							{
+								name: 'Alphabetical (Descending)',
+								value: CollectionSort.AlphabeticalDesc,
+							},
+							{
+								name: 'Card ID (Ascending)',
+								value: CollectionSort.CardIdAsc,
+							},
+							{
+								name: 'Card ID (Descending)',
+								value: CollectionSort.CardIdDesc,
+							},
+							{
+								name: 'Rarity (Ascending)',
+								value: CollectionSort.RarityAsc,
+							},
+							{
+								name: 'Rarity (Descending)',
+								value: CollectionSort.RarityDesc,
+							},
+						],
 					},
 				],
 			},

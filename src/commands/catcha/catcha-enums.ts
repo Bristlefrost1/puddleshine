@@ -34,6 +34,7 @@ enum ListSubcommandOption {
 	Rarity = 'rarity',
 	OnlyInverted = 'only_inverted',
 	OnlyVariant = 'only_variant',
+	Sort = 'sort',
 }
 
 enum LocateSubcommandOption {

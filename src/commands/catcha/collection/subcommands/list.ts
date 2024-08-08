@@ -6,6 +6,7 @@ import { messageResponse, simpleEphemeralResponse, embedMessageResponse, errorEm
 
 import * as collection from '#commands/catcha/collection/collection.js';
 import * as listUtils from '#commands/catcha/collection/list-utils.js';
+import { CollectionSort, sortCollection } from '#commands/catcha/utils/sort.js';
 
 async function getTitle(requestedBy: DAPI.APIUser, userId: string, env: Env) {
 	let title = '';
@@ -35,15 +36,18 @@ async function listUserCollection(
 		onlyRarity?: number;
 		onlyInverted?: boolean;
 		onlyVariant?: boolean;
+		sort?: CollectionSort;
 	},
 ): Promise<string[]> {
-	const userCollection = await collection.getCollection(options.userId, env, {
+	let userCollection = await collection.getCollection(options.userId, env, {
 		rarity: options.onlyRarity,
 		onlyInverted: options.onlyInverted,
 		onlyVariant: options.onlyVariant,
 	});
 
 	if (userCollection.length === 0) return [];
+
+	if (options.sort) userCollection = sortCollection(userCollection, options.sort);
 
 	const collectionList = listUtils.stringifyCollection(userCollection);
 
@@ -66,6 +70,7 @@ async function handleListScroll(
 		onlyRarity: listData.onlyRarity,
 		onlyInverted: listData.onlyInverted,
 		onlyVariant: listData.onlyVariant,
+		sort: listData.sort,
 	});
 
 	if (collectionList.length === 0) {
@@ -112,6 +117,7 @@ async function handleListSubcommand(
 	let onlyRarity: number | undefined;
 	let onlyInverted: boolean | undefined;
 	let onlyVariant: boolean | undefined;
+	let sort: CollectionSort | undefined;
 
 	// Parse the options
 	if (commandOptions) {
@@ -122,6 +128,7 @@ async function handleListSubcommand(
 		onlyRarity = searchOptions.onlyRarity;
 		onlyInverted = searchOptions.onlyInverted;
 		onlyVariant = searchOptions.onlyVariant;
+		sort = searchOptions.sort;
 	}
 
 	if (pageNumber < 1) return simpleEphemeralResponse('The page number cannot be less than 1.');
@@ -131,6 +138,7 @@ async function handleListSubcommand(
 		onlyRarity,
 		onlyInverted,
 		onlyVariant,
+		sort,
 	});
 
 	if (collectionList.length === 0) {
@@ -145,7 +153,7 @@ async function handleListSubcommand(
 
 	const list = listMessage.createListMessage({
 		action: 'catcha/list',
-		listDataString: listUtils.buildListDataString(listUserId, onlyRarity, onlyInverted, onlyVariant),
+		listDataString: listUtils.buildListDataString(listUserId, onlyRarity, onlyInverted, onlyVariant, sort),
 
 		items: collectionList,
 		pageNumber,

@@ -3,13 +3,10 @@ import * as DAPI from 'discord-api-types/v10';
 import * as archive from '#commands/catcha/archive/archive.js';
 import * as enums from '#commands/catcha/catcha-enums.js';
 import * as starString from '#commands/catcha/utils/star-string.js';
-
-import * as defer from '#discord/responses-deferred.js';
+import { CollectionSort } from '#commands/catcha/utils/sort.js';
 
 import type { Collection } from './collection.js';
 import type { CatchaCard } from '@prisma/client';
-
-import * as config from '#config.js';
 
 function getRequestedByAuthor(requestedBy: DAPI.APIUser, userId: string) {
 	let author: DAPI.APIEmbedAuthor | undefined = undefined;
@@ -71,6 +68,7 @@ function parseSearchOptions(options: DAPI.APIApplicationCommandInteractionDataBa
 	let onlyRarity: number | undefined;
 	let onlyInverted: boolean | undefined;
 	let onlyVariant: boolean | undefined;
+	let sort: CollectionSort | undefined;
 
 	for (const option of options) {
 		switch (option.name) {
@@ -89,6 +87,9 @@ function parseSearchOptions(options: DAPI.APIApplicationCommandInteractionDataBa
 			case enums.ListSubcommandOption.OnlyVariant:
 				if (option.type === DAPI.ApplicationCommandOptionType.Boolean) onlyVariant = option.value;
 				continue;
+			case enums.ListSubcommandOption.Sort:
+				if (option.type === DAPI.ApplicationCommandOptionType.String) sort = option.value as any;
+				continue;
 			default:
 				continue;
 		}
@@ -100,10 +101,17 @@ function parseSearchOptions(options: DAPI.APIApplicationCommandInteractionDataBa
 		onlyRarity: onlyRarity,
 		onlyInverted: onlyInverted,
 		onlyVariant: onlyVariant,
+		sort,
 	};
 }
 
-function buildListDataString(userId: string, onlyRarity?: number, onlyInverted?: boolean, onlyVariant?: boolean) {
+function buildListDataString(
+	userId: string,
+	onlyRarity?: number,
+	onlyInverted?: boolean,
+	onlyVariant?: boolean,
+	sort?: CollectionSort,
+) {
 	let onlyInvertedString = '';
 	let onlyVariantString = '';
 
@@ -115,7 +123,7 @@ function buildListDataString(userId: string, onlyRarity?: number, onlyInverted?:
 		onlyVariantString = onlyVariant ? '1' : '0';
 	}
 
-	return `${userId},${onlyRarity ?? '0'},${onlyInvertedString},${onlyVariantString}`;
+	return `${userId},${onlyRarity ?? '0'},${onlyInvertedString},${onlyVariantString},${sort ?? ''}`;
 }
 
 function parseListDataString(dataString: string) {
@@ -125,12 +133,14 @@ function parseListDataString(dataString: string) {
 	const onlyRarity = listData[1] !== '0' ? Number.parseInt(listData[1]) : undefined;
 	const onlyInverted = listData[2] === '' ? undefined : Boolean(Number.parseInt(listData[2]));
 	const onlyVariant = listData[3] === '' ? undefined : Boolean(Number.parseInt(listData[3]));
+	const sort: CollectionSort | undefined = listData[4] === '' ? undefined : (listData[4] as any);
 
 	return {
 		userId: listUserId,
 		onlyRarity: onlyRarity,
 		onlyInverted: onlyInverted,
 		onlyVariant: onlyVariant,
+		sort,
 	};
 }
 
