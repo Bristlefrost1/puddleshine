@@ -2734,6 +2734,21 @@
 				"url": "https://static.wikia.nocookie.net/warriors/images/9/94/Dovewing.OTS-1-RR.png/revision/latest?cb=20190127235439",
 				"credit": "Owen Richardson / Official art"
 			}
+		],
+
+		"variants": [
+			{
+				"variant": "Rainbow",
+				"name": "Rainbowwing",
+				"description": "*\"Dovewing doesn't have an eye colour. Her eyes are all of the colours at the same time.\"*",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/0245-dovewing/variants/rainbow.png",
+						"credit": "shadedsights."
+					}
+				]
+			}
 		]
 	},
 	{
