@@ -105,8 +105,8 @@ model CatchaCardHistoryEvent {
 	catcha   Catcha?     @relation(fields: [userUuid], references: [userUuid], onDelete: SetNull)
 
 	@@id([cardUuid, timestamp])
+	@@index(fields: [cardUuid, event, eventDetails])
 	@@map("catcha_card_history_events")
-	@@index(fields: [cardUuid])
 }
 
 model CatchaTrade {
