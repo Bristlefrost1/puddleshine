@@ -7720,7 +7720,14 @@
 		"name": "Beepaw",
 		"group": "SkyClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0772-beepaw/beepaw-falloutragez.png",
+				"credit": "falloutragez"
+			}
+		]
 	},
 	{
 		"id": 773,
