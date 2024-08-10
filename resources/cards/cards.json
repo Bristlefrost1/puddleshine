@@ -542,6 +542,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/1/19/Bee_%28Ro%29.rogue.png/revision/latest?cb=20240401201505",
 				"credit": "Warriors Wiki"
+			},
+			{
+				"url": "$ART_URL_BASE$/0034-bee/bee-chibi.png",
+				"credit": "Chibi"
 			}
 		]
 	},
@@ -13288,6 +13292,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/8/81/Rumble.star.png/revision/latest?cb=20230908203046",
 				"credit": "Warriors Wiki"
+			},
+			{
+				"url": "$ART_URL_BASE$/1346-rumble/rumble-chibi.png",
+				"credit": "Chibi"
 			}
 		]
 	},
