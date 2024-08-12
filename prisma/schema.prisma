@@ -132,3 +132,15 @@ model CatchaTrade {
 	@@map("catcha_trades")
 	@@index(fields: [senderUserUuid, recipientUserUuid])
 }
+
+model ArtistProfile {
+	name         String   @id @unique
+	displayName  String?  @map("display_name")
+
+	discordId  String?  @map("discord_id")
+
+	description  String?
+
+	@@index([discordId])
+	@@map("artist_profiles")
+}
