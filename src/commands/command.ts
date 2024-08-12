@@ -175,6 +175,51 @@ interface Command {
 		 */
 		ctx: ExecutionContext;
 	}) => Promise<DAPI.APICommandAutocompleteInteractionResponseCallbackData>;
+
+	/**
+	 * The handler that will be fired for modal submit interactions.
+	 *
+	 * @param options The interaction options.
+	 * @returns An interaction response or void. Returning void will raise an error.
+	 */
+	onModal?: (options: {
+		/**
+		 * The modal submit interaction.
+		 */
+		interaction: DAPI.APIModalSubmitInteraction;
+
+		/**
+		 * The user that submitted the modal.
+		 *
+		 * https://discord.com/developers/docs/resources/user#user-object
+		 */
+		user: DAPI.APIUser;
+
+		/**
+		 * The full custom ID of the modal.
+		 */
+		customId: string;
+
+		/**
+		 * The custom ID split by `/`.
+		 */
+		parsedCustomId: string[];
+
+		/**
+		 * The components of the modal.
+		 */
+		components: DAPI.ModalSubmitActionRowComponent[];
+
+		/**
+		 * The Worker's env.
+		 */
+		env: Env;
+
+		/**
+		 * The Worker's execution context.
+		 */
+		ctx: ExecutionContext;
+	}) => Promise<DAPI.APIInteractionResponse | void>;
 }
 
 export type { Command };

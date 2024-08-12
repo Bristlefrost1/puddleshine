@@ -231,6 +231,59 @@ async function handleApplicationCommandAutocomplete(
 }
 
 /**
+ * Handles a modal submit interaction.
+ *
+ * Throws an error if no handler is found or it doesn't return a response.
+ *
+ * @param interaction The modal submit interaction.
+ * @param env The Worker's env.
+ * @param ctx The Worker's execution context.
+ * @returns An interaction response.
+ */
+async function handleModal(interaction: DAPI.APIModalSubmitInteraction, env: Env, ctx: ExecutionContext) {
+	const user = interaction.user ? interaction.user : interaction.member!.user;
+
+	// The message component custom IDs are used to indicate which command created them and should thus handle them
+	// The format is COMMAND/SUBCOMMAND/DATA
+	// For example, catcha/trade/y/TRADE_UUID,SIDE1_DISCORD_ID,SIDE2_DISCORD_ID accepts a trade
+	// https://discord.com/developers/docs/interactions/message-components#custom-id
+	const customId = interaction.data.custom_id;
+	const parsedCustomId = customId.split('/');
+	const commandName = parsedCustomId[0];
+
+	interaction.data.components;
+
+	if (commands[commandName]) {
+		const command = commands[commandName];
+
+		if (command.onModal) {
+			const returnResponse = await command.onModal({
+				interaction: interaction,
+				user: user,
+
+				customId: customId,
+				parsedCustomId: parsedCustomId,
+
+				components: interaction.data.components,
+
+				env: env,
+				ctx: ctx,
+			});
+
+			if (returnResponse) {
+				return returnResponse;
+			} else {
+				throw 'The modal submit handler returned no response.';
+			}
+		} else {
+			throw `The command ${commandName} doesn't implement a modal submit handler.`;
+		}
+	} else {
+		throw `No handler named ${commandName} found.`;
+	}
+}
+
+/**
  * Catch potential errors in the interaction handlers. Catches the error and returns an ephemeral message instead of crashing.
  *
  * @param handler The interaction handler.
@@ -286,6 +339,9 @@ async function onInteractionReceived(
 
 		case DAPI.InteractionType.ApplicationCommandAutocomplete:
 			return await handleApplicationCommandAutocomplete(interaction, env, ctx);
+
+		case DAPI.InteractionType.ModalSubmit:
+			return await handleModal(interaction, env, ctx);
 
 		default:
 			return {
