@@ -14,6 +14,8 @@ import * as eventSubcommand from './event/event-subcommand.js';
 import * as burn from './collection/subcommands/burn.js';
 import * as birthday from './birthday/birthday.js';
 import { onArtScroll } from './art/art-scroll.js';
+import ArtistSubcommand from './art/artist.js';
+import { getArtistAutocompleChoices } from './art/artist-autocomplete.js';
 import * as enums from './catcha-enums.js';
 import { getAutocompleteChoices } from './archive/autocomplete-card.js';
 import { CollectionSort } from './utils/sort.js';
@@ -324,6 +326,7 @@ const CatchaCommand: Command = {
 					},
 				],
 			},
+			ArtistSubcommand.subcommand,
 		],
 	},
 
@@ -374,6 +377,8 @@ const CatchaCommand: Command = {
 				return await burn.handleBurn(interaction, options!, user, env, ctx);
 			case enums.Subcommand.Birthday:
 				return await birthday.handleBirthdaySubcommand(interaction, options!, user, env, ctx);
+			case ArtistSubcommand.name:
+				return await ArtistSubcommand.execute({ interaction, user, commandOptions: options!, env, ctx });
 			default:
 			// Do nothing
 		}
@@ -405,6 +410,8 @@ const CatchaCommand: Command = {
 				return await view.handleViewMessageComponent(interaction, user, parsedCustomId, env, ctx);
 			case 'birthday':
 				return await birthday.handleBirthdayMessageComponent(interaction, parsedCustomId, user, env, ctx);
+			case ArtistSubcommand.name:
+				return await ArtistSubcommand.handleMessageComponent?.({ interaction, user, parsedCustomId, env, ctx });
 			default:
 			// Do nothing
 		}
@@ -414,6 +421,8 @@ const CatchaCommand: Command = {
 		// If the focused option name is 'card', autofill card names from the archive
 		if (focusedOption.name === 'card' && focusedOption.type === DAPI.ApplicationCommandOptionType.String) {
 			return { choices: getAutocompleteChoices(focusedOption.value) };
+		} else if (focusedOption.name === 'artist' && focusedOption.type === DAPI.ApplicationCommandOptionType.String) {
+			return { choices: getArtistAutocompleChoices(focusedOption.value) };
 		}
 
 		// Unknown focused option. Return a default error message.
@@ -425,6 +434,18 @@ const CatchaCommand: Command = {
 				},
 			],
 		};
+	},
+
+	async onModal(options) {
+		const { interaction, user, parsedCustomId, components, env, ctx } = options;
+		const subcommand = parsedCustomId[1];
+
+		switch (subcommand) {
+			case 'artist':
+				return await ArtistSubcommand.onModal?.(options);
+			default:
+			// Do nothing
+		}
 	},
 };
 
