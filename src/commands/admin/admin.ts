@@ -4,6 +4,8 @@ import { embedMessageResponse, simpleEphemeralResponse } from '#discord/response
 
 import * as userAdminCommands from './user/user.js';
 import * as catchaAdminCommands from './catcha/catcha-admin.js';
+import * as artistAdminCommands from './artist/artist-admin.js';
+import { getArtistAutocompleChoices } from '#commands/catcha/art/artist-autocomplete.js';
 
 import type { Command } from '../command.js';
 
@@ -76,7 +78,7 @@ const AdminCommand: Command = {
 			{
 				type: DAPI.ApplicationCommandOptionType.SubcommandGroup,
 				name: 'catcha',
-				description: "View and manage users' Catchas.",
+				description: 'View and manage Catchas.',
 
 				options: [
 					{
@@ -95,27 +97,84 @@ const AdminCommand: Command = {
 					},
 					{
 						type: DAPI.ApplicationCommandOptionType.Subcommand,
-						name: 'setrolls',
-						description: "Set a user's rolls to a number.",
+						name: 'current_roll_period',
+						description: 'Show the current roll period.',
+					},
+				],
+			},
+			{
+				type: DAPI.ApplicationCommandOptionType.SubcommandGroup,
+				name: 'profile',
+				description: 'Manage user profiles',
+
+				options: [
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'set_name',
+						description: "Set a user's profile name (bypasses all checks)",
 
 						options: [
 							{
 								type: DAPI.ApplicationCommandOptionType.User,
 								name: 'user',
-								description: 'The user whose rolls to set',
-								required: true,
-							},
-							{
-								type: DAPI.ApplicationCommandOptionType.Integer,
-								name: 'rolls',
-								description: 'The rolls',
+								description: 'The user whose profile name to change',
 								required: true,
 							},
 						],
 					},
 					{
 						type: DAPI.ApplicationCommandOptionType.Subcommand,
-						name: 'trade_block',
+						name: 'set_birthday',
+						description: "Set a user's birthday even if they've already set one",
+
+						options: [
+							{
+								type: DAPI.ApplicationCommandOptionType.User,
+								name: 'user',
+								description: 'The user whose birthday to set',
+								required: true,
+							},
+						],
+					},
+				],
+			},
+			{
+				type: DAPI.ApplicationCommandOptionType.SubcommandGroup,
+				name: 'trade',
+				description: 'View and manage trades.',
+
+				options: [
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'history',
+						description: 'Show the trade history of the given user',
+
+						options: [
+							{
+								type: DAPI.ApplicationCommandOptionType.User,
+								name: 'user',
+								description: 'The user whose Catcha to show',
+								required: true,
+							},
+						],
+					},
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'view',
+						description: 'View a trade by UUID',
+
+						options: [
+							{
+								type: DAPI.ApplicationCommandOptionType.String,
+								name: 'trade_uuid',
+								description: 'The UUID of the trade to view',
+								required: true,
+							},
+						],
+					},
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'block',
 						description: 'Block a user from trading.',
 
 						options: [
@@ -139,7 +198,7 @@ const AdminCommand: Command = {
 					},
 					{
 						type: DAPI.ApplicationCommandOptionType.Subcommand,
-						name: 'trade_unblock',
+						name: 'unblock',
 						description: 'Remove a trade block from a user.',
 
 						options: [
@@ -148,6 +207,92 @@ const AdminCommand: Command = {
 								name: 'user',
 								description: 'The user to unblock from trading',
 								required: true,
+							},
+						],
+					},
+				],
+			},
+			{
+				type: DAPI.ApplicationCommandOptionType.SubcommandGroup,
+				name: 'artist',
+				description: 'Manage artist profiles.',
+
+				options: [
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'initialize',
+						description: 'Initialize an artist profile with the given name and link it to a user',
+
+						options: [
+							{
+								type: DAPI.ApplicationCommandOptionType.String,
+								name: 'artist',
+								description: 'The artist whose profile to initialize',
+								required: true,
+								autocomplete: true,
+							},
+							{
+								type: DAPI.ApplicationCommandOptionType.User,
+								name: 'user',
+								description: 'The user to link to',
+								required: true,
+							},
+						],
+					},
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'link_user',
+						description: 'Link an artist profile to a Discord user',
+
+						options: [
+							{
+								type: DAPI.ApplicationCommandOptionType.String,
+								name: 'artist',
+								description: 'The artist profile to link',
+								required: true,
+								autocomplete: true,
+							},
+							{
+								type: DAPI.ApplicationCommandOptionType.User,
+								name: 'user',
+								description: 'The user to link to',
+								required: true,
+							},
+						],
+					},
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'display_name',
+						description: 'Edit an artist profile display name',
+
+						options: [
+							{
+								type: DAPI.ApplicationCommandOptionType.String,
+								name: 'artist',
+								description: 'The artist profile to update',
+								required: true,
+								autocomplete: true,
+							},
+							{
+								type: DAPI.ApplicationCommandOptionType.String,
+								name: 'display_name',
+								description: 'The new display name',
+								required: true,
+							},
+						],
+					},
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'description',
+						description: 'Edit an artist profile description',
+
+						options: [
+							{
+								type: DAPI.ApplicationCommandOptionType.String,
+								name: 'artist',
+								description: 'The artist profile to update',
+								required: true,
+								autocomplete: true,
 							},
 						],
 					},
@@ -185,6 +330,16 @@ const AdminCommand: Command = {
 						env,
 						ctx,
 					);
+				case 'artist':
+					return await artistAdminCommands.handleArtistAdminCommand(
+						interaction,
+						user,
+						accessLevel,
+						subcommand,
+						options,
+						env,
+						ctx,
+					);
 				default:
 					return simpleEphemeralResponse('An error occured.');
 			}
@@ -193,6 +348,22 @@ const AdminCommand: Command = {
 		return embedMessageResponse({
 			description: 'Hello, World!',
 		});
+	},
+
+	async onAutocomplete({ interaction, user, subcommandGroup, subcommand, options, focusedOption, env, ctx }) {
+		if (focusedOption.name === 'artist' && focusedOption.type === DAPI.ApplicationCommandOptionType.String) {
+			return { choices: getArtistAutocompleChoices(focusedOption.value) };
+		}
+
+		// Unknown focused option. Return a default error message.
+		return {
+			choices: [
+				{
+					name: 'Error - Something went wrong',
+					value: 'Error',
+				},
+			],
+		};
 	},
 };
 
