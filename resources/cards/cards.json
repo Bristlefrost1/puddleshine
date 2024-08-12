@@ -2800,7 +2800,14 @@
 		"name": "Duckpaw",
 		"group": "RiverClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0250-duckpaw/duckpaw-xxsnowyxx23.png",
+				"credit": "xxSnowyxx23"
+			}
+		]
 	},
 	{
 		"id": 251,
