@@ -22,14 +22,16 @@ async function getUser(
 	const userData = await db.getUserWithDiscordId(env.PRISMA, userId);
 
 	if (userData) {
-		const userDataString = JSON.stringify(userData, undefined, 4);
 		const discordUser = await discordGetUser(env.DISCORD_TOKEN, userId);
+		const discordUserDetailsString = `Discord user ID: ${userId}\nDiscord username: \`${discordUser?.username}\`\n`;
 
-		const discordUserDetailsString = `Discord user ID: ${userId}\nDiscord username: \`${discordUser?.username}#${discordUser?.discriminator}\`\n`;
+		const userUuid = userData.uuid;
+		const createdAtUnixTimestamp = Math.floor(userData.createdAt.getTime() / 1000);
 
 		return embedMessageResponse({
-			title: 'Database query results',
-			description: discordUserDetailsString + '```json\n' + userDataString + '\n```',
+			title: 'User details',
+			description: discordUserDetailsString,
+			fields: [{ name: 'Details', value: `User UUID: ${userUuid}\nCreated at: <t:${createdAtUnixTimestamp}:F>` }],
 		});
 	} else {
 		return embedMessageResponse({

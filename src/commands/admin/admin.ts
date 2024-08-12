@@ -5,6 +5,7 @@ import { embedMessageResponse, simpleEphemeralResponse } from '#discord/response
 import * as userAdminCommands from './user/user.js';
 import * as catchaAdminCommands from './catcha/catcha-admin.js';
 import * as artistAdminCommands from './artist/artist-admin.js';
+import * as tradeAdminCommands from './trade/trade-admin.js';
 import { getArtistAutocompleChoices } from '#commands/catcha/art/artist-autocomplete.js';
 
 import type { Command } from '../command.js';
@@ -53,6 +54,42 @@ const AdminCommand: Command = {
 		contexts: [DAPI.InteractionContextType.Guild],
 
 		options: [
+			{
+				type: DAPI.ApplicationCommandOptionType.SubcommandGroup,
+				name: 'admins',
+				description: 'Manage other admins as a super admin.',
+
+				options: [
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'add',
+						description: 'Grant admin acccess to a user.',
+
+						options: [
+							{
+								type: DAPI.ApplicationCommandOptionType.User,
+								name: 'user',
+								description: 'The user to grant admin access to',
+								required: true,
+							},
+						],
+					},
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'remove',
+						description: 'Remove admin access from a user.',
+
+						options: [
+							{
+								type: DAPI.ApplicationCommandOptionType.User,
+								name: 'user',
+								description: 'The user whose admin access to revoke',
+								required: true,
+							},
+						],
+					},
+				],
+			},
 			{
 				type: DAPI.ApplicationCommandOptionType.SubcommandGroup,
 				name: 'user',
@@ -153,7 +190,7 @@ const AdminCommand: Command = {
 							{
 								type: DAPI.ApplicationCommandOptionType.User,
 								name: 'user',
-								description: 'The user whose Catcha to show',
+								description: 'The user whose trade history to show',
 								required: true,
 							},
 						],
@@ -305,6 +342,7 @@ const AdminCommand: Command = {
 		if (!subcommand) throw 'No subcommand provided';
 
 		const accessLevel = await getAdminAccessLevel(env, user.id);
+
 		if (accessLevel === AdminAccessLevel.None)
 			return simpleEphemeralResponse("You don't have access to admin commands.");
 
@@ -340,6 +378,16 @@ const AdminCommand: Command = {
 						env,
 						ctx,
 					);
+				case 'trade':
+					return await tradeAdminCommands.handleTradeAdminCommand(
+						interaction,
+						user,
+						accessLevel,
+						subcommand,
+						options,
+						env,
+						ctx,
+					);
 				default:
 					return simpleEphemeralResponse('An error occured.');
 			}
@@ -348,6 +396,27 @@ const AdminCommand: Command = {
 		return embedMessageResponse({
 			description: 'Hello, World!',
 		});
+	},
+
+	async onMessageComponent({ interaction, user, componentType, parsedCustomId, env, ctx }) {
+		const accessLevel = await getAdminAccessLevel(env, user.id);
+
+		if (accessLevel === AdminAccessLevel.None)
+			return simpleEphemeralResponse("You don't have access to admin commands.");
+
+		switch (parsedCustomId[1]) {
+			case 'trade':
+				return await tradeAdminCommands.handleTradeAdminMessageComponent(
+					interaction,
+					user,
+					accessLevel,
+					parsedCustomId,
+					env,
+					ctx,
+				);
+			default:
+			// Do nothing
+		}
 	},
 
 	async onAutocomplete({ interaction, user, subcommandGroup, subcommand, options, focusedOption, env, ctx }) {
