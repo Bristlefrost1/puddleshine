@@ -1169,7 +1169,14 @@
 		"name": "Bone",
 		"group": "BloodClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0084-bone/bone-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 85,
