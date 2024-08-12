@@ -45,6 +45,7 @@ function scrollListMessage(options: {
 
 	title?: string;
 	author?: DAPI.APIEmbedAuthor;
+	description?: string;
 }): ListMessage {
 	const pageData = options.pageData.split(':');
 	const nextOrPrev = pageData[0] as 'next' | 'prev';
@@ -73,7 +74,7 @@ function scrollListMessage(options: {
 		embed: {
 			title: options.title,
 			author: options.author,
-			description: newPage.join('\n'),
+			description: `${options.description ?? ''}${newPage.join('\n')}`,
 			footer: { text: `Page ${newPageNumber}/${pages.length}` },
 			timestamp: new Date().toISOString(),
 		},
@@ -96,6 +97,7 @@ function createListMessage(options: {
 
 	title?: string;
 	author?: DAPI.APIEmbedAuthor;
+	description?: string;
 }): ListMessage {
 	if (options.items.length === 0) {
 		return {
@@ -119,7 +121,7 @@ function createListMessage(options: {
 		embed: {
 			title: options.title,
 			author: options.author,
-			description: page.join('\n'),
+			description: `${options.description ?? ''}${page.join('\n')}`,
 			footer: { text: `Page ${pageNumber}/${pages.length}` },
 			timestamp: new Date().toISOString(),
 		},
