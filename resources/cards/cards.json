@@ -9373,6 +9373,10 @@
 
 		"art": [
 			{
+				"url": "$ART_URL_BASE$/0946-tall-shadow/tall-shadow-chibi.png",
+				"credit": "Chibi"
+			},
+			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/d/d9/Shadowstar.FG-6.png/revision/latest?cb=20240526085246",
 				"credit": "Wayne McLoughlin / Official art"
 			},
@@ -10169,6 +10173,10 @@
 			{
 				"url": "$ART_URL_BASE$/1029-snowtuft/snowtuft-bingo2561.png",
 				"credit": "bingo2561"
+			},
+			{
+				"url": "$ART_URL_BASE$/1029-snowtuft/snowtuft-falloutragez.png",
+				"credit": "falloutragez"
 			}
 		]
 	},
