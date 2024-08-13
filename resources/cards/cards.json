@@ -476,6 +476,10 @@
 
 		"art": [
 			{
+				"url": "$ART_URL_BASE$/0030-badgerfang/badgerfang-falloutragez.png",
+				"credit": "falloutragez"
+			},
+			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/f/f1/Badgerfang.apprentice.png/revision/latest?cb=20230703154628",
 				"credit": "Warriors Wiki"
 			}
@@ -7466,7 +7470,14 @@
 		"name": "Sunshine",
 		"group": "The Sisters",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0742-sunshine/sunshine-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 743,
