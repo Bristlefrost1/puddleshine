@@ -11855,7 +11855,14 @@
 		"name": "Turtlecrawl",
 		"group": "SkyClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/1203-turtlecrawl/turtlecrawl-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 1204,
