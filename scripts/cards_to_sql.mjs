@@ -31,11 +31,29 @@ for (const line of lines) {
 
 	if (starString.at(0) === '☆') isInverted = true;
 
+	let variant = undefined;
+
+	if (splitLine[2] === 'Squilf') {
+		variant = 'Short';
+	} else if (splitLine[2] === 'Prom' && splitLine[3] === 'Date' && splitLine[4] === 'Hawkfrost') {
+		variant = 'Mistake';
+	} else if (splitLine[2] === 'Rainbow' && splitLine[3] === 'Dovewing') {
+		variant = 'Rainbow';
+	}
+
 	const randomCardUuid = crypto.randomUUID();
 	const obtainedAt = new Date(importStartedMs + importedCardNumber).toISOString();
 
-	const cardSql = `INSERT INTO catcha_cards (uuid, card_id, owner_uuid, is_inverted, obtained_at, obtained_from) VALUES ('${randomCardUuid}', ${cardId}, $OWNER_UUID$, ${isInverted ? '1' : '0'}, '${obtainedAt}', 'I');`;
-	const cardHistorySql = `INSERT INTO catcha_card_history_events (card_uuid, timestamp, event, user_uuid) VALUES ('${randomCardUuid}', '${importTimeString}', 'I', $OWNER_UUID$);`;
+	let cardSql = '';
+	let cardHistorySql = '';
+
+	if (variant === undefined) {
+		cardSql = `INSERT INTO catcha_cards (uuid, card_id, owner_uuid, is_inverted, obtained_at, obtained_from) VALUES ('${randomCardUuid}', ${cardId}, $OWNER_UUID$, ${isInverted ? '1' : '0'}, '${obtainedAt}', 'I');`;
+	} else {
+		cardSql = `INSERT INTO catcha_cards (uuid, card_id, owner_uuid, is_inverted, obtained_at, obtained_from, variant) VALUES ('${randomCardUuid}', ${cardId}, $OWNER_UUID$, ${isInverted ? '1' : '0'}, '${obtainedAt}', 'I', '${variant}');`;
+	}
+
+	cardHistorySql = `INSERT INTO catcha_card_history_events (card_uuid, timestamp, event, user_uuid) VALUES ('${randomCardUuid}', '${importTimeString}', 'I', $OWNER_UUID$);`;
 
 	sqlFileLines.push(cardSql);
 	sqlFileLines.push(cardHistorySql);
