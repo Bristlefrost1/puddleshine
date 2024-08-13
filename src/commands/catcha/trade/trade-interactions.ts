@@ -48,11 +48,12 @@ async function onTradeRequest(
 
 	// Ensure the user isn't trying to send a trade request to themself
 	if (commandOptionUserId === user.id) return simpleEphemeralResponse('You cannot send a trade request to yourself.');
-
 	// Turn the string of card positions separated by commas into an array of card positions as numbers
 	// Trim the positions supplied by the user and filter out any NaNs (if the user entered something else than a number)
 	const cardPositions = cardsString
 		.split(',')
+		.map((value) => value.trim().split(' '))
+		.flat()
 		.map((value) => Number.parseInt(value.trim()))
 		.filter((value) => !isNaN(value));
 
