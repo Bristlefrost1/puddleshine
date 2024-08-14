@@ -2,7 +2,7 @@ import * as DAPI from 'discord-api-types/v10';
 
 import * as defer from '#discord/responses-deferred.js';
 import * as discordUserUtils from '#discord/api/discord-user.js';
-import { errorEmbed } from '#discord/responses.js';
+import { errorEmbed, messageResponse } from '#discord/responses.js';
 
 import * as catchaDB from '#commands/catcha/db/catcha-db.js';
 import * as collection from '#commands/catcha/collection/collection.js';
@@ -37,7 +37,7 @@ async function processTradeRequest(
 		otherUserDiscordId: string;
 		cardPositions: number[];
 	},
-) {
+): Promise<DAPI.APIInteractionResponse> {
 	// The bot's application ID and token
 	const applicationId = env.DISCORD_APPLICATION_ID;
 	const discordToken = env.DISCORD_TOKEN;
@@ -59,11 +59,7 @@ async function processTradeRequest(
 
 	// The user doesn't have a Catcha so they've never rolled before. Thus, they cannot possibly have any cards to give.
 	if (!userCatcha) {
-		await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
-			embeds: [errorEmbed("You don't have any cards to trade in your collection.")],
-		});
-
-		return;
+		return messageResponse({ embeds: [errorEmbed("You don't have any cards to trade in your collection.")] });
 	}
 
 	/**
@@ -73,11 +69,7 @@ async function processTradeRequest(
 
 	// Same thing. If they don't have a Catcha in the database, they're not a player
 	if (!otherUserCatcha) {
-		await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
-			embeds: [errorEmbed("The user doesn't have any cards to trade.")],
-		});
-
-		return;
+		return messageResponse({ embeds: [errorEmbed("The user doesn't have any cards to trade.")] });
 	}
 
 	const userTradeBlock = getCurrentlyTradeBlocked(userCatcha, currentTimeMs);
@@ -86,40 +78,34 @@ async function processTradeRequest(
 		// The user has an active trade block
 		const { blockedUntilUnixTime, reason } = userTradeBlock;
 
-		await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+		return messageResponse({
 			embeds: [
 				errorEmbed(
 					`You're blocked from trading${blockedUntilUnixTime !== undefined ? ` until <t:${blockedUntilUnixTime}:f>` : ' indefinitely'}.${reason ? ' Reason: ' + reason : ''}`,
 				),
 			],
 		});
-
-		return;
 	}
 
 	const otherUserTradeBlock = getCurrentlyTradeBlocked(otherUserCatcha, currentTimeMs);
 
 	if (otherUserTradeBlock.currentlyBlocked) {
 		// The other user is blocked
-		await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+		return messageResponse({
 			embeds: [errorEmbed("The user you're attempting to trade is currently blocked from trading.")],
 		});
-
-		return;
 	}
 
 	const cooldown = getTradeCooldown(userCatcha, currentUnixTime);
 
 	if (cooldown.isOnCooldown) {
-		await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+		return messageResponse({
 			embeds: [
 				errorEmbed(
 					`You're on trade cooldown and can trade <t:${cooldown.canTradeAtUnixTime}:R> (at <t:${cooldown.canTradeAtUnixTime}:t>).`,
 				),
 			],
 		});
-
-		return;
 	}
 
 	const userCollection = await collection.getCollection(userDiscordId, env);
@@ -130,29 +116,25 @@ async function processTradeRequest(
 		const card = userCollection[cardIndex];
 
 		if (!card) {
-			await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
-				embeds: [errorEmbed(`No card with the position ${cardPosition} found.`)],
-			});
-
-			return;
+			return messageResponse({ embeds: [errorEmbed(`No card found at position ${cardPosition}.`)] });
 		}
 
 		// We don't want anyone to find any crazy card duplication exploits so a card can only be in
 		// one pending trade at a time.
 		if (card.card.pendingTradeUuid1 !== null || card.card.pendingTradeUuid2 !== null) {
-			await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
-				embeds: [errorEmbed(`The card at position ${cardPosition} is already in another pending trade.`)],
+			return messageResponse({
+				embeds: [
+					errorEmbed(
+						`The card at position ${cardPosition} is already in another pending trade. Complete or cancel that trade first.`,
+					),
+				],
 			});
-
-			return;
 		}
 
 		if (card.card.untradeable) {
-			await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
-				embeds: [errorEmbed(`The card at position ${cardPosition} cannot be traded.`)],
+			return messageResponse({
+				embeds: [errorEmbed(`The card at position ${cardPosition} is marked as untradeable.`)],
 			});
-
-			return;
 		}
 
 		cardsToTrade.push(card.card);
@@ -205,13 +187,18 @@ async function processTradeRequest(
 
 		// If both parties have sent their sides, begin the trade confirmation
 		if (updatedTrade.senderSideSent && updatedTrade.recipientSideSent) {
-			await tradeConfirmation.createTradeConfirmation(interaction, senderUser, recipientUser, updatedTrade, env);
+			const senderUsername = `${senderUser.username}${senderUser.discriminator === '0' ? '' : `#${senderUser.discriminator}`}`;
+			const recipientUsername = `${recipientUser.username}${recipientUser.discriminator === '0' ? '' : `#${recipientUser.discriminator}`}`;
 
-			return;
+			return tradeConfirmation.createTradeConfirmation(
+				updatedTrade,
+				senderUser.id,
+				senderUsername,
+				recipientUser.id,
+				recipientUsername,
+			);
 		} else {
-			await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
-				embeds: [buildTradeRequestEmbed(stringifyCards(cardsToTrade).join('\n'))],
-			});
+			return messageResponse({ embeds: [buildTradeRequestEmbed(stringifyCards(cardsToTrade).join('\n'))] });
 		}
 	} else {
 		// Create a brand new trade
@@ -221,9 +208,7 @@ async function processTradeRequest(
 			sentCardUuids: cardUuidsToTrade,
 		});
 
-		await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
-			embeds: [buildTradeRequestEmbed(stringifyCards(cardsToTrade).join('\n'))],
-		});
+		return messageResponse({ embeds: [buildTradeRequestEmbed(stringifyCards(cardsToTrade).join('\n'))] });
 	}
 }
 

@@ -90,6 +90,18 @@ async function editInteractionResponse(
 		body: jsonPaylod,
 	});
 
+	if (!response.ok) {
+		let json = '';
+
+		try {
+			json = JSON.stringify(await response.json());
+		} catch {
+			json = 'No JSON in the response';
+		}
+
+		console.error(`HTTP ERROR ${response.status}: ${json}`);
+	}
+
 	return response;
 
 	/*

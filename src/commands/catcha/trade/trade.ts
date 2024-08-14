@@ -1,10 +1,12 @@
 import * as DAPI from 'discord-api-types/v10';
 
 import * as defer from '#discord/responses-deferred.js';
+import { messageResponse } from '#discord/responses.js';
 
 import * as archive from '#commands/catcha/archive/archive.js';
 import * as catchaDB from '#commands/catcha/db/catcha-db.js';
 
+import * as tradeConfirmation from './trade-confirmation.js';
 import { getCurrentlyTradeBlocked } from './block.js';
 import { getTradeCooldown } from './cooldown.js';
 
@@ -24,11 +26,13 @@ function calculateStarValue(cardId: number, isInverted?: boolean, variant?: stri
 	return starValue;
 }
 
-async function processTrade(interaction: DAPI.APIMessageComponentInteraction, trade: Trade, env: Env) {
-	// The bot's application ID and token
-	const applicationId = env.DISCORD_APPLICATION_ID;
-	const discordToken = env.DISCORD_TOKEN;
-
+async function processTrade(
+	interaction: DAPI.APIMessageComponentInteraction,
+	trade: Trade,
+	senderDiscordId: string,
+	recipientDiscordId: string,
+	env: Env,
+): Promise<DAPI.APIInteractionResponse> {
 	// The time of the trade
 	const currentDate = new Date();
 	const currentTimeMs = currentDate.getTime();
@@ -36,6 +40,17 @@ async function processTrade(interaction: DAPI.APIMessageComponentInteraction, tr
 
 	// The existing embed of the trade confirmation message
 	const oldEmbed = interaction.message.embeds[0];
+
+	if (!oldEmbed || !oldEmbed.fields || !oldEmbed.timestamp) {
+		await catchaDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
+
+		return messageResponse({
+			content: 'Could not find the trade confirmation embed. Trade canceled.',
+			components: [],
+			update: true,
+		});
+	}
+
 	// The new embed that will replace the old one after the trade has been processed
 	const newEmbed: DAPI.APIEmbed = {
 		title: undefined,
@@ -43,6 +58,20 @@ async function processTrade(interaction: DAPI.APIMessageComponentInteraction, tr
 		timestamp: oldEmbed.timestamp,
 		footer: { text: '✅/✅' },
 	};
+
+	const tradeEmbedUpdated = Date.parse(oldEmbed.timestamp);
+
+	if (trade.updatedAt.getTime() > tradeEmbedUpdated) {
+		return tradeConfirmation.createTradeConfirmation(
+			trade,
+			senderDiscordId,
+			oldEmbed.fields[0].name,
+			recipientDiscordId,
+			oldEmbed.fields[1].name,
+			undefined,
+			true,
+		);
+	}
 
 	// Check that neither side has been trade blocked
 	const senderTradeBlocked = getCurrentlyTradeBlocked(trade.sender as any, currentTimeMs);
@@ -53,13 +82,13 @@ async function processTrade(interaction: DAPI.APIMessageComponentInteraction, tr
 		newEmbed.timestamp = undefined;
 
 		await catchaDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
-		await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+
+		return messageResponse({
 			content: 'Trade canceled due to a trade block.',
 			embeds: [newEmbed],
 			components: [],
+			update: true,
 		});
-
-		return;
 	}
 
 	// Check the cooldowns
@@ -71,13 +100,13 @@ async function processTrade(interaction: DAPI.APIMessageComponentInteraction, tr
 		newEmbed.timestamp = undefined;
 
 		await catchaDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
-		await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+
+		return messageResponse({
 			content: 'Trade canceled due to cooldown.',
 			embeds: [newEmbed],
 			components: [],
+			update: true,
 		});
-
-		return;
 	}
 
 	// Calculate the star values of both sides
@@ -126,10 +155,11 @@ async function processTrade(interaction: DAPI.APIMessageComponentInteraction, tr
 	});
 
 	// Trade approved
-	await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+	return messageResponse({
 		content: 'Trade approved.',
 		embeds: [newEmbed],
 		components: [],
+		update: true,
 	});
 }
 

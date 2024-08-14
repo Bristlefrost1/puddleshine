@@ -1,7 +1,8 @@
 import * as DAPI from 'discord-api-types/v10';
 
-import { stringifyCards } from '../collection/list-utils.js';
 import * as defer from '#discord/responses-deferred.js';
+import { messageResponse } from '#discord/responses.js';
+import { stringifyCards } from '../collection/list-utils.js';
 import * as catchaDB from '#commands/catcha/db/catcha-db.js';
 import { processTrade } from './trade.js';
 
@@ -9,23 +10,19 @@ import type { CatchaTrade } from '@prisma/client';
 
 type Trade = Awaited<ReturnType<typeof catchaDB.updateTrade>>;
 
-async function createTradeConfirmation(
-	interaction: DAPI.APIApplicationCommandInteraction,
-	sender: DAPI.APIUser,
-	recipient: DAPI.APIUser,
+function createTradeConfirmation(
 	trade: Trade,
-	env: Env,
-) {
-	const applicationId = env.DISCORD_APPLICATION_ID;
-	const discordToken = env.DISCORD_TOKEN;
-
-	const senderUsername = `${sender.username}${sender.discriminator === '0' ? '' : `#${sender.discriminator}`}`;
-	const recipientUsername = `${recipient.username}${recipient.discriminator === '0' ? '' : `#${recipient.discriminator}`}`;
-
+	senderDiscordId: string,
+	senderUsername: string,
+	recipientDiscordId: string,
+	recipientUsername: string,
+	footerText?: string,
+	update?: boolean,
+): DAPI.APIInteractionResponse {
 	const senderCards = trade.senderCards;
 	const recipientCards = trade.recipientCards;
 
-	await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+	return messageResponse({
 		embeds: [
 			{
 				title: 'Trade confirmation',
@@ -42,7 +39,7 @@ async function createTradeConfirmation(
 					},
 				],
 				timestamp: trade.updatedAt.toISOString(),
-				footer: { text: '-/-' },
+				footer: { text: footerText ?? '-/-' },
 			},
 		],
 		components: [
@@ -53,17 +50,18 @@ async function createTradeConfirmation(
 						type: DAPI.ComponentType.Button,
 						label: '✅ Accept',
 						style: DAPI.ButtonStyle.Success,
-						custom_id: `catcha/trade/y/${trade.tradeUuid},${sender.id},${recipient.id}`,
+						custom_id: `catcha/trade/y/${trade.tradeUuid},${senderDiscordId},${recipientDiscordId}`,
 					},
 					{
 						type: DAPI.ComponentType.Button,
 						label: '❌ Decline',
 						style: DAPI.ButtonStyle.Danger,
-						custom_id: `catcha/trade/n/${trade.tradeUuid},${sender.id},${recipient.id}`,
+						custom_id: `catcha/trade/n/${trade.tradeUuid},${senderDiscordId},${recipientDiscordId}`,
 					},
 				],
 			},
 		],
+		update,
 	});
 }
 
@@ -72,39 +70,47 @@ async function accept(
 	interactionData: string[],
 	user: DAPI.APIUser,
 	env: Env,
-) {
-	const applicationId = env.DISCORD_APPLICATION_ID;
-	const discordToken = env.DISCORD_TOKEN;
-
-	// The existing embed of the trade confirmation message
-	const oldEmbed = interaction.message.embeds[0];
-	const newEmbed: DAPI.APIEmbed = {
-		title: undefined,
-		fields: oldEmbed.fields,
-		timestamp: oldEmbed.timestamp,
-		footer: oldEmbed.footer,
-	};
-
+): Promise<DAPI.APIInteractionResponse> {
 	// Get the trade details from the interation data (the part of the custom ID separated by commas)
 	const tradeUuid = interactionData[0];
 	const senderDiscordId = interactionData[1];
 	const recipientDiscordId = interactionData[2];
+
+	// The existing embed of the trade confirmation message
+	const confirmationEmbed = interaction.message.embeds[0];
+
+	if (!confirmationEmbed || !confirmationEmbed.fields) {
+		await catchaDB.deleteTrade(env.PRISMA, tradeUuid); // Cancel the trade
+
+		return messageResponse({
+			content: 'No trade confirmation embed found. Trade canceled.',
+			embeds: [],
+			components: [],
+			update: true,
+		});
+	}
 
 	// Get a trade with the UUID
 	let trade = await catchaDB.getTrade(env.PRISMA, tradeUuid, false);
 
 	// Not found, perhaps either user canceled by doing /catcha trade cancel
 	if (trade === null) {
+		const newEmbed: DAPI.APIEmbed = {
+			title: undefined,
+			fields: confirmationEmbed.fields,
+			timestamp: confirmationEmbed.timestamp,
+			footer: confirmationEmbed.footer,
+		};
+
 		newEmbed.footer = undefined;
 		newEmbed.timestamp = undefined;
 
-		await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+		return messageResponse({
 			content: 'This trade was canceled.',
 			embeds: [newEmbed],
 			components: [],
+			update: true,
 		});
-
-		return;
 	}
 
 	let newFooterText = '-/-';
@@ -113,39 +119,39 @@ async function accept(
 		// Side 1 accepted
 		if (trade.recipientAccepted) {
 			// The other side has accepted too, process the trade
-			await processTrade(interaction, trade, env);
-
-			return;
+			return await processTrade(interaction, trade, senderDiscordId, recipientDiscordId, env);
 		} else {
 			// Update the trade and footer to show that side 1 has accepted
 			trade = await catchaDB.updateTrade(env.PRISMA, trade.tradeUuid, {
 				senderAccepted: true,
 			});
+
 			newFooterText = '✅/-';
 		}
 	} else if (user.id === recipientDiscordId) {
 		// Side 2 accepted
 		if (trade.senderAccepted) {
 			// The other side has accepted too, process the trade
-			await processTrade(interaction, trade, env);
-
-			return;
+			return await processTrade(interaction, trade, senderDiscordId, recipientDiscordId, env);
 		} else {
 			// Update the trade and footer to show that side 2 has accepted
 			trade = await catchaDB.updateTrade(env.PRISMA, trade.tradeUuid, {
 				recipientAccepted: true,
 			});
+
 			newFooterText = '-/✅';
 		}
 	}
 
-	if (newEmbed.footer) newEmbed.footer.text = newFooterText;
-	newEmbed.title = oldEmbed.title; // Preserve the old title
-
-	// Edit the trade confirmation message with the new footer
-	await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
-		embeds: [newEmbed],
-	});
+	return createTradeConfirmation(
+		trade,
+		senderDiscordId,
+		confirmationEmbed.fields[0].name,
+		recipientDiscordId,
+		confirmationEmbed.fields[1].name,
+		newFooterText,
+		true,
+	);
 }
 
 async function decline(
@@ -153,23 +159,31 @@ async function decline(
 	interactionData: string[],
 	user: DAPI.APIUser,
 	env: Env,
-) {
-	const applicationId = env.DISCORD_APPLICATION_ID;
-	const discordToken = env.DISCORD_TOKEN;
-
-	// The existing embed of the trade confirmation message
-	const oldEmbed = interaction.message.embeds[0];
-	const newEmbed: DAPI.APIEmbed = {
-		title: undefined,
-		fields: oldEmbed.fields,
-		timestamp: oldEmbed.timestamp,
-		footer: oldEmbed.footer,
-	};
-
+): Promise<DAPI.APIInteractionResponse> {
 	// Get the trade details from the interation data (the part of the custom ID separated by commas)
 	const tradeUuid = interactionData[0];
 	const senderDiscordId = interactionData[1];
 	const recipientDiscordId = interactionData[2];
+
+	// The existing embed of the trade confirmation message
+	const confirmationEmbed = interaction.message.embeds[0];
+	const newEmbed: DAPI.APIEmbed = {
+		title: undefined,
+		fields: confirmationEmbed.fields,
+		timestamp: confirmationEmbed.timestamp,
+		footer: confirmationEmbed.footer,
+	};
+
+	if (!confirmationEmbed || !confirmationEmbed.fields) {
+		await catchaDB.deleteTrade(env.PRISMA, tradeUuid); // Cancel the trade
+
+		return messageResponse({
+			content: 'No trade confirmation embed found. Trade canceled.',
+			embeds: [],
+			components: [],
+			update: true,
+		});
+	}
 
 	// Get a trade with the UUID
 	const trade = await catchaDB.getTrade(env.PRISMA, tradeUuid, false);
@@ -179,13 +193,12 @@ async function decline(
 		newEmbed.footer = undefined;
 		newEmbed.timestamp = undefined;
 
-		await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+		return messageResponse({
 			content: 'This trade was canceled.',
 			embeds: [newEmbed],
 			components: [],
+			update: true,
 		});
-
-		return;
 	}
 
 	// Drop the trade from the DB
@@ -195,18 +208,19 @@ async function decline(
 	let newFooterText = '';
 
 	if (user.id === senderDiscordId) {
-		newFooterText = `❌/${oldEmbed.footer?.text.split('/')[1]}`;
+		newFooterText = `❌/${confirmationEmbed.footer?.text.split('/')[1]}`;
 	} else {
-		newFooterText = `${oldEmbed.footer?.text.split('/')[0]}/❌`;
+		newFooterText = `${confirmationEmbed.footer?.text.split('/')[0]}/❌`;
 	}
 
 	if (newEmbed.footer) newEmbed.footer.text = newFooterText;
 
 	// Update the trade confirmation
-	await defer.editInteractionResponse(applicationId, discordToken, interaction.token, {
+	return messageResponse({
 		content: 'Trade declined.',
 		embeds: [newEmbed],
 		components: [],
+		update: true,
 	});
 }
 

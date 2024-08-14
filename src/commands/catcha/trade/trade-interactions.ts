@@ -72,17 +72,11 @@ async function onTradeRequest(
 	}
 
 	// The trade request is valid, process it
-	ctx.waitUntil(
-		processTradeRequest(interaction, env, ctx, {
-			user: user,
-			otherUserDiscordId: commandOptionUserId,
-			cardPositions: cardPositions,
-		}),
-	);
-
-	// Defer the trade request/confirmation message
-	// Processing the trade can take a few seconds with a large number of cards
-	return defer.deferMessage();
+	return await processTradeRequest(interaction, env, ctx, {
+		user: user,
+		otherUserDiscordId: commandOptionUserId,
+		cardPositions: cardPositions,
+	});
 }
 
 async function onTradeCancel(
@@ -188,14 +182,11 @@ async function onTradeMessageComponent(
 
 	if (yesOrNo === 'y') {
 		// Accept the trade
-		ctx.waitUntil(tradeConfirmation.accept(interaction, interactionData, user, env));
+		return await tradeConfirmation.accept(interaction, interactionData, user, env);
 	} else {
 		// Decline it
-		ctx.waitUntil(tradeConfirmation.decline(interaction, interactionData, user, env));
+		return await tradeConfirmation.decline(interaction, interactionData, user, env);
 	}
-
-	// Defer the message update since trading can take some time, especially with the max cards
-	return { type: DAPI.InteractionResponseType.DeferredMessageUpdate };
 }
 
 export { onTradeRequest, onTradeCancel, onTradeClear, onTradeMessageComponent };
