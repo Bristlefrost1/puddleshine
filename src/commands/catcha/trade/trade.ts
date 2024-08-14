@@ -68,7 +68,7 @@ async function processTrade(
 			oldEmbed.fields[0].name,
 			recipientDiscordId,
 			oldEmbed.fields[1].name,
-			undefined,
+			oldEmbed.footer?.text,
 			true,
 		);
 	}
