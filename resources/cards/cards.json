@@ -10307,6 +10307,21 @@
 				"url": "https://static.wikia.nocookie.net/warriors/images/0/0b/Sparkpelt.ASC-4.png/revision/latest?cb=20240627061321",
 				"credit": "Owen Richardson / Official art"
 			}
+		],
+
+		"variants": [
+			{
+				"variant": "Sparky",
+				"name": "Pikapelt",
+				"description": "*'I don't know how to justify this, just go figure' -falloutragez*",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/1042-sparkpelt/variants/sparky.png",
+						"credit": "falloutragez"
+					}
+				]
+			}
 		]
 	},
 	{
