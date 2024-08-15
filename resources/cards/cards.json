@@ -11795,6 +11795,21 @@
 				"url": "https://static.wikia.nocookie.net/warriors/images/7/72/Tree.FG-8.png/revision/latest?cb=20240713061510",
 				"credit": "Owen Richardson / Official art"
 			}
+		],
+
+		"variants": [
+			{
+				"variant": "Kitten",
+				"name": "Sapling",
+				"description": "*\"You're right. I don't want to be Earth anymore. From now on, call me Tree.\"*",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/1195-tree/variants/sapling.jpg",
+						"credit": "blyth3xd"
+					}
+				]
+			}
 		]
 	},
 	{
