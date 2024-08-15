@@ -33,7 +33,7 @@ function getLastDateYear(day: number, month: number) {
 	const currentDate = new Date();
 
 	const currentYear = currentDate.getUTCFullYear();
-	const currentMonth = currentDate.getUTCMonth();
+	const currentMonth = currentDate.getUTCMonth() + 1;
 	const currentDay = currentDate.getUTCDate();
 
 	if (month < currentMonth) {
