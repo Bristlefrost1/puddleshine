@@ -39,6 +39,8 @@ for (const line of lines) {
 		variant = 'Mistake';
 	} else if (splitLine[2] === 'Rainbow' && splitLine[3] === 'Dovewing') {
 		variant = 'Rainbow';
+	} else if (splitLine[2] === 'Gray' && splitLine[3] === 'Wings') {
+		variant = 'Angel';
 	}
 
 	const randomCardUuid = crypto.randomUUID();

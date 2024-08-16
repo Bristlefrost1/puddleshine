@@ -4269,6 +4269,21 @@
 				"url": "https://static.wikia.nocookie.net/warriors/images/f/fe/Gray_Wing.DTC-1-RR.png/revision/latest?cb=20220121183725",
 				"credit": "Owen Richardson / Official art"
 			}
+		],
+
+		"variants": [
+			{
+				"variant": "Angel",
+				"name": "Gray Wings",
+				"description": "*\"I have traveled so far and loved so much, and yet I am still following the Sun Trail, heading for my new hunting grounds.\"*",
+
+				"art": [
+					{
+						"url": "https://i.imgur.com/tNJFZKs.png",
+						"credit": "Moonkitti"
+					}
+				]
+			}
 		]
 	},
 	{
