@@ -10650,6 +10650,10 @@
 
 		"art": [
 			{
+				"url": "$ART_URL_BASE$/1074-spottedleaf/spottedleaf-blyth3xd.png",
+				"credit": "blyth3xd"
+			},
+			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/7/78/Spottedleaf.FG-6.png/revision/latest?cb=20240526114317",
 				"credit": "Wayne McLoughlin / Official art"
 			},
