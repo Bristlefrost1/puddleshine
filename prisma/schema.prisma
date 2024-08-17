@@ -18,6 +18,9 @@ model User {
 
 	profile  Profile?
 	catcha   Catcha?
+	nursery  Nursery?
+
+	history  HistoryCat[]
 
 	@@map("users")
 }
@@ -143,4 +146,90 @@ model ArtistProfile {
 
 	@@index([discordId])
 	@@map("artist_profiles")
+}
+
+model HistoryCat {
+	uuid      String  @id @unique @default(uuid())
+	userUuid  String  @map("user_uuid")
+
+	namePrefix  String  @map("name_prefix")
+	nameSuffix  String  @map("name_suffix")
+
+	pelt      String?
+	eyeColor  String?  @map("eye_color")
+
+	clan  String
+	rank  String
+
+	isDead        Boolean  @map("is_dead")
+	diedAtMoons   Float?   @map("died_at_moons")
+	causeOfDeath  String?  @map("cause_of_death")
+
+	dateStored  DateTime  @map("date_stored")
+	ageStored   Float     @map("age_stored")
+
+	user  User  @relation(fields: [userUuid], references: [uuid], onDelete: Cascade)
+
+	@@index([userUuid])
+	@@map("history_cats")
+}
+
+model Nursery {
+	uuid  String  @unique @id
+
+	difficulty  String
+	isPaused    Boolean  @map("is_paused")
+
+	food    Float
+	energy  Float
+
+	alerts  String  // Alerts are stored as JSON
+
+	lastUpdatedAt  DateTime   @map("last_updated_at")
+	lastBredAt     DateTime?  @map("last_bred_at")
+	lastAdoptedAt  DateTime?  @map("last_adopted_at")
+
+	kits            NurseryKit[]  @relation("nursery")
+	biologicalKits  NurseryKit[]  @relation("biological_nursery")
+
+	user  User  @relation(fields: [uuid], references: [uuid], onDelete: Cascade)
+
+	@@map("nurseries")
+}
+
+model NurseryKit {
+	uuid         String  @unique @id
+	nurseryUuid  String  @map("nursery_uuid")
+
+	lastUpdatedAt  DateTime  @map("last_updated_at")
+
+	namePrefix  String    @map("name_prefix")
+	gender      String?
+
+	ageMoons  Float     @map("age_moons")
+	bredAt    DateTime  @map("bred_at")
+	bredBy    String?   @map("bred_by")
+
+	pelt      String
+	eyeColor  String  @map("eye_color")
+
+	health              Float
+	healthUpdated       DateTime  @map("health_updated")
+	hunger              Float
+	hungerUpdated       DateTime  @map("hunger_updated")
+	bond                Float
+	bondUpdated         DateTime  @map("bond_updated")
+	temperature         Float // In Celsius
+	temperatureUpdated  DateTime  @map("temperature_updated")
+
+	events  String // Stored as JSON
+
+	isSick       Boolean?  @map("is_sick")
+	hasWandered  Boolean?  @map("has_wandered")
+
+	nursery            Nursery   @relation("nursery", fields: [nurseryUuid], references: [uuid], onDelete: Cascade)
+	biologicalNursery  Nursery?  @relation("biological_nursery", fields: [bredBy], references: [uuid], onDelete: SetNull)
+
+	@@index([nurseryUuid])
+	@@map("nursery_kits")
 }
