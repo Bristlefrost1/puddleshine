@@ -5500,6 +5500,10 @@
 
 		"art": [
 			{
+				"url": "$ART_URL_BASE$/0532-leafpool/leafpool-falloutragez.png",
+				"credit": "falloutragez"
+			},
+			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/d/dc/Leafpool.FG-6.png/revision/latest?cb=20240614232002",
 				"credit": "Wayne McLoughlin / Official art"
 			},
