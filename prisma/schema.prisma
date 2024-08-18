@@ -180,14 +180,16 @@ model Nursery {
 	difficulty  String
 	isPaused    Boolean  @map("is_paused")
 
-	food    Float
-	energy  Float
+	food           Float
+	foodUpdated    DateTime  @map("food_updated")
+	energy         Float
+	energyUpdated  DateTime  @map("energy_updated")
 
 	alerts  String  // Alerts are stored as JSON
 
-	lastUpdatedAt  DateTime   @map("last_updated_at")
 	lastBredAt     DateTime?  @map("last_bred_at")
 	lastAdoptedAt  DateTime?  @map("last_adopted_at")
+	lastCooledAt   DateTime?  @map("last_cooled_at")
 
 	kits            NurseryKit[]  @relation("nursery")
 	biologicalKits  NurseryKit[]  @relation("biological_nursery")
