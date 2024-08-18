@@ -182,8 +182,6 @@ model Nursery {
 
 	food           Float
 	foodUpdated    DateTime  @map("food_updated")
-	energy         Float
-	energyUpdated  DateTime  @map("energy_updated")
 
 	alerts  String  // Alerts are stored as JSON
 
