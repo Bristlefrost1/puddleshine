@@ -175,7 +175,7 @@ model HistoryCat {
 }
 
 model Nursery {
-	uuid  String  @unique @id
+	uuid  String  @unique @id @default(uuid())
 
 	difficulty  String
 	isPaused    Boolean  @map("is_paused")
@@ -198,7 +198,7 @@ model Nursery {
 }
 
 model NurseryKit {
-	uuid         String  @unique @id
+	uuid         String  @unique @id @default(uuid())
 	nurseryUuid  String  @map("nursery_uuid")
 
 	lastUpdatedAt  DateTime  @map("last_updated_at")
