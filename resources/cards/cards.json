@@ -12168,7 +12168,14 @@
 		"name": "Webkit",
 		"group": "SkyClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/1231-webkit/webkit-falloutragez.png",
+				"credit": "falloutragez"
+			}
+		]
 	},
 	{
 		"id": 1232,
