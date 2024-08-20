@@ -56,6 +56,8 @@ const CATCHA_TRADE_MAX_STAR_VALUE_DIFFERENCE = 6; // Block trades that are more 
  */
 const NURSERY_REGENERATE_FOOD_POINT = 4500; // 4500s is 75min
 
+const NURSERY_KIT_AGE_PER_SECOND = 6 / 3 / 30 / 24 / 60 / 60; // 2 real-life months to fully grow up
+
 // Crons
 const DAILY_CRON = '0 0 * * *'; // Every day at midnight UTC
 const WEEKLY_CRON = '0 0 * * MON'; // At midnight UTC every Monday
@@ -83,6 +85,7 @@ export {
 	CATCHA_TRADE_COOLDOWN,
 	CATCHA_TRADE_MAX_STAR_VALUE_DIFFERENCE,
 	NURSERY_REGENERATE_FOOD_POINT,
+	NURSERY_KIT_AGE_PER_SECOND,
 	DAILY_CRON,
 	WEEKLY_CRON,
 };
