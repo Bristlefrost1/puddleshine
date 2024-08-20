@@ -3310,8 +3310,15 @@
 		"rarity": 2,
 		"name": "Fury",
 		"group": "BloodClan",
-		"gender": "",
-		"disambiguator": ""
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0303-fury/fury-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 304,
@@ -6929,7 +6936,14 @@
 		"name": "Myler",
 		"group": "Kittypet",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0681-myler/myler-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 682,
@@ -12336,7 +12350,14 @@
 		"name": "Whitethroat",
 		"group": "ShadowClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/1248-whitethroat/whitethroat-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 1249,
