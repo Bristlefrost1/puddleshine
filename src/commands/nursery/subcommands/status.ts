@@ -7,6 +7,7 @@ import * as db from '#db/database.js';
 import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
 import * as nurseryStatus from '#commands/nursery/game/nursery-status.js';
 import * as nurseryViews from '#commands/nursery/nursery-views.js';
+import { calculateAgeMoons } from '#commands/nursery/kits/kit-age.js';
 
 import type { Subcommand } from '#commands/subcommand.js';
 
@@ -28,6 +29,7 @@ const StatusSubcommand: Subcommand = {
 
 		const profile = await db.findProfileWithDiscordId(options.env.PRISMA, userId);
 		const nursery = await nurseryDB.getNursery(options.env.PRISMA, userId);
+		const kits = await nurseryDB.findKits(options.env.PRISMA, nursery.uuid);
 
 		const foodMeter = nurseryStatus.getFood(nursery);
 
@@ -42,6 +44,13 @@ const StatusSubcommand: Subcommand = {
 
 				foodPoints: foodMeter.foodPoints,
 				nextFoodPointPercetage: foodMeter.nextFoodPointPercentage,
+
+				kits: kits.map((kit) => {
+					const name = kit.namePrefix + 'kit';
+					const age = calculateAgeMoons(kit);
+
+					return { name, age };
+				}),
 			}),
 		});
 	},
