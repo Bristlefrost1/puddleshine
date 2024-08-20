@@ -211,8 +211,8 @@ model NurseryKit {
 	bredBy     String?   @map("bred_by")
 	adoptedAt  DateTime?  @map("adopted_at")
 
-	pelt      String
-	eyeColor  String  @map("eye_color")
+	pelt  String
+	eyes  String
 
 	health              Float
 	healthUpdated       DateTime  @map("health_updated")
