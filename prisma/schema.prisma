@@ -201,14 +201,15 @@ model NurseryKit {
 	uuid         String  @unique @id @default(uuid())
 	nurseryUuid  String  @map("nursery_uuid")
 
-	lastUpdatedAt  DateTime  @map("last_updated_at")
-
 	namePrefix  String    @map("name_prefix")
 	gender      String?
 
-	ageMoons  Float     @map("age_moons")
-	bredAt    DateTime  @map("bred_at")
-	bredBy    String?   @map("bred_by")
+	ageMoons    Float     @map("age_moons")
+	ageUpdated  DateTime  @map("age_updated")
+
+	bredAt     DateTime  @map("bred_at")
+	bredBy     String?   @map("bred_by")
+	adoptedAt  DateTime?  @map("adopted_at")
 
 	pelt      String
 	eyeColor  String  @map("eye_color")
@@ -224,8 +225,8 @@ model NurseryKit {
 
 	events  String // Stored as JSON
 
-	isSick       Boolean?  @map("is_sick")
-	hasWandered  Boolean?  @map("has_wandered")
+	sickSince       DateTime?  @map("sick_since")
+	wanderingSince  DateTime?  @map("wandering_since")
 
 	nursery            Nursery   @relation("nursery", fields: [nurseryUuid], references: [uuid], onDelete: Cascade)
 	biologicalNursery  Nursery?  @relation("biological_nursery", fields: [bredBy], references: [uuid], onDelete: SetNull)
