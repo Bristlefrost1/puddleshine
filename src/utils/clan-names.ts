@@ -28,11 +28,19 @@ function validateName(name: string): boolean {
 	return false;
 }
 
+function generateRandomPrefix(): string {
+	return clanNames.prefixes[Math.floor(Math.random() * clanNames.prefixes.length)];
+}
+
+function generateRandomSuffix(): string {
+	return clanNames.suffixes[Math.floor(Math.random() * clanNames.suffixes.length)];
+}
+
 function generateRandomName(): string {
-	const randomPrefix = clanNames.prefixes[Math.floor(Math.random() * clanNames.prefixes.length)];
-	const randomSuffix = clanNames.suffixes[Math.floor(Math.random() * clanNames.suffixes.length)];
+	const randomPrefix = generateRandomPrefix();
+	const randomSuffix = generateRandomSuffix();
 
 	return randomPrefix + randomSuffix;
 }
 
-export { validateName, generateRandomName };
+export { validateName, generateRandomPrefix, generateRandomSuffix, generateRandomName };
