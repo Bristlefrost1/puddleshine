@@ -1,6 +1,7 @@
 import * as pelt from '#cat/pelts.js';
 import * as eyes from '#cat/eyes.js';
 
+import type { Kit } from '#commands/nursery/game/kit.js';
 import type { Pelt } from '#cat/pelts.js';
 import type { Eyes } from '#cat/eyes.js';
 
@@ -12,10 +13,7 @@ function buildNurseryStatusView(options: {
 	foodPoints: number;
 	nextFoodPointPercetage?: number;
 
-	kits?: {
-		name: string;
-		age: number;
-	}[];
+	kits?: Kit[];
 }) {
 	const lines: string[] = [];
 
@@ -33,8 +31,13 @@ function buildNurseryStatusView(options: {
 			const kitNumber = i + 1;
 			const kit = options.kits[i];
 
-			lines.push(`[${kitNumber}] ${kit.name}:`);
-			lines.push(`- Age: ${kit.age.toFixed(2)} moons | Health: 100% | Hunger: 100% | Bond: 100% | Temp: Good`);
+			const age = kit.age.toFixed(2);
+			const health = (kit.health * 100).toFixed(1);
+			const hunger = (kit.hunger * 100).toFixed(1);
+			const bond = (kit.bond * 100).toFixed(1);
+
+			lines.push(`[${kitNumber}] ${kit.fullName}:`);
+			lines.push(`- Age: ${age} moons | Health: ${health}% | Hunger: ${hunger}% | Bond: ${bond}% | Temp: Good`);
 		}
 	} else {
 		lines.push("You don't have any kits. Try /nursery breed to get some!");

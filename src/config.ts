@@ -58,6 +58,11 @@ const NURSERY_REGENERATE_FOOD_POINT = 4500; // 4500s is 75min
 
 const NURSERY_KIT_AGE_PER_SECOND = 6 / 3 / 30 / 24 / 60 / 60; // 2 real-life months to fully grow up
 
+const NURSERY_KIT_HUNGER_PER_SECOND = 1 / 3 / 24 / 60 / 60; // 3 real-life days for the hunger to be completely depleted
+
+const NURSERY_KIT_HEALTH_DECREASE = 1 / 24 / 60 / 60; // 24 hours for a kit to die
+const NURSERY_KIT_HEALTH_REGEN = 1 / 36 / 60 / 60; // 36 hours to regenerate to full health
+
 // Crons
 const DAILY_CRON = '0 0 * * *'; // Every day at midnight UTC
 const WEEKLY_CRON = '0 0 * * MON'; // At midnight UTC every Monday
@@ -86,6 +91,9 @@ export {
 	CATCHA_TRADE_MAX_STAR_VALUE_DIFFERENCE,
 	NURSERY_REGENERATE_FOOD_POINT,
 	NURSERY_KIT_AGE_PER_SECOND,
+	NURSERY_KIT_HUNGER_PER_SECOND,
+	NURSERY_KIT_HEALTH_DECREASE,
+	NURSERY_KIT_HEALTH_REGEN,
 	DAILY_CRON,
 	WEEKLY_CRON,
 };
