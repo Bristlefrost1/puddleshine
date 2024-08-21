@@ -11316,8 +11316,15 @@
 		"rarity": 2,
 		"name": "Swiftpaw",
 		"group": "ThunderClan",
-		"gender": "",
-		"disambiguator": ""
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/1142-swiftpaw/swiftpaw-falloutragez.png",
+				"credit": "falloutragez"
+			}
+		]
 	},
 	{
 		"id": 1143,
