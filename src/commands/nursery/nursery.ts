@@ -5,6 +5,7 @@ import { parseCommandOptions } from '#discord/parse-options.js';
 
 import StatusSubcommand from './subcommands/status.js';
 import BreedSubcommand from './subcommands/breed.js';
+import FeedSubcommand from './subcommands/feed.js';
 
 import type { Command } from '../command.js';
 import type { Subcommand } from '#commands/subcommand.js';
@@ -12,6 +13,7 @@ import type { Subcommand } from '#commands/subcommand.js';
 const subcommands: { [name: string]: Subcommand } = {
 	[StatusSubcommand.name]: StatusSubcommand,
 	[BreedSubcommand.name]: BreedSubcommand,
+	[FeedSubcommand.name]: FeedSubcommand,
 };
 
 const NurseryCommand: Command = {

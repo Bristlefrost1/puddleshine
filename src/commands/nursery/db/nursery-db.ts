@@ -8,6 +8,8 @@ import type { D1PrismaClient } from '#/db/database.js';
 import type { Pelt } from '#cat/pelts.js';
 import type { Eyes } from '#cat/eyes.js';
 
+import * as config from '#config.js';
+
 async function findNursery(prisma: D1PrismaClient, discordId: string) {
 	return await prisma.nursery.findFirst({
 		where: {
@@ -138,4 +140,36 @@ async function breedForKits(
 	]);
 }
 
-export { findNursery, initializeNurseryForUser, getNursery, updateFood, findKits, breedForKits };
+async function feedKits(
+	prisma: D1PrismaClient,
+	nurseryUuid: string,
+	feedTime: Date,
+	updateKits: { uuid: string; hunger: number }[],
+) {
+	return await prisma.$transaction([
+		prisma.nursery.update({
+			where: {
+				uuid: nurseryUuid,
+			},
+			data: {
+				food: {
+					decrement: config.NURSERY_FEED_FOOD_POINTS,
+				},
+				foodUpdated: feedTime,
+			},
+		}),
+		...updateKits.map((kitUpdate) => {
+			return prisma.nurseryKit.update({
+				where: {
+					uuid: kitUpdate.uuid,
+				},
+				data: {
+					hunger: kitUpdate.hunger,
+					hungerUpdated: feedTime,
+				},
+			});
+		}),
+	]);
+}
+
+export { findNursery, initializeNurseryForUser, getNursery, updateFood, findKits, breedForKits, feedKits };
