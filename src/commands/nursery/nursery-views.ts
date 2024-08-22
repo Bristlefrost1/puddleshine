@@ -1,35 +1,26 @@
+import { messageResponse } from '#discord/responses.js';
+
 import * as pelt from '#cat/pelts.js';
 import * as eyes from '#cat/eyes.js';
 
-import type { Kit } from '#commands/nursery/game/kit.js';
-import type { Pelt } from '#cat/pelts.js';
-import type { Eyes } from '#cat/eyes.js';
+import type { Nursery } from './game/nursery-manager.js';
 
-function buildNurseryStatusView(options: {
-	displayName: string;
-
-	season: string;
-
-	foodPoints: number;
-	nextFoodPointPercetage?: number;
-
-	kits?: Kit[];
-}) {
+function buildNurseryStatusView(nursery: Nursery) {
 	const lines: string[] = [];
 
 	lines.push('```');
-	lines.push(`${options.displayName}'s nursery [${options.season}]`);
+	lines.push(`${nursery.displayName}'s nursery [Greenleaf]`);
 	lines.push(
-		`Food Meter: ${options.foodPoints} (${options.nextFoodPointPercetage !== undefined ? options.nextFoodPointPercetage.toFixed(1) + '%' : 'Full'})`,
+		`Food Meter: ${nursery.food.foodPoints} (${nursery.food.nextFoodPointPercentage !== undefined ? nursery.food.nextFoodPointPercentage.toFixed(1) + '%' : 'Full'})`,
 	);
 	lines.push('');
 	lines.push('You have no alerts.');
 	lines.push('');
 
-	if (options.kits && options.kits.length > 0) {
-		for (let i = 0; i < options.kits.length; i++) {
+	if (nursery.kits && nursery.kits.length > 0) {
+		for (let i = 0; i < nursery.kits.length; i++) {
 			const kitNumber = i + 1;
-			const kit = options.kits[i];
+			const kit = nursery.kits[i];
 
 			const age = kit.age.toFixed(2);
 			const health = (kit.health * 100).toFixed(1);
@@ -48,42 +39,28 @@ function buildNurseryStatusView(options: {
 	return lines.join('\n');
 }
 
-function buildNurseryHomeView(options: {
-	displayName: string;
-
-	season: string;
-
-	foodPoints: number;
-	nextFoodPointPercetage?: number;
-
-	kits?: {
-		name: string;
-		pelt: string;
-		eyes: string;
-		gender?: string;
-	}[];
-}) {
+function buildNurseryHomeView(nursery: Nursery) {
 	const lines: string[] = [];
 
 	lines.push('```');
-	lines.push(`${options.displayName}'s nursery [${options.season}]`);
+	lines.push(`${nursery.displayName}'s nursery [Greenleaf]`);
 	lines.push(
-		`Food Meter: ${options.foodPoints} (${options.nextFoodPointPercetage !== undefined ? options.nextFoodPointPercetage.toFixed(1) + '%' : 'Full'})`,
+		`Food Meter: ${nursery.food.foodPoints} (${nursery.food.nextFoodPointPercentage !== undefined ? nursery.food.nextFoodPointPercentage.toFixed(1) + '%' : 'Full'})`,
 	);
 	lines.push('');
 
-	if (options.kits && options.kits.length > 0) {
-		for (let i = 0; i < options.kits.length; i++) {
+	if (nursery.kits && nursery.kits.length > 0) {
+		for (let i = 0; i < nursery.kits.length; i++) {
 			const kitNumber = i + 1;
-			const kit = options.kits[i];
+			const kit = nursery.kits[i];
 
-			const kitPelt = pelt.stringifyPelt(JSON.parse(kit.pelt) as Pelt);
-			const kitEyes = eyes.stringifyEyes(JSON.parse(kit.eyes) as Eyes);
+			const kitPelt = pelt.stringifyPelt(kit.pelt);
+			const kitEyes = eyes.stringifyEyes(kit.eyes);
 
 			let gender = kit.gender?.toLowerCase() ?? 'kit';
 			if (gender === '') gender = 'kit';
 
-			lines.push(`[${kitNumber}] ${kit.name}: ${kitPelt} ${gender} with ${kitEyes}`);
+			lines.push(`[${kitNumber}] ${kit.fullName}: ${kitPelt} ${gender} with ${kitEyes}`);
 		}
 	} else {
 		lines.push("You don't have any kits. Try /nursery breed to get some!");
@@ -94,4 +71,12 @@ function buildNurseryHomeView(options: {
 	return lines.join('\n');
 }
 
-export { buildNurseryStatusView, buildNurseryHomeView };
+function nurseryMessageResponse(nursery: Nursery, messages: string[], showStatus?: boolean) {
+	const nurseryView = showStatus ? buildNurseryStatusView(nursery) : buildNurseryHomeView(nursery);
+
+	return messageResponse({
+		content: messages.map((message) => `> ${message}`).join('\n') + '\n' + nurseryView,
+	});
+}
+
+export { buildNurseryStatusView, buildNurseryHomeView, nurseryMessageResponse };
