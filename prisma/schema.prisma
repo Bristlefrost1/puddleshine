@@ -189,6 +189,12 @@ model Nursery {
 	lastAdoptedAt  DateTime?  @map("last_adopted_at")
 	lastCooledAt   DateTime?  @map("last_cooled_at")
 
+	statsAbandoned  Int  @map("stats_abandoned")  @default(0)
+	statsAdopted    Int  @map("stats_adopted")    @default(0)
+	statsEntrusted  Int  @map("stats_entrusted")  @default(0)
+	statsKilled     Int  @map("stats_killed")     @default(0)
+	statsRaised     Int  @map("stats_raised")     @default(0)
+
 	kits            NurseryKit[]  @relation("nursery")
 	biologicalKits  NurseryKit[]  @relation("biological_nursery")
 
