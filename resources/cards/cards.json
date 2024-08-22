@@ -10925,6 +10925,21 @@
 				"url": "https://static.wikia.nocookie.net/warriors/images/8/81/Stonefur.star.png/revision/latest?cb=20230402001304",
 				"credit": "Warriors Wiki"
 			}
+		],
+
+		"variants": [
+			{
+				"variant": "Stone",
+				"name": "Stone",
+				"description": "*\"I can't feel my paws. How can I walk if I don't know where my paws are?\"*",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/1097-stonefur/variants/stone.png",
+						"credit": "falloutragez"
+					}
+				]
+			}
 		]
 	},
 	{
