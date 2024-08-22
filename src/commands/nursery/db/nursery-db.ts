@@ -89,6 +89,8 @@ async function breedForKits(
 	prisma: D1PrismaClient,
 	nurseryUuid: string,
 
+	breedTime: Date,
+
 	bredKits: {
 		prefix: string;
 		gender: KitGender;
@@ -96,7 +98,7 @@ async function breedForKits(
 		eyes: Eyes;
 	}[],
 ) {
-	const breedTime = new Date();
+	let i = 0;
 
 	return await prisma.$transaction([
 		prisma.nursery.update({
@@ -109,27 +111,31 @@ async function breedForKits(
 		}),
 		prisma.nurseryKit.createMany({
 			data: bredKits.map((kit) => {
+				const kitBreedTime = new Date(breedTime.getTime() + i);
+
+				i++;
+
 				return {
 					namePrefix: kit.prefix,
 					gender: kit.gender,
 
 					ageMoons: 0,
-					ageUpdated: breedTime,
+					ageUpdated: kitBreedTime,
 
-					bredAt: breedTime,
+					bredAt: kitBreedTime,
 					bredBy: nurseryUuid,
 
 					pelt: JSON.stringify(kit.pelt),
 					eyes: JSON.stringify(kit.eyes),
 
 					health: 1,
-					healthUpdated: breedTime,
+					healthUpdated: kitBreedTime,
 					hunger: 1,
-					hungerUpdated: breedTime,
+					hungerUpdated: kitBreedTime,
 					bond: 0.5,
-					bondUpdated: breedTime,
+					bondUpdated: kitBreedTime,
 					temperature: 38,
-					temperatureUpdated: breedTime,
+					temperatureUpdated: kitBreedTime,
 
 					events: JSON.stringify([]),
 

@@ -69,6 +69,29 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 	const nursery = await nurseryDB.getNursery(env.PRISMA, discordId);
 	const kits = await nurseryDB.findKits(env.PRISMA, nursery.uuid);
 
+	kits.sort((a, b) => {
+		let compareA: Date;
+		let compareB: Date;
+
+		if (a.adoptedAt === null) {
+			compareA = a.bredAt;
+		} else if (a.adoptedAt.getTime() > a.bredAt.getTime()) {
+			compareA = a.adoptedAt;
+		} else {
+			compareA = a.bredAt;
+		}
+
+		if (b.adoptedAt === null) {
+			compareB = b.bredAt;
+		} else if (b.adoptedAt.getTime() > b.bredAt.getTime()) {
+			compareB = b.adoptedAt;
+		} else {
+			compareB = b.bredAt;
+		}
+
+		return compareA.getTime() - compareB.getTime();
+	});
+
 	let displayName = user.username;
 	if (profile && profile.name) displayName = profile.name;
 
