@@ -14,6 +14,8 @@ type Nursery = {
 	uuid: string;
 	displayName: string;
 
+	lastBredAt?: Date;
+
 	food: { food: number; max: number; foodPoints: number; nextFoodPointPercentage: number | undefined };
 
 	alerts: NurseryAlert[];
@@ -106,6 +108,8 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 	return {
 		uuid: nursery.uuid,
 		displayName,
+
+		lastBredAt: nursery.lastBredAt ?? undefined,
 
 		food: {
 			food: food.food,

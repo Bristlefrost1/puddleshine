@@ -56,15 +56,51 @@ const CATCHA_TRADE_MAX_STAR_VALUE_DIFFERENCE = 6; // Block trades that are more 
  */
 const NURSERY_REGENERATE_FOOD_POINT = 4500; // 4500s is 75min
 
+/**
+ * How many moons should a kit age per second.
+ */
 const NURSERY_KIT_AGE_PER_SECOND = 6 / 3 / 30 / 24 / 60 / 60; // 2 real-life months to fully grow up
 
+/**
+ * How much hunger should be depleted from a kit each second.
+ */
 const NURSERY_KIT_HUNGER_PER_SECOND = 1 / 3 / 24 / 60 / 60; // 3 real-life days for the hunger to be completely depleted
 
+/**
+ * How much should the health decrease per second if the food/whatever drops to 0.
+ */
 const NURSERY_KIT_HEALTH_DECREASE = 1 / 24 / 60 / 60; // 24 hours for a kit to die
+
+/**
+ * How much health to regenerate per second.
+ */
 const NURSERY_KIT_HEALTH_REGEN = 1 / 36 / 60 / 60; // 36 hours to regenerate to full health
 
+/**
+ * How many food points feeding one kit costs.
+ */
 const NURSERY_FEED_FOOD_POINTS = 1;
+
+/**
+ * How much hunger should feeding replenish.
+ */
 const NURSERY_FEED_HUNGER_REGEN = 0.4;
+
+/**
+ * The breed cooldown in seconds.
+ */
+const NURSERY_BREED_COOLDOWN = 518400; // 6 days
+
+/**
+ * The chance to not get any kits when breeding.
+ */
+const NURSERY_NO_KITS_BREED_CHANCE = 0.35;
+
+// The nursery breed chances
+const NURSERY_1_KIT_CHANCE = 0.15;
+const NURSERY_2_KITS_CHANCE = '*';
+const NURSERY_3_KITS_CHANCE = 0.25;
+const NURSERY_4_KITS_CHANCE = 0.1;
 
 // Crons
 const DAILY_CRON = '0 0 * * *'; // Every day at midnight UTC
@@ -99,6 +135,12 @@ export {
 	NURSERY_KIT_HEALTH_REGEN,
 	NURSERY_FEED_FOOD_POINTS,
 	NURSERY_FEED_HUNGER_REGEN,
+	NURSERY_BREED_COOLDOWN,
+	NURSERY_NO_KITS_BREED_CHANCE,
+	NURSERY_1_KIT_CHANCE,
+	NURSERY_2_KITS_CHANCE,
+	NURSERY_3_KITS_CHANCE,
+	NURSERY_4_KITS_CHANCE,
 	DAILY_CRON,
 	WEEKLY_CRON,
 };
