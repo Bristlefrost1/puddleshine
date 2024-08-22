@@ -1,4 +1,4 @@
-import { Gender } from '#cat/gender.js';
+import { Gender, KitGender } from '#cat/gender.js';
 
 import * as config from '#config.js';
 
@@ -8,6 +8,9 @@ import type { Eyes } from '#cat/eyes.js';
 
 type Kit = {
 	uuid: string;
+	position: number;
+	index: number;
+
 	prefix: string;
 	fullName: string;
 
@@ -69,13 +72,16 @@ function calculateHealth(kit: NurseryKit, hunger: number) {
 
 function calculateTemperature() {}
 
-function getKit(kit: NurseryKit): Kit {
+function getKit(kit: NurseryKit, index: number): Kit {
 	const age = calculateAgeMoons(kit);
 	const hunger = calculateHunger(kit);
 	const health = calculateHealth(kit, hunger);
 
 	return {
 		uuid: kit.uuid,
+		position: index + 1,
+		index,
+
 		prefix: kit.namePrefix,
 		fullName: kit.namePrefix + 'kit',
 

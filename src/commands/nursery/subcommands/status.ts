@@ -2,12 +2,8 @@ import * as DAPI from 'discord-api-types/v10';
 
 import { messageResponse } from '#discord/responses.js';
 
-import * as db from '#db/database.js';
-
-import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
-import * as nurseryStatus from '#commands/nursery/game/nursery-status.js';
+import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
 import * as nurseryViews from '#commands/nursery/nursery-views.js';
-import { getKit } from '#commands/nursery/game/kit.js';
 
 import type { Subcommand } from '#commands/subcommand.js';
 
@@ -25,28 +21,10 @@ const StatusSubcommand: Subcommand = {
 	},
 
 	async execute(options) {
-		const userId = options.user.id;
-
-		const profile = await db.findProfileWithDiscordId(options.env.PRISMA, userId);
-		const nursery = await nurseryDB.getNursery(options.env.PRISMA, userId);
-		const kits = await nurseryDB.findKits(options.env.PRISMA, nursery.uuid);
-
-		const foodMeter = nurseryStatus.getFood(nursery);
-
-		let displayName = options.user.username;
-		if (profile && profile.name) displayName = profile.name;
+		const nursery = await nurseryManager.getNursery(options.user, options.env);
 
 		return messageResponse({
-			content: nurseryViews.buildNurseryStatusView({
-				displayName,
-
-				season: 'Greenleaf',
-
-				foodPoints: foodMeter.foodPoints,
-				nextFoodPointPercetage: foodMeter.nextFoodPointPercentage,
-
-				kits: kits.map((kit) => getKit(kit)),
-			}),
+			content: nurseryViews.buildNurseryStatusView(nursery),
 		});
 	},
 };

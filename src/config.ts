@@ -63,6 +63,9 @@ const NURSERY_KIT_HUNGER_PER_SECOND = 1 / 3 / 24 / 60 / 60; // 3 real-life days 
 const NURSERY_KIT_HEALTH_DECREASE = 1 / 24 / 60 / 60; // 24 hours for a kit to die
 const NURSERY_KIT_HEALTH_REGEN = 1 / 36 / 60 / 60; // 36 hours to regenerate to full health
 
+const NURSERY_FEED_FOOD_POINTS = 1;
+const NURSERY_FEED_HUNGER_REGEN = 0.4;
+
 // Crons
 const DAILY_CRON = '0 0 * * *'; // Every day at midnight UTC
 const WEEKLY_CRON = '0 0 * * MON'; // At midnight UTC every Monday
@@ -94,6 +97,8 @@ export {
 	NURSERY_KIT_HUNGER_PER_SECOND,
 	NURSERY_KIT_HEALTH_DECREASE,
 	NURSERY_KIT_HEALTH_REGEN,
+	NURSERY_FEED_FOOD_POINTS,
+	NURSERY_FEED_HUNGER_REGEN,
 	DAILY_CRON,
 	WEEKLY_CRON,
 };
