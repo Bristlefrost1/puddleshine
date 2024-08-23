@@ -4,6 +4,7 @@ import { messageResponse, simpleEphemeralResponse, simpleMessageResponse } from 
 import { parseCommandOptions } from '#discord/parse-options.js';
 
 import StatusSubcommand from './subcommands/status.js';
+import HomeSubcommand from './subcommands/home.js';
 import BreedSubcommand from './subcommands/breed.js';
 import FeedSubcommand from './subcommands/feed.js';
 
@@ -12,6 +13,7 @@ import type { Subcommand } from '#commands/subcommand.js';
 
 const subcommands: { [name: string]: Subcommand } = {
 	[StatusSubcommand.name]: StatusSubcommand,
+	[HomeSubcommand.name]: HomeSubcommand,
 	[BreedSubcommand.name]: BreedSubcommand,
 	[FeedSubcommand.name]: FeedSubcommand,
 };
