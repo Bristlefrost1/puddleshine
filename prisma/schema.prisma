@@ -155,8 +155,8 @@ model HistoryCat {
 	namePrefix  String  @map("name_prefix")
 	nameSuffix  String  @map("name_suffix")
 
-	pelt      String?
-	eyeColor  String?  @map("eye_color")
+	pelt  String?
+	eyes  String?
 
 	clan  String
 	rank  String
