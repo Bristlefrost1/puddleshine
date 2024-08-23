@@ -8,11 +8,21 @@ import type { Nursery } from './game/nursery-manager.js';
 function buildNurseryStatusView(nursery: Nursery) {
 	const lines: string[] = [];
 
+	let nextFoodPoint = '';
+
+	if (nursery.food.foodPoints >= nursery.food.max) {
+		nextFoodPoint = 'Full';
+	} else {
+		if (nursery.food.nextFoodPointPercentage) {
+			nextFoodPoint = nursery.food.nextFoodPointPercentage.toFixed(1).toString() + '%';
+		} else {
+			nextFoodPoint = '0%';
+		}
+	}
+
 	lines.push('```');
 	lines.push(`${nursery.displayName}'s nursery [Greenleaf]`);
-	lines.push(
-		`Food Meter: ${nursery.food.foodPoints} (${nursery.food.nextFoodPointPercentage !== undefined ? nursery.food.nextFoodPointPercentage.toFixed(1) + '%' : 'Full'})`,
-	);
+	lines.push(`Food Meter: ${nursery.food.foodPoints} (${nextFoodPoint})`);
 	lines.push('');
 	lines.push('You have no alerts.');
 	lines.push('');
@@ -42,11 +52,21 @@ function buildNurseryStatusView(nursery: Nursery) {
 function buildNurseryHomeView(nursery: Nursery) {
 	const lines: string[] = [];
 
+	let nextFoodPoint = '';
+
+	if (nursery.food.foodPoints >= nursery.food.max) {
+		nextFoodPoint = 'Full';
+	} else {
+		if (nursery.food.nextFoodPointPercentage) {
+			nextFoodPoint = nursery.food.nextFoodPointPercentage.toFixed(1).toString() + '%';
+		} else {
+			nextFoodPoint = '0%';
+		}
+	}
+
 	lines.push('```');
 	lines.push(`${nursery.displayName}'s nursery [Greenleaf]`);
-	lines.push(
-		`Food Meter: ${nursery.food.foodPoints} (${nursery.food.nextFoodPointPercentage !== undefined ? nursery.food.nextFoodPointPercentage.toFixed(1) + '%' : 'Full'})`,
-	);
+	lines.push(`Food Meter: ${nursery.food.foodPoints} (${nextFoodPoint})`);
 	lines.push('');
 
 	if (nursery.kits && nursery.kits.length > 0) {

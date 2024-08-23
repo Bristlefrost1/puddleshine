@@ -65,6 +65,7 @@ const FeedSubcommand: Subcommand = {
 		const feedTime = new Date();
 
 		nursery.food.foodPoints -= foodPointsNeeded;
+		nursery.food.food -= foodPointsNeeded;
 
 		const dbUpdate = kitsToFeed.map((kit) => {
 			let hunger = kit.hunger + config.NURSERY_FEED_HUNGER_REGEN;
@@ -76,7 +77,7 @@ const FeedSubcommand: Subcommand = {
 			return { uuid: kit.uuid, hunger };
 		});
 
-		await nurseryDB.feedKits(options.env.PRISMA, nursery.uuid, feedTime, dbUpdate);
+		await nurseryDB.feedKits(options.env.PRISMA, nursery.uuid, feedTime, nursery.food.food, dbUpdate);
 
 		return nurseryViews.nurseryMessageResponse(nursery, feedMessages, true);
 	},
