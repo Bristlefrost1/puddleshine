@@ -3,6 +3,7 @@ import * as DAPI from 'discord-api-types/v10';
 import * as db from '#db/database.js';
 import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
 import { getKit, type Kit } from '#commands/nursery/game/kit.js';
+import { Season, getCurrentSeason } from './seasons.js';
 
 import * as config from '#config.js';
 
@@ -13,6 +14,7 @@ type NurseryAlert = {};
 type Nursery = {
 	uuid: string;
 	displayName: string;
+	season: Season;
 
 	lastBredAt?: Date;
 
@@ -108,6 +110,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 	return {
 		uuid: nursery.uuid,
 		displayName,
+		season: getCurrentSeason(),
 
 		lastBredAt: nursery.lastBredAt ?? undefined,
 

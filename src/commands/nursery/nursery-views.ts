@@ -21,7 +21,7 @@ function buildNurseryStatusView(nursery: Nursery) {
 	}
 
 	lines.push('```');
-	lines.push(`${nursery.displayName}'s nursery [Greenleaf]`);
+	lines.push(`${nursery.displayName}'s nursery [${nursery.season}]`);
 	lines.push(`Food Meter: ${nursery.food.foodPoints} (${nextFoodPoint})`);
 	lines.push('');
 	lines.push('You have no alerts.');
@@ -65,7 +65,7 @@ function buildNurseryHomeView(nursery: Nursery) {
 	}
 
 	lines.push('```');
-	lines.push(`${nursery.displayName}'s nursery [Greenleaf]`);
+	lines.push(`${nursery.displayName}'s nursery [${nursery.season}]`);
 	lines.push(`Food Meter: ${nursery.food.foodPoints} (${nextFoodPoint})`);
 	lines.push('');
 

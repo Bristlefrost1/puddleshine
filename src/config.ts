@@ -102,6 +102,10 @@ const NURSERY_2_KITS_CHANCE = '*';
 const NURSERY_3_KITS_CHANCE = 0.25;
 const NURSERY_4_KITS_CHANCE = 0.1;
 
+const NURSERY_SEASON_SECONDS = 604800; // 1 week
+
+const NURSERY_PROMOTE_AGE = 6; // 6 moons
+
 // Crons
 const DAILY_CRON = '0 0 * * *'; // Every day at midnight UTC
 const WEEKLY_CRON = '0 0 * * MON'; // At midnight UTC every Monday
@@ -141,6 +145,8 @@ export {
 	NURSERY_2_KITS_CHANCE,
 	NURSERY_3_KITS_CHANCE,
 	NURSERY_4_KITS_CHANCE,
+	NURSERY_SEASON_SECONDS,
+	NURSERY_PROMOTE_AGE,
 	DAILY_CRON,
 	WEEKLY_CRON,
 };

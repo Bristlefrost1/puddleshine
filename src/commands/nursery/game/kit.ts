@@ -6,6 +6,19 @@ import type { NurseryKit } from '@prisma/client';
 import type { Pelt } from '#cat/pelts.js';
 import type { Eyes } from '#cat/eyes.js';
 
+enum KitTemperature {
+	Burning = 'Burning',
+	VeryHot = 'Very Hot',
+	Hot = 'Hot',
+	Warm = 'Warm',
+	Good = 'Good',
+	Okay = 'Okay',
+	Cool = 'Cool',
+	Cold = 'Cold',
+	VeryCold = 'Very Cold',
+	Freezing = 'Freezing',
+}
+
 type Kit = {
 	uuid: string;
 	position: number;
