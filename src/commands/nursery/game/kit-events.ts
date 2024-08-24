@@ -8,12 +8,12 @@ enum KitEventType {
 
 type KitEvent = {
 	type: KitEventType;
-	timestamp: string; // ISO timestamp
+	timestamp: number; // Unix timestamp
 	description: string;
 };
 
 function addNewEventToKit(kit: Kit, type: KitEventType, description: string, date?: Date) {
-	const eventTimestamp = date?.toISOString() ?? new Date().toISOString();
+	const eventTimestamp = Math.floor((date?.getDate() ?? new Date().getDate()) / 1000);
 
 	const newEvent: KitEvent = {
 		type,
@@ -22,7 +22,7 @@ function addNewEventToKit(kit: Kit, type: KitEventType, description: string, dat
 	};
 
 	kit.events.push(newEvent);
-	kit.events.sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
+	kit.events.sort((a, b) => b.timestamp - a.timestamp);
 	kit.events = kit.events.slice(undefined, config.NURSERY_MAX_KIT_EVENTS);
 }
 

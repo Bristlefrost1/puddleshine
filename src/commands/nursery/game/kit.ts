@@ -105,9 +105,7 @@ function getKit(kit: NurseryKit, index: number): Kit {
 	const hunger = calculateHunger(kit);
 	const health = calculateHealth(kit, hunger);
 
-	const events = (JSON.parse(kit.events) as KitEvent[]).toSorted(
-		(a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp),
-	);
+	const events = (JSON.parse(kit.events) as KitEvent[]).toSorted((a, b) => b.timestamp - a.timestamp);
 
 	return {
 		uuid: kit.uuid,
