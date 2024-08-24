@@ -6357,7 +6357,14 @@
 		"name": "Mistfeather",
 		"group": "Loner",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0621-mistfeather/mistfeather-falloutragez.png",
+				"credit": "falloutragez"
+			}
+		]
 	},
 	{
 		"id": 622,
