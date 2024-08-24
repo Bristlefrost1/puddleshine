@@ -1,6 +1,7 @@
 import * as DAPI from 'discord-api-types/v10';
 
 import { parseCommandOptions } from '#discord/parse-options.js';
+import { parseList } from '#utils/parse-list.js';
 import {
 	messageResponse,
 	simpleMessageResponse,
@@ -138,10 +139,7 @@ async function handleBurn(
 	if (!cardsString || typeof cardsString !== 'string' || cardsString.trim() === '')
 		return simpleEphemeralResponse("You haven't provided the cards option.");
 
-	const cardPositions = cardsString
-		.split(',')
-		.map((value) => Number.parseInt(value.trim()))
-		.filter((value) => !isNaN(value));
+	const cardPositions = parseList(cardsString, true) as number[];
 
 	const userCollection = await collection.getCollection(user.id, env);
 	if (!userCollection || userCollection.length === 0)

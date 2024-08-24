@@ -35,19 +35,21 @@ async function getCollection(
 	const dbCollection = await catchaDB.getCardCollection(env.PRISMA, discordId);
 	if (dbCollection.length === 0) return [];
 
-	const sortedCollection = dbCollection.toSorted((a, b) => {
-		const timestampA = a.obtainedAt.getTime();
-		const timestampB = b.obtainedAt.getTime();
+	const sortedCollection = dbCollection
+		.toSorted((a, b) => {
+			const timestampA = a.obtainedAt.getTime();
+			const timestampB = b.obtainedAt.getTime();
 
-		if (timestampA !== timestampB) {
-			return timestampA - timestampB;
-		} else {
-			const cardAName = archive.getCardDetailsById(a.cardId)!.name;
-			const cardBName = archive.getCardDetailsById(b.cardId)!.name;
+			if (timestampA !== timestampB) {
+				return timestampA - timestampB;
+			} else {
+				const cardAName = archive.getCardDetailsById(a.cardId)!.name;
+				const cardBName = archive.getCardDetailsById(b.cardId)!.name;
 
-			return cardAName.localeCompare(cardBName, 'en');
-		}
-	});
+				return cardAName.localeCompare(cardBName, 'en');
+			}
+		})
+		.filter((card) => card.burned === null || card.burned === false);
 
 	const collection: { position: number; card: (typeof dbCollection)[0] }[] = [];
 

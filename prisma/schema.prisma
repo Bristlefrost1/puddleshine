@@ -79,6 +79,8 @@ model CatchaCard {
 	isInverted  Boolean  @map("is_inverted")
 	variant     String?
 
+	burned  Boolean?
+
 	untradeable  Boolean?
 
 	pendingTradeUuid1  String?       @map("pending_trade_uuid_1")

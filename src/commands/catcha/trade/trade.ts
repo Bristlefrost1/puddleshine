@@ -113,12 +113,41 @@ async function processTrade(
 	let senderSideStarValue = 0;
 	let recipientSideStarValue = 0;
 
-	trade.senderCards.forEach(
-		(card) => (senderSideStarValue += calculateStarValue(card.cardId, card.isInverted, card.variant)),
-	);
-	trade.recipientCards.forEach(
-		(card) => (recipientSideStarValue += calculateStarValue(card.cardId, card.isInverted, card.variant)),
-	);
+	for (const card of trade.senderCards) {
+		if (card.burned) {
+			newEmbed.footer = undefined;
+			newEmbed.timestamp = undefined;
+
+			await catchaDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
+
+			return messageResponse({
+				content: 'This trade has been canceled as it contains burned cards.',
+				embeds: [newEmbed],
+				components: [],
+				update: true,
+			});
+		}
+
+		senderSideStarValue += calculateStarValue(card.cardId, card.isInverted, card.variant);
+	}
+
+	for (const card of trade.recipientCards) {
+		if (card.burned) {
+			newEmbed.footer = undefined;
+			newEmbed.timestamp = undefined;
+
+			await catchaDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
+
+			return messageResponse({
+				content: 'This trade has been canceled as it contains burned cards.',
+				embeds: [newEmbed],
+				components: [],
+				update: true,
+			});
+		}
+
+		recipientSideStarValue += calculateStarValue(card.cardId, card.isInverted, card.variant);
+	}
 
 	// The difference
 	const starValueDifference = Math.abs(senderSideStarValue - recipientSideStarValue);

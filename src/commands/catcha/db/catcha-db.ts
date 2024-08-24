@@ -261,11 +261,14 @@ async function claimBirthdayCard(prisma: D1PrismaClient, userUuid: string, birth
 
 async function burnCardUuids(prisma: D1PrismaClient, userUuid: string, cardUuids: string[]) {
 	await prisma.$transaction([
-		prisma.catchaCard.deleteMany({
+		prisma.catchaCard.updateMany({
 			where: {
 				OR: cardUuids.map((cardUuid) => {
 					return { uuid: cardUuid };
 				}),
+			},
+			data: {
+				burned: true,
 			},
 		}),
 		prisma.catcha.update({
