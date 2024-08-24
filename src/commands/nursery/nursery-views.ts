@@ -1,7 +1,6 @@
 import { messageResponse } from '#discord/responses.js';
 
-import * as pelt from '#cat/pelts.js';
-import * as eyes from '#cat/eyes.js';
+import { getKitDescription } from './game/kit.js';
 
 import type { Nursery } from './game/nursery-manager.js';
 
@@ -74,13 +73,7 @@ function buildNurseryHomeView(nursery: Nursery) {
 			const kitNumber = i + 1;
 			const kit = nursery.kits[i];
 
-			const kitPelt = pelt.stringifyPelt(kit.pelt);
-			const kitEyes = eyes.stringifyEyes(kit.eyes);
-
-			let gender = kit.gender?.toLowerCase() ?? 'kit';
-			if (gender === '') gender = 'kit';
-
-			lines.push(`[${kitNumber}] ${kit.fullName}: ${kitPelt} ${gender} with ${kitEyes}`);
+			lines.push(`[${kitNumber}] ${kit.fullName}: ${getKitDescription(kit)}`);
 		}
 	} else {
 		lines.push("You don't have any kits. Try /nursery breed to get some!");

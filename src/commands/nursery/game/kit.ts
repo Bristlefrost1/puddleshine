@@ -1,10 +1,13 @@
 import { Gender, KitGender } from '#cat/gender.js';
+import * as pelt from '#cat/pelts.js';
+import * as eyes from '#cat/eyes.js';
 
 import * as config from '#config.js';
 
 import type { NurseryKit } from '@prisma/client';
 import type { Pelt } from '#cat/pelts.js';
 import type { Eyes } from '#cat/eyes.js';
+import type { KitEvent } from '#commands/nursery/game/kit-events.js';
 
 enum KitTemperature {
 	Burning = 'Burning',
@@ -30,6 +33,8 @@ type Kit = {
 	gender: Gender;
 	pelt: Pelt;
 	eyes: Eyes;
+
+	events: KitEvent[];
 
 	age: number;
 	health: number;
@@ -85,10 +90,24 @@ function calculateHealth(kit: NurseryKit, hunger: number) {
 
 function calculateTemperature() {}
 
+function getKitDescription(kit: Kit) {
+	const kitPelt = pelt.stringifyPelt(kit.pelt);
+	const kitEyes = eyes.stringifyEyes(kit.eyes);
+
+	let gender = kit.gender?.toLowerCase() ?? 'kit';
+	if (gender === '') gender = 'kit';
+
+	return `${kitPelt} ${gender} with ${kitEyes}`;
+}
+
 function getKit(kit: NurseryKit, index: number): Kit {
 	const age = calculateAgeMoons(kit);
 	const hunger = calculateHunger(kit);
 	const health = calculateHealth(kit, hunger);
+
+	const events = (JSON.parse(kit.events) as KitEvent[]).toSorted(
+		(a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp),
+	);
 
 	return {
 		uuid: kit.uuid,
@@ -102,6 +121,8 @@ function getKit(kit: NurseryKit, index: number): Kit {
 		pelt: JSON.parse(kit.pelt) as Pelt,
 		eyes: JSON.parse(kit.eyes) as Eyes,
 
+		events,
+
 		age,
 		health,
 		hunger: hunger > 0 ? hunger : 0,
@@ -112,5 +133,5 @@ function getKit(kit: NurseryKit, index: number): Kit {
 	};
 }
 
-export { getKit };
+export { getKit, getKitDescription };
 export type { Kit };

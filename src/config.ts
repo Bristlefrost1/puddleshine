@@ -106,6 +106,8 @@ const NURSERY_SEASON_SECONDS = 604800; // 1 week
 
 const NURSERY_PROMOTE_AGE = 6; // 6 moons
 
+const NURSERY_MAX_KIT_EVENTS = 15;
+
 // Crons
 const DAILY_CRON = '0 0 * * *'; // Every day at midnight UTC
 const WEEKLY_CRON = '0 0 * * MON'; // At midnight UTC every Monday
@@ -147,6 +149,7 @@ export {
 	NURSERY_4_KITS_CHANCE,
 	NURSERY_SEASON_SECONDS,
 	NURSERY_PROMOTE_AGE,
+	NURSERY_MAX_KIT_EVENTS,
 	DAILY_CRON,
 	WEEKLY_CRON,
 };

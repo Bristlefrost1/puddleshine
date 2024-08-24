@@ -7,6 +7,7 @@ import { parseList } from '#utils/parse-list.js';
 import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
 import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
 import * as nurseryViews from '#commands/nursery/nursery-views.js';
+import { addNewEventToKit, KitEventType } from '#commands/nursery/game/kit-events.js';
 
 import * as config from '#config.js';
 
@@ -68,7 +69,9 @@ const FeedSubcommand: Subcommand = {
 			nursery.kits[kit.index].hunger = hunger;
 			feedMessages.push(`You've fed ${kit.fullName}.`);
 
-			return { uuid: kit.uuid, hunger };
+			addNewEventToKit(kit, KitEventType.Feed, '{{KIT_FULL_NAME}} was fed.');
+
+			return { uuid: kit.uuid, hunger, events: JSON.stringify(kit.events) };
 		});
 
 		await nurseryDB.feedKits(options.env.PRISMA, nursery.uuid, feedTime, nursery.food.food, dbUpdate);

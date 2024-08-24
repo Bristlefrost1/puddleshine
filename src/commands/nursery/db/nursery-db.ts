@@ -151,7 +151,7 @@ async function feedKits(
 	nurseryUuid: string,
 	feedTime: Date,
 	newFood: number,
-	updateKits: { uuid: string; hunger: number }[],
+	updateKits: { uuid: string; hunger: number; events: string }[],
 ) {
 	return await prisma.$transaction([
 		prisma.nursery.update({
@@ -169,6 +169,8 @@ async function feedKits(
 					uuid: kitUpdate.uuid,
 				},
 				data: {
+					events: kitUpdate.events,
+
 					hunger: kitUpdate.hunger,
 					hungerUpdated: feedTime,
 				},
