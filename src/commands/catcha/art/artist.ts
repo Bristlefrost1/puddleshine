@@ -16,6 +16,8 @@ import * as artistDB from './artist-db.js';
 import type { Subcommand } from '#commands/subcommand.js';
 
 const SUBCOMMAND_NAME = 'artist';
+const ISO_8601_DATE_REGEX =
+	/(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))/;
 
 function editProfileActionRow(
 	discordId: string,
@@ -240,6 +242,11 @@ const ArtistSubcommand: Subcommand = {
 			if (!textField || textField.type !== DAPI.ComponentType.TextInput || textField.custom_id !== 'profile')
 				return simpleEphemeralResponse('No profile text field provided.');
 
+			const updatedProfileDescription = textField.value.trim();
+
+			if (updatedProfileDescription.match(ISO_8601_DATE_REGEX))
+				return simpleEphemeralResponse('This profile description contains blacklisted words.');
+
 			const data = options.parsedCustomId[3].split(',');
 			const userId = data[0];
 
@@ -250,7 +257,7 @@ const ArtistSubcommand: Subcommand = {
 
 			const updatedArtistProfile = await artistDB.updateDescription(
 				artistProfileName,
-				textField.value.trim(),
+				updatedProfileDescription,
 				options.env.PRISMA,
 			);
 
