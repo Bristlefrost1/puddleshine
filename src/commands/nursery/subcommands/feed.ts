@@ -1,14 +1,12 @@
 import * as DAPI from 'discord-api-types/v10';
 
-import { messageResponse, simpleEphemeralResponse } from '#discord/responses.js';
+import { simpleEphemeralResponse } from '#discord/responses.js';
 import { parseCommandOptions } from '#discord/parse-options.js';
-
-import * as db from '#db/database.js';
+import { parseList } from '#utils/parse-list.js';
 
 import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
 import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
 import * as nurseryViews from '#commands/nursery/nursery-views.js';
-import { getKit } from '#commands/nursery/game/kit.js';
 
 import * as config from '#config.js';
 
@@ -40,11 +38,7 @@ const FeedSubcommand: Subcommand = {
 		if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String)
 			return simpleEphemeralResponse('No kits option provided.');
 
-		const kitNamesToFeed = kitsOption.value
-			.split(',')
-			.map((value) => value.trim().split(' '))
-			.flat()
-			.map((value) => value.trim());
+		const kitNamesToFeed = parseList(kitsOption.value) as string[];
 
 		const nursery = await nurseryManager.getNursery(options.user, options.env);
 

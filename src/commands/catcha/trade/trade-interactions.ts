@@ -1,7 +1,7 @@
 import * as DAPI from 'discord-api-types/v10';
 
-import * as defer from '#discord/responses-deferred.js';
 import { simpleEphemeralResponse } from '#discord/responses.js';
+import { parseList } from '#utils/parse-list.js';
 
 import * as catchaDB from '#commands/catcha/db/catcha-db.js';
 import { processTradeRequest } from './trade-request.js';
@@ -50,12 +50,7 @@ async function onTradeRequest(
 	if (commandOptionUserId === user.id) return simpleEphemeralResponse('You cannot send a trade request to yourself.');
 	// Turn the string of card positions separated by commas into an array of card positions as numbers
 	// Trim the positions supplied by the user and filter out any NaNs (if the user entered something else than a number)
-	const cardPositions = cardsString
-		.split(',')
-		.map((value) => value.trim().split(' '))
-		.flat()
-		.map((value) => Number.parseInt(value.trim()))
-		.filter((value) => !isNaN(value));
+	const cardPositions = parseList(cardsString, true) as number[];
 
 	// Check that the user actually supplied cards to trade and that there aren't too many cards
 	if (cardPositions.length < 1) {
