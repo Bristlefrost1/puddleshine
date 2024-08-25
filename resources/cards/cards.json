@@ -1941,6 +1941,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/7/77/Cloudtail.FG-8.png/revision/latest?cb=20231016163538",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0158-cloudtail/cloudtail-falloutragez.png",
+				"credit": "falloutragez"
 			}
 		]
 	},
@@ -9389,6 +9393,10 @@
 			{
 				"url": "$ART_URL_BASE$/0945-shadowsight/shadowsight-bingo2561.png",
 				"credit": "bingo2561"
+			},
+			{
+				"url": "$ART_URL_BASE$/0945-shadowsight/shadowsight-shadedsights.png",
+				"credit": "shadedsights."
 			}
 		]
 	},
@@ -10339,6 +10347,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/b/b3/Sorreltail.star.png/revision/latest?cb=20240401200737",
 				"credit": "Warriors Wiki"
+			},
+			{
+				"url": "$ART_URL_BASE$/1041-sorreltail/sorreltail-foxy9461.png",
+				"credit": "foxy9461"
 			}
 		]
 	},
