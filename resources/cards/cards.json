@@ -6716,6 +6716,10 @@
 			{
 				"url": "$ART_URL_BASE$/0657-mosskit/mosskit-blyth3xd.png",
 				"credit": "blyth3xd"
+			},
+			{
+				"url": "$ART_URL_BASE$/0657-mosskit/mosskit-falloutragez.png",
+				"credit": "falloutragez"
 			}
 		]
 	},
@@ -8006,7 +8010,14 @@
 		"name": "Plumstone",
 		"group": "ThunderClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0794-plumstone/plumstone-falloutragez.jpg",
+				"credit": "falloutragez"
+			}
+		]
 	},
 	{
 		"id": 795,
