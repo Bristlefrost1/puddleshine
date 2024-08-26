@@ -5218,6 +5218,21 @@
 				"url": "https://static.wikia.nocookie.net/warriors/images/f/f9/Jayfeather.PO3-1-RR.png/revision/latest?cb=20190127234856",
 				"credit": "Owen Richardson / Official art"
 			}
+		],
+
+		"variants": [
+			{
+				"variant": "Time Traveller",
+				"name": "Time Traveller Jayfeather",
+				"description": "*\"Past or future, I still hate everyone.\"*",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/0498-jayfeather/variants/time-traveller.png",
+						"credit": "Chibi"
+					}
+				]
+			}
 		]
 	},
 	{
