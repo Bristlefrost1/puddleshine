@@ -516,6 +516,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/6/6f/Barley.FG-8.png/revision/latest?cb=20240713060931",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0032-barley/barley-foxy9461.png",
+				"credit": "foxy9461"
 			}
 		]
 	},
@@ -5778,6 +5782,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/9/92/Lionblaze.PO3-2-RR.png/revision/latest?cb=20200202001342",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0555-lionblaze/lionblaze-falloutragez.png",
+				"credit": "falloutragez"
 			}
 		]
 	},
