@@ -34,7 +34,7 @@
 		"typescript": "^5.4.5",
 		"webpack": "^5.93.0",
 		"webpack-cli": "^5.1.4",
-		"wrangler": "^3.66.0"
+		"wrangler": "^3.72.2"
 	},
 	"dependencies": {
 		"@prisma/adapter-d1": "^5.15.0",

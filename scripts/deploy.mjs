@@ -33,7 +33,7 @@ if (!cloudflareAccountId || !workerName || !d1Name || !d1Id || !kvId || !discord
 const wranglerConfig = `
 name = "${workerName}"
 main = "dist/worker/worker.mjs"
-compatibility_date = "2024-06-14"
+compatibility_date = "2024-08-26"
 compatibility_flags = ["nodejs_compat"]
 
 [placement]
