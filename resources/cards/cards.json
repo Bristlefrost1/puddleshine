@@ -8897,6 +8897,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/9/90/Rootspring.TBC-2.png/revision/latest?cb=20200201234027",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0891-rootspring/rootspring-shadedsights.jpg",
+				"credit": "shadedsights."
 			}
 		]
 	},
@@ -9461,6 +9465,10 @@
 			{
 				"url": "$ART_URL_BASE$/0946-tall-shadow/tall-shadow-chibi.png",
 				"credit": "Chibi"
+			},
+			{
+				"url": "$ART_URL_BASE$/0946-tall-shadow/tall-shadow-foxy9461.png",
+				"credit": "foxy9461"
 			},
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/d/d9/Shadowstar.FG-6.png/revision/latest?cb=20240526085246",
