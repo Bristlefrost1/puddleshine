@@ -1,8 +1,9 @@
 import * as database from '#db/database.js';
 
 import { KitGender } from '#cat/gender.js';
-
 import { NurseryDifficulty } from '#commands/nursery/game/difficulty.js';
+import { Kit } from '#commands/nursery/game/kit.js';
+import { ClanRank } from '#utils/clans.js';
 
 import type { D1PrismaClient } from '#/db/database.js';
 import type { Pelt } from '#cat/pelts.js';
@@ -179,4 +180,47 @@ async function feedKits(
 	]);
 }
 
-export { findNursery, initializeNurseryForUser, getNursery, updateFood, findKits, breedForKits, feedKits };
+async function promoteKit(
+	prisma: D1PrismaClient,
+	userUuid: string,
+	kit: Kit,
+	options: {
+		clan: string;
+		apprenticeRank: ClanRank.WarriorApprentice | ClanRank.MedicineCatApprentice;
+	},
+) {
+	const timeOfStorage = new Date();
+
+	return await prisma.$transaction([
+		prisma.historyCat.create({
+			data: {
+				namePrefix: kit.prefix,
+				nameSuffix: 'paw',
+
+				pelt: JSON.stringify(kit.pelt),
+				eyes: JSON.stringify(kit.eyes),
+
+				clan: options.clan,
+				rank: options.apprenticeRank,
+
+				isDead: false,
+
+				dateStored: timeOfStorage,
+				ageStored: kit.age,
+
+				user: {
+					connect: {
+						uuid: userUuid,
+					},
+				},
+			},
+		}),
+		prisma.nurseryKit.delete({
+			where: {
+				uuid: kit.uuid,
+			},
+		}),
+	]);
+}
+
+export { findNursery, initializeNurseryForUser, getNursery, updateFood, findKits, breedForKits, feedKits, promoteKit };

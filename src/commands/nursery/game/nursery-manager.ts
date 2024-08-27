@@ -14,6 +14,7 @@ type NurseryAlert = {};
 type Nursery = {
 	uuid: string;
 	displayName: string;
+	clan?: string;
 	season: Season;
 
 	lastBredAt?: Date;
@@ -110,6 +111,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 	return {
 		uuid: nursery.uuid,
 		displayName,
+		clan: profile?.group ?? undefined,
 		season: getCurrentSeason(),
 
 		lastBredAt: nursery.lastBredAt ?? undefined,

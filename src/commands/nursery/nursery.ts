@@ -9,6 +9,7 @@ import BreedSubcommand from './subcommands/breed.js';
 import FeedSubcommand from './subcommands/feed.js';
 import CooldownsSubcommand from './subcommands/cooldowns.js';
 import CheckSubcommand from './subcommands/check.js';
+import PromoteSubcommand from './subcommands/promote.js';
 
 import type { Command } from '../command.js';
 import type { Subcommand } from '#commands/subcommand.js';
@@ -20,6 +21,7 @@ const subcommands: { [name: string]: Subcommand } = {
 	[FeedSubcommand.name]: FeedSubcommand,
 	[CooldownsSubcommand.name]: CooldownsSubcommand,
 	[CheckSubcommand.name]: CheckSubcommand,
+	[PromoteSubcommand.name]: PromoteSubcommand,
 };
 
 const NurseryCommand: Command = {
