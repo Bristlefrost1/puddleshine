@@ -49,4 +49,40 @@ function getLastDateYear(day: number, month: number) {
 	}
 }
 
-export { months, isDateValid, getLastDateYear };
+function formatSeconds(sec: number) {
+	if (sec < 60) return `${sec}s`;
+
+	const seconds = sec % 60;
+	let minutes = Math.floor(sec / 60);
+
+	if (minutes < 60) return `${minutes}min${seconds > 0 ? ` ${seconds}s` : ''}`;
+
+	let hours = Math.floor(minutes / 60);
+	minutes = minutes % 60;
+
+	if (hours < 24) return `${hours}h${minutes > 0 ? ` ${minutes}min` : ''}`;
+
+	let days = Math.floor(hours / 24);
+	hours = hours % 24;
+
+	if (days < 7) return `${days}d${hours > 0 ? ` ${hours}h` : ''}${minutes > 0 ? ` ${minutes}min` : ''}`;
+	if (days < 30) {
+		const weeks = Math.floor(days / 7);
+		days = days % 7;
+
+		return `${weeks}w${days > 0 ? ` ${days}d` : ''}${hours > 0 ? ` ${hours}h` : ''}${minutes > 0 ? ` ${minutes}min` : ''}`;
+	}
+
+	let months = Math.floor(days / 30);
+	days = days % 30;
+
+	if (months < 12)
+		return `${months}mo${days > 0 ? ` ${days}d` : ''}${hours > 0 ? ` ${hours}h` : ''}${minutes > 0 ? ` ${minutes}min` : ''}`;
+
+	const years = Math.floor(months / 12);
+	months = months % 12;
+
+	return `${years}y${months > 0 ? ` ${months}mo` : ''}${days > 0 ? ` ${days}d` : ''}${hours > 0 ? ` ${hours}h` : ''}${minutes > 0 ? ` ${minutes}min` : ''}`;
+}
+
+export { months, isDateValid, getLastDateYear, formatSeconds };

@@ -6,6 +6,7 @@ import { parseCommandOptions } from '#discord/parse-options.js';
 import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
 import * as nurseryViews from '#commands/nursery/nursery-views.js';
 import { getKitDescription } from '../game/kit.js';
+import { formatSeconds } from '#utils/date-time-utils.js';
 
 import type { Subcommand } from '#commands/subcommand.js';
 
@@ -46,6 +47,7 @@ const CheckSubcommand: Subcommand = {
 			);
 		}
 
+		const currentTimestamp = Math.floor(new Date().getTime() / 1000);
 		const kit = foundKits[0];
 		const lines: string[] = [];
 
@@ -68,7 +70,12 @@ const CheckSubcommand: Subcommand = {
 
 		lines.push('```');
 		lines.push('Last 15 events (newest first):');
-		kit.events.forEach((event) => lines.push(event.description));
+		kit.events.forEach((event) => {
+			const secondsSince = currentTimestamp - event.timestamp;
+			const formattedSeconds = formatSeconds(secondsSince);
+
+			lines.push(`[${formattedSeconds}] ${event.description}`.replace('{{KIT_FULL_NAME}}', kit.fullName));
+		});
 		lines.push('```');
 
 		return messageResponse({
