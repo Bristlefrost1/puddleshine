@@ -13,7 +13,7 @@ type KitEvent = {
 };
 
 function addNewEventToKit(kit: Kit, type: KitEventType, description: string, date?: Date) {
-	const eventTimestamp = Math.floor((date?.getDate() ?? new Date().getDate()) / 1000);
+	const eventTimestamp = Math.floor((date?.getTime() ?? new Date().getTime()) / 1000);
 
 	const newEvent: KitEvent = {
 		type,
