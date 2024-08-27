@@ -1504,6 +1504,10 @@
 			{
 				"url": "$ART_URL_BASE$/0117-bristlefrost/bristlefrost-ursiday.png",
 				"credit": "Ursiday"
+			},
+			{
+				"url": "$ART_URL_BASE$/0117-bristlefrost/bristlefrost-chibi.png",
+				"credit": "Chibi"
 			}
 		],
 
@@ -3556,6 +3560,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/8/8b/Nightheart_%28ASC%29.ASC-2.png/revision/latest?cb=20230402002743",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0325-nightheart/nightheart-chibi.png",
+				"credit": "Chibi"
 			}
 		],
 
@@ -9766,7 +9774,14 @@
 		"name": "Silvermask",
 		"group": "ShadowClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0977-silvermask/silvermask-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 978,
