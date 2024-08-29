@@ -223,4 +223,44 @@ async function promoteKit(
 	]);
 }
 
-export { findNursery, initializeNurseryForUser, getNursery, updateFood, findKits, breedForKits, feedKits, promoteKit };
+async function coolNursery(
+	prisma: D1PrismaClient,
+	userUuid: string,
+	kitsToCool: { uuid: string; newTemperature: number }[],
+) {
+	const coolTime = new Date();
+
+	return await prisma.$transaction([
+		prisma.nursery.update({
+			where: {
+				uuid: userUuid,
+			},
+			data: {
+				lastCooledAt: coolTime,
+			},
+		}),
+		...kitsToCool.map((kit) => {
+			return prisma.nurseryKit.update({
+				where: {
+					uuid: kit.uuid,
+				},
+				data: {
+					temperature: kit.newTemperature,
+					temperatureUpdated: coolTime,
+				},
+			});
+		}),
+	]);
+}
+
+export {
+	findNursery,
+	initializeNurseryForUser,
+	getNursery,
+	updateFood,
+	findKits,
+	breedForKits,
+	feedKits,
+	promoteKit,
+	coolNursery,
+};
