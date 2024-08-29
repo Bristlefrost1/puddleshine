@@ -65,7 +65,9 @@ const CheckSubcommand: Subcommand = {
 		lines.push(`> Health: ${health}%`);
 		lines.push(`> Hunger: ${hunger}%`);
 		lines.push(`> Bond: ${bond}%`);
-		lines.push(`> Temperature: ${temperature}°C (${(kit.temperature * (9 / 5) + 32).toFixed(1)}°F) [Good]`);
+		lines.push(
+			`> Temperature: ${temperature}°C (${(kit.temperature * (9 / 5) + 32).toFixed(1)}°F) [${kit.temperatureClass}]`,
+		);
 		lines.push(`> Description: ${getKitDescription(kit)}`);
 
 		lines.push('```');

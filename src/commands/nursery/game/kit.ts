@@ -2,14 +2,17 @@ import { Gender, KitGender } from '#cat/gender.js';
 import * as pelt from '#cat/pelts.js';
 import * as eyes from '#cat/eyes.js';
 
-import * as config from '#config.js';
+import * as seasons from './seasons.js';
 
 import type { NurseryKit } from '@prisma/client';
 import type { Pelt } from '#cat/pelts.js';
 import type { Eyes } from '#cat/eyes.js';
 import type { KitEvent } from '#commands/nursery/game/kit-events.js';
 
+import * as config from '#config.js';
+
 enum KitTemperature {
+	Heatstroke = 'Heatstroke',
 	Burning = 'Burning',
 	VeryHot = 'Very Hot',
 	Hot = 'Hot',
@@ -20,6 +23,7 @@ enum KitTemperature {
 	Cold = 'Cold',
 	VeryCold = 'Very Cold',
 	Freezing = 'Freezing',
+	Hypothermia = 'Hypothermia',
 }
 
 type Kit = {
@@ -41,6 +45,7 @@ type Kit = {
 	hunger: number;
 	bond: number;
 	temperature: number;
+	temperatureClass: KitTemperature;
 
 	isDead?: boolean;
 };
@@ -88,7 +93,57 @@ function calculateHealth(kit: NurseryKit, hunger: number) {
 	}
 }
 
-function calculateTemperature() {}
+function getTemperatureClass(temperature: number): KitTemperature {
+	if (temperature > 38.3) {
+		if (temperature > config.NURSERY_HEATSTROKE_TEMPERATURE) {
+			return KitTemperature.Heatstroke;
+		} else if (temperature > 45) {
+			return KitTemperature.Burning;
+		} else if (temperature > 43) {
+			return KitTemperature.VeryHot;
+		} else if (temperature > 41) {
+			return KitTemperature.Hot;
+		} else if (temperature > 39.6) {
+			return KitTemperature.Warm;
+		}
+
+		return KitTemperature.Okay;
+	} else if (temperature < 37.2) {
+		if (temperature < config.NURSERY_HYPOTHERMIA_TEMPERATURE) {
+			return KitTemperature.Hypothermia;
+		} else if (temperature < 30) {
+			return KitTemperature.Freezing;
+		} else if (temperature < 32) {
+			return KitTemperature.VeryCold;
+		} else if (temperature < 34) {
+			return KitTemperature.Cold;
+		} else if (temperature < 35.8) {
+			return KitTemperature.Cool;
+		}
+
+		return KitTemperature.Okay;
+	} else {
+		return KitTemperature.Good;
+	}
+}
+
+function calculateTemperature(kit: NurseryKit) {
+	let temperature = kit.temperature;
+
+	const seasonsSinceUpdate = seasons.getSeasonsBetweenDates(kit.temperatureUpdated, new Date());
+
+	seasonsSinceUpdate.forEach((season) => {
+		if (season.season === seasons.Season.Leafbare) {
+			temperature -= season.time * config.NURSERY_KIT_TEMPERATURE_PER_SECOND;
+		} else if (season.season === seasons.Season.Greenleaf) {
+			temperature += season.time * config.NURSERY_KIT_TEMPERATURE_PER_SECOND;
+		}
+	});
+
+	const temperatureClass = getTemperatureClass(temperature);
+
+	return { temperature, temperatureClass };
+}
 
 function getKitDescription(kit: Kit) {
 	const kitPelt = pelt.stringifyPelt(kit.pelt);
@@ -103,6 +158,7 @@ function getKitDescription(kit: Kit) {
 function getKit(kit: NurseryKit, index: number): Kit {
 	const age = calculateAgeMoons(kit);
 	const hunger = calculateHunger(kit);
+	const temperature = calculateTemperature(kit);
 	const health = calculateHealth(kit, hunger);
 
 	const events = (JSON.parse(kit.events) as KitEvent[]).toSorted((a, b) => b.timestamp - a.timestamp);
@@ -125,11 +181,12 @@ function getKit(kit: NurseryKit, index: number): Kit {
 		health,
 		hunger: hunger > 0 ? hunger : 0,
 		bond: kit.bond,
-		temperature: kit.temperature,
+		temperature: temperature.temperature,
+		temperatureClass: temperature.temperatureClass,
 
 		isDead: false,
 	};
 }
 
-export { getKit, getKitDescription };
+export { getKit, getKitDescription, getTemperatureClass };
 export type { Kit };

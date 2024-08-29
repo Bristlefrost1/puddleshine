@@ -35,9 +35,12 @@ function buildNurseryStatusView(nursery: Nursery) {
 			const health = (kit.health * 100).toFixed(1);
 			const hunger = (kit.hunger * 100).toFixed(1);
 			const bond = (kit.bond * 100).toFixed(1);
+			const temperature = kit.temperatureClass;
 
 			lines.push(`[${kitNumber}] ${kit.fullName}:`);
-			lines.push(`- Age: ${age} moons | Health: ${health}% | Hunger: ${hunger}% | Bond: ${bond}% | Temp: Good`);
+			lines.push(
+				`- Age: ${age} moons | Health: ${health}% | Hunger: ${hunger}% | Bond: ${bond}% | Temp: ${temperature}`,
+			);
 		}
 	} else {
 		lines.push("You don't have any kits. Try /nursery breed to get some!");

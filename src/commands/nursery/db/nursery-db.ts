@@ -220,6 +220,16 @@ async function promoteKit(
 				uuid: kit.uuid,
 			},
 		}),
+		prisma.nursery.update({
+			where: {
+				uuid: userUuid,
+			},
+			data: {
+				statsRaised: {
+					increment: 1,
+				},
+			},
+		}),
 	]);
 }
 
