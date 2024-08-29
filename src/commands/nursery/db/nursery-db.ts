@@ -263,6 +263,27 @@ async function coolNursery(
 	]);
 }
 
+async function updateKitTemperatures(
+	prisma: D1PrismaClient,
+	kits: { uuid: string; newTemperature: number; events?: string }[],
+	updateTime: Date,
+) {
+	return await prisma.$transaction([
+		...kits.map((kit) => {
+			return prisma.nurseryKit.update({
+				where: {
+					uuid: kit.uuid,
+				},
+				data: {
+					temperature: kit.newTemperature,
+					temperatureUpdated: updateTime,
+					events: kit.events,
+				},
+			});
+		}),
+	]);
+}
+
 export {
 	findNursery,
 	initializeNurseryForUser,
@@ -273,4 +294,5 @@ export {
 	feedKits,
 	promoteKit,
 	coolNursery,
+	updateKitTemperatures,
 };

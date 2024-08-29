@@ -4,6 +4,9 @@ import * as config from '#config.js';
 
 enum KitEventType {
 	Feed = 'Feed',
+	Comfort = 'Comfort',
+	Groom = 'Groom',
+	Play = 'Play',
 }
 
 type KitEvent = {
