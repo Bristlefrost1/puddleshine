@@ -145,6 +145,20 @@ function calculateTemperature(kit: NurseryKit) {
 	return { temperature, temperatureClass };
 }
 
+function calculateBond(kit: NurseryKit) {
+	const bond = kit.bond;
+
+	const currentTimestamp = Math.floor(new Date().getTime() / 1000);
+	const bondLastUpdatedAt = Math.floor(kit.bondUpdated.getTime() / 1000);
+	const secondsSinceLastUpdate = currentTimestamp - bondLastUpdatedAt;
+
+	const newBond = bond + secondsSinceLastUpdate * config.NURSERY_BOND_PER_SECOND;
+
+	if (newBond > 1) return 1;
+
+	return newBond;
+}
+
 function getKitDescription(kit: Kit) {
 	const kitPelt = pelt.stringifyPelt(kit.pelt);
 	const kitEyes = eyes.stringifyEyes(kit.eyes);
@@ -180,7 +194,7 @@ function getKit(kit: NurseryKit, index: number): Kit {
 		age,
 		health,
 		hunger: hunger > 0 ? hunger : 0,
-		bond: kit.bond,
+		bond: calculateBond(kit),
 		temperature: temperature.temperature,
 		temperatureClass: temperature.temperatureClass,
 

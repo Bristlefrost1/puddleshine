@@ -119,6 +119,8 @@ const NURSERY_PLAY_TEMPERATURE = 2;
 const NURSERY_MAX_ALERTS = 20;
 const NURSERY_SHORT_ALERTS = 3;
 
+const NURSERY_BOND_PER_SECOND = 1 / 7 / 24 / 60 / 60; // 1 week
+
 // Crons
 const DAILY_CRON = '0 0 * * *'; // Every day at midnight UTC
 const WEEKLY_CRON = '0 0 * * MON'; // At midnight UTC every Monday
@@ -170,6 +172,7 @@ export {
 	NURSERY_PLAY_TEMPERATURE,
 	NURSERY_MAX_ALERTS,
 	NURSERY_SHORT_ALERTS,
+	NURSERY_BOND_PER_SECOND,
 	DAILY_CRON,
 	WEEKLY_CRON,
 };
