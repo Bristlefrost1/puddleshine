@@ -4,12 +4,11 @@ import * as db from '#db/database.js';
 import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
 import { getKit, type Kit } from '#commands/nursery/game/kit.js';
 import { Season, getCurrentSeason } from './seasons.js';
+import { NurseryAlert } from './nursery-alerts.js';
 
 import * as config from '#config.js';
 
 import type { Nursery as DBNursery, NurseryKit } from '@prisma/client';
-
-type NurseryAlert = {};
 
 type Nursery = {
 	uuid: string;
@@ -101,6 +100,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 	if (profile && profile.name) displayName = profile.name;
 
 	const food = getFood(nursery);
+	const alerts = (JSON.parse(nursery.alerts) as NurseryAlert[]).toSorted((a, b) => b.timestamp - a.timestamp);
 
 	const nurseryKits: Kit[] = [];
 
@@ -123,7 +123,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 			nextFoodPointPercentage: food.nextFoodPointPercentage,
 		},
 
-		alerts: [],
+		alerts: alerts,
 
 		kits: nurseryKits,
 	};

@@ -1,8 +1,9 @@
 import { messageResponse } from '#discord/responses.js';
-
 import { getKitDescription } from './game/kit.js';
 
 import type { Nursery } from './game/nursery-manager.js';
+
+import * as config from '#config.js';
 
 function buildNurseryStatusView(nursery: Nursery) {
 	const lines: string[] = [];
@@ -23,7 +24,21 @@ function buildNurseryStatusView(nursery: Nursery) {
 	lines.push(`${nursery.displayName}'s nursery [${nursery.season}]`);
 	lines.push(`Food Meter: ${nursery.food.foodPoints} (${nextFoodPoint})`);
 	lines.push('');
-	lines.push('You have no alerts.');
+
+	if (nursery.alerts.length > 0) {
+		const mostRecentAlerts = nursery.alerts.slice(undefined, config.NURSERY_SHORT_ALERTS);
+
+		for (const alert of mostRecentAlerts) {
+			lines.push(`| ${alert.alert}`);
+		}
+
+		if (nursery.alerts.length > config.NURSERY_SHORT_ALERTS) {
+			lines.push(`| (use [alerts] to view the rest of your ${nursery.alerts.length} alerts)`);
+		}
+	} else {
+		lines.push('You have no alerts.');
+	}
+
 	lines.push('');
 
 	if (nursery.kits && nursery.kits.length > 0) {

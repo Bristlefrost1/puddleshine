@@ -284,6 +284,15 @@ async function updateKitTemperatures(
 	]);
 }
 
+async function updateNurseryAlerts(prisma: D1PrismaClient, uuid: string, alerts: string) {
+	return await prisma.nursery.update({
+		where: {
+			uuid,
+		},
+		data: { alerts },
+	});
+}
+
 export {
 	findNursery,
 	initializeNurseryForUser,
@@ -295,4 +304,5 @@ export {
 	promoteKit,
 	coolNursery,
 	updateKitTemperatures,
+	updateNurseryAlerts,
 };
