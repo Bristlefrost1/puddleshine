@@ -70,27 +70,44 @@ function calculateHunger(kit: NurseryKit) {
 	return hunger - secondsSinceLastUpdate * config.NURSERY_KIT_HUNGER_PER_SECOND;
 }
 
-function calculateHealth(kit: NurseryKit, hunger: number) {
-	const health = kit.health;
+function calculateHealth(kit: NurseryKit, hunger: number, temperature: number) {
+	let health = kit.health;
 
 	const currentTimestamp = Math.floor(new Date().getTime() / 1000);
 	const healthLastUpdatedAt = Math.floor(kit.healthUpdated.getTime() / 1000);
 	const secondsSinceLastUpdate = currentTimestamp - healthLastUpdatedAt;
 
-	if (hunger <= 0) {
-		const secondsHungry = Math.floor(Math.abs(hunger) / config.NURSERY_KIT_HUNGER_PER_SECOND);
-		const newHealth = health - secondsHungry * config.NURSERY_KIT_HEALTH_DECREASE;
-
-		if (newHealth < 0) return 0; // TODO: Implement dying
-
-		return newHealth;
-	} else {
+	// prettier-ignore
+	if (hunger > 0 && temperature >= config.NURSERY_HYPOTHERMIA_TEMPERATURE && temperature <= config.NURSERY_HEATSTROKE_TEMPERATURE) {
 		const newHealth = health + secondsSinceLastUpdate * config.NURSERY_KIT_HEALTH_REGEN;
 
 		if (newHealth > 1) return 1;
 
 		return health + secondsSinceLastUpdate * config.NURSERY_KIT_HEALTH_REGEN;
 	}
+
+	if (hunger <= 0) {
+		const secondsHungry = Math.floor(Math.abs(hunger) / config.NURSERY_KIT_HUNGER_PER_SECOND);
+
+		health -= secondsHungry * config.NURSERY_KIT_HEALTH_DECREASE;
+		if (health < 0) health = 0;
+	}
+
+	if (temperature > config.NURSERY_HEATSTROKE_TEMPERATURE) {
+		const degreesPastHeatstroke = Math.abs(config.NURSERY_HEATSTROKE_TEMPERATURE - temperature);
+
+		health -= degreesPastHeatstroke;
+		if (health < 0) health = 0;
+	}
+
+	if (temperature < config.NURSERY_HYPOTHERMIA_TEMPERATURE) {
+		const degreesPastHypothermia = Math.abs(config.NURSERY_HYPOTHERMIA_TEMPERATURE - temperature);
+
+		health -= degreesPastHypothermia;
+		if (health < 0) health = 0;
+	}
+
+	return health;
 }
 
 function getTemperatureClass(temperature: number): KitTemperature {
@@ -173,7 +190,7 @@ function getKit(kit: NurseryKit, index: number): Kit {
 	const age = calculateAgeMoons(kit);
 	const hunger = calculateHunger(kit);
 	const temperature = calculateTemperature(kit);
-	const health = calculateHealth(kit, hunger);
+	const health = calculateHealth(kit, hunger, temperature.temperature);
 
 	const events = (JSON.parse(kit.events) as KitEvent[]).toSorted((a, b) => b.timestamp - a.timestamp);
 
@@ -198,7 +215,7 @@ function getKit(kit: NurseryKit, index: number): Kit {
 		temperature: temperature.temperature,
 		temperatureClass: temperature.temperatureClass,
 
-		isDead: false,
+		isDead: health <= 0 ? true : false,
 	};
 }
 

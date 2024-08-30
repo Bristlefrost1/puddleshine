@@ -293,6 +293,53 @@ async function updateNurseryAlerts(prisma: D1PrismaClient, uuid: string, alerts:
 	});
 }
 
+async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, kits: Kit[], alerts: string) {
+	const timeOfStorage = new Date();
+
+	return await prisma.$transaction([
+		prisma.historyCat.createMany({
+			data: kits.map((kit) => {
+				return {
+					userUuid,
+
+					namePrefix: kit.prefix,
+					nameSuffix: 'kit',
+
+					pelt: JSON.stringify(kit.pelt),
+					eyes: JSON.stringify(kit.eyes),
+
+					clan: clan,
+					rank: ClanRank.Kit,
+
+					isDead: true,
+					diedAtMoons: kit.age,
+
+					dateStored: timeOfStorage,
+					ageStored: kit.age,
+				};
+			}),
+		}),
+		prisma.nurseryKit.deleteMany({
+			where: {
+				OR: kits.map((kit) => {
+					return { uuid: kit.uuid };
+				}),
+			},
+		}),
+		prisma.nursery.update({
+			where: {
+				uuid: userUuid,
+			},
+			data: {
+				alerts,
+				statsKilled: {
+					increment: kits.length,
+				},
+			},
+		}),
+	]);
+}
+
 export {
 	findNursery,
 	initializeNurseryForUser,
@@ -305,4 +352,5 @@ export {
 	coolNursery,
 	updateKitTemperatures,
 	updateNurseryAlerts,
+	kitsDied,
 };

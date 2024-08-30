@@ -4,7 +4,7 @@ import * as db from '#db/database.js';
 import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
 import { getKit, type Kit } from '#commands/nursery/game/kit.js';
 import { Season, getCurrentSeason } from './seasons.js';
-import { NurseryAlert } from './nursery-alerts.js';
+import { addNewAlertToAlerts, addNewAlertToNursery, NurseryAlert, NurseryAlertType } from './nursery-alerts.js';
 
 import * as config from '#config.js';
 
@@ -71,9 +71,9 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 
 	const profile = await db.findProfileWithDiscordId(env.PRISMA, discordId);
 	const nursery = await nurseryDB.getNursery(env.PRISMA, discordId);
-	const kits = await nurseryDB.findKits(env.PRISMA, nursery.uuid);
+	const nurseryKits = await nurseryDB.findKits(env.PRISMA, nursery.uuid);
 
-	kits.sort((a, b) => {
+	nurseryKits.sort((a, b) => {
 		let compareA: Date;
 		let compareB: Date;
 
@@ -102,10 +102,25 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 	const food = getFood(nursery);
 	const alerts = (JSON.parse(nursery.alerts) as NurseryAlert[]).toSorted((a, b) => b.timestamp - a.timestamp);
 
-	const nurseryKits: Kit[] = [];
+	const kits: Kit[] = [];
+	const deadKits: Kit[] = [];
 
-	for (let i = 0; i < kits.length; i++) {
-		nurseryKits.push(getKit(kits[i], i));
+	let kitIndex = 0;
+
+	for (const nurseryKit of nurseryKits) {
+		const kit = getKit(nurseryKit, kitIndex);
+
+		if (kit.isDead) {
+			addNewAlertToAlerts(alerts, NurseryAlertType.KitDied, `${kit.fullName} has died.`);
+			deadKits.push(kit);
+		} else {
+			kits.push(kit);
+			kitIndex++;
+		}
+	}
+
+	if (deadKits.length >= 1) {
+		await nurseryDB.kitsDied(env.PRISMA, nursery.uuid, profile?.group ?? '', deadKits, JSON.stringify(alerts));
 	}
 
 	return {
@@ -125,7 +140,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 
 		alerts: alerts,
 
-		kits: nurseryKits,
+		kits: kits,
 	};
 }
 
