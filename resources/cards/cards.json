@@ -5195,7 +5195,14 @@
 		"name": "Jay Frost",
 		"group": "Tribe of Endless Hunting",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0495-jay-frost/jay-frost-blyth3xd.png",
+				"credit": "blyth3xd"
+			}
+		]
 	},
 	{
 		"id": 496,
