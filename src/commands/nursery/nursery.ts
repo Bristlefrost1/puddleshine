@@ -1,7 +1,6 @@
 import * as DAPI from 'discord-api-types/v10';
 
-import { messageResponse, simpleEphemeralResponse, simpleMessageResponse } from '#discord/responses.js';
-import { parseCommandOptions } from '#discord/parse-options.js';
+import { simpleEphemeralResponse } from '#discord/responses.js';
 
 import StatusSubcommand from './subcommands/status.js';
 import HomeSubcommand from './subcommands/home.js';
@@ -13,7 +12,8 @@ import PromoteSubcommand from './subcommands/promote.js';
 import CoolSubcommand from './subcommands/cool.js';
 import ComfortSubcommand from './subcommands/comfort.js';
 import GroomSubcommand from './subcommands/groom.js';
-import PlaySubcommand from './subcommands/play.js';
+import AlertsSubcommand from './subcommands/alerts.js';
+import DismissSubcommand from './subcommands/dismiss.js';
 
 import type { Command } from '../command.js';
 import type { Subcommand } from '#commands/subcommand.js';
@@ -29,7 +29,8 @@ const subcommands: { [name: string]: Subcommand } = {
 	[CoolSubcommand.name]: CoolSubcommand,
 	[ComfortSubcommand.name]: ComfortSubcommand,
 	[GroomSubcommand.name]: GroomSubcommand,
-	[PlaySubcommand.name]: PlaySubcommand,
+	[AlertsSubcommand.name]: AlertsSubcommand,
+	[DismissSubcommand.name]: DismissSubcommand,
 };
 
 const NurseryCommand: Command = {
