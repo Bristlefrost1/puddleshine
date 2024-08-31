@@ -39,6 +39,10 @@ const PromoteSubcommand: Subcommand = {
 	async execute(options) {
 		const nursery = await nurseryManager.getNursery(options.user, options.env);
 
+		if (nursery.isPaused) {
+			return nurseryViews.nurseryMessageResponse(nursery, ['Your nursery is currently paused.']);
+		}
+
 		const { kit: kitOption } = parseCommandOptions(options.commandOptions);
 
 		if (!kitOption || kitOption.type !== DAPI.ApplicationCommandOptionType.String)

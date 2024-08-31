@@ -34,6 +34,10 @@ const BreedSubcommand: Subcommand = {
 	async execute(options) {
 		let nursery = await nurseryManager.getNursery(options.user, options.env);
 
+		if (nursery.isPaused) {
+			return nurseryViews.nurseryMessageResponse(nursery, ['Your nursery is currently paused.']);
+		}
+
 		const breedTime = new Date();
 		const breedTimestamp = Math.floor(breedTime.getTime() / 1000);
 

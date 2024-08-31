@@ -14,6 +14,7 @@ import ComfortSubcommand from './subcommands/comfort.js';
 import GroomSubcommand from './subcommands/groom.js';
 import AlertsSubcommand from './subcommands/alerts.js';
 import DismissSubcommand from './subcommands/dismiss.js';
+import PauseSubcommand from './subcommands/pause.js';
 
 import type { Command } from '../command.js';
 import type { Subcommand } from '#commands/subcommand.js';
@@ -31,6 +32,7 @@ const subcommands: { [name: string]: Subcommand } = {
 	[GroomSubcommand.name]: GroomSubcommand,
 	[AlertsSubcommand.name]: AlertsSubcommand,
 	[DismissSubcommand.name]: DismissSubcommand,
+	[PauseSubcommand.name]: PauseSubcommand,
 };
 
 const NurseryCommand: Command = {

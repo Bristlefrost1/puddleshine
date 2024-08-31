@@ -43,6 +43,10 @@ const PlaySubcommand: Subcommand = {
 		const kitNames = parseList(kitsOption.value) as string[];
 		const nursery = await nurseryManager.getNursery(options.user, options.env);
 
+		if (nursery.isPaused) {
+			return nurseryViews.nurseryMessageResponse(nursery, ['Your nursery is currently paused.']);
+		}
+
 		if (nursery.kits.length < 1)
 			return nurseryViews.nurseryMessageResponse(nursery, ["You don't have any kits to play with."], true);
 

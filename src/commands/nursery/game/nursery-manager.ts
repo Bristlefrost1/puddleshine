@@ -13,6 +13,7 @@ import type { Nursery as DBNursery, NurseryKit } from '@prisma/client';
 type Nursery = {
 	uuid: string;
 	displayName: string;
+	isPaused: boolean;
 	clan?: string;
 	season: Season;
 
@@ -51,8 +52,8 @@ function calculateFood(nursery: DBNursery) {
 	return regenerated;
 }
 
-function getFood(nursery: DBNursery) {
-	const food = calculateFood(nursery);
+function getFood(nursery: DBNursery, isPaused: boolean) {
+	const food = isPaused ? nursery.food : calculateFood(nursery);
 	const foodString = food.toString().split('.');
 
 	const foodPoints = Number.parseInt(foodString[0]);
@@ -99,7 +100,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 	let displayName = user.username;
 	if (profile && profile.name) displayName = profile.name;
 
-	const food = getFood(nursery);
+	const food = getFood(nursery, nursery.isPaused);
 	const alerts = (JSON.parse(nursery.alerts) as NurseryAlert[]).toSorted((a, b) => b.timestamp - a.timestamp);
 
 	const kits: Kit[] = [];
@@ -108,7 +109,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 	let kitIndex = 0;
 
 	for (const nurseryKit of nurseryKits) {
-		const kit = getKit(nurseryKit, kitIndex);
+		const kit = getKit(nurseryKit, kitIndex, nursery.isPaused);
 
 		if (kit.isDead) {
 			addNewAlertToAlerts(alerts, NurseryAlertType.KitDied, `${kit.fullName} has died.`);
@@ -126,6 +127,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 	return {
 		uuid: nursery.uuid,
 		displayName,
+		isPaused: nursery.isPaused,
 		clan: profile?.group ?? undefined,
 		season: getCurrentSeason(),
 

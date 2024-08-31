@@ -5,7 +5,7 @@ import type { Nursery } from './game/nursery-manager.js';
 
 import * as config from '#config.js';
 
-function buildNurseryStatusView(nursery: Nursery) {
+function buildNurseryStatusView(nursery: Nursery, noAlerts?: boolean) {
 	const lines: string[] = [];
 
 	let nextFoodPoint = '';
@@ -21,25 +21,33 @@ function buildNurseryStatusView(nursery: Nursery) {
 	}
 
 	lines.push('```');
-	lines.push(`${nursery.displayName}'s nursery [${nursery.season}]`);
+
+	if (nursery.isPaused) {
+		lines.push(`${nursery.displayName}'s nursery [${nursery.season}] [PAUSED]`);
+	} else {
+		lines.push(`${nursery.displayName}'s nursery [${nursery.season}]`);
+	}
+
 	lines.push(`Food Meter: ${nursery.food.foodPoints} (${nextFoodPoint})`);
 	lines.push('');
 
-	if (nursery.alerts.length > 0) {
-		const mostRecentAlerts = nursery.alerts.slice(undefined, config.NURSERY_SHORT_ALERTS);
+	if (!noAlerts) {
+		if (nursery.alerts.length > 0) {
+			const mostRecentAlerts = nursery.alerts.slice(undefined, config.NURSERY_SHORT_ALERTS);
 
-		for (const alert of mostRecentAlerts) {
-			lines.push(`| ${alert.alert}`);
+			for (const alert of mostRecentAlerts) {
+				lines.push(`| ${alert.alert}`);
+			}
+
+			if (nursery.alerts.length > config.NURSERY_SHORT_ALERTS) {
+				lines.push(`| (use [alerts] to view the rest of your ${nursery.alerts.length} alerts)`);
+			}
+		} else {
+			lines.push('You have no alerts.');
 		}
 
-		if (nursery.alerts.length > config.NURSERY_SHORT_ALERTS) {
-			lines.push(`| (use [alerts] to view the rest of your ${nursery.alerts.length} alerts)`);
-		}
-	} else {
-		lines.push('You have no alerts.');
+		lines.push('');
 	}
-
-	lines.push('');
 
 	if (nursery.kits && nursery.kits.length > 0) {
 		for (let i = 0; i < nursery.kits.length; i++) {
@@ -82,7 +90,13 @@ function buildNurseryHomeView(nursery: Nursery) {
 	}
 
 	lines.push('```');
-	lines.push(`${nursery.displayName}'s nursery [${nursery.season}]`);
+
+	if (nursery.isPaused) {
+		lines.push(`${nursery.displayName}'s nursery [${nursery.season}] [PAUSED]`);
+	} else {
+		lines.push(`${nursery.displayName}'s nursery [${nursery.season}]`);
+	}
+
 	lines.push(`Food Meter: ${nursery.food.foodPoints} (${nextFoodPoint})`);
 	lines.push('');
 
@@ -102,8 +116,8 @@ function buildNurseryHomeView(nursery: Nursery) {
 	return lines.join('\n');
 }
 
-function nurseryMessageResponse(nursery: Nursery, messages: string[], showStatus?: boolean) {
-	const nurseryView = showStatus ? buildNurseryStatusView(nursery) : buildNurseryHomeView(nursery);
+function nurseryMessageResponse(nursery: Nursery, messages: string[], showStatus?: boolean, noAlerts?: boolean) {
+	const nurseryView = showStatus ? buildNurseryStatusView(nursery, noAlerts) : buildNurseryHomeView(nursery);
 
 	return messageResponse({
 		content: messages.map((message) => `> ${message}`).join('\n') + '\n' + nurseryView,

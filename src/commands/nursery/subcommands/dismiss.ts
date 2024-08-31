@@ -46,6 +46,7 @@ const DismissSubcommand: Subcommand = {
 				nursery,
 				['No alerts to dismiss.', ...buildAlertsBlock(nursery.alerts)],
 				true,
+				true,
 			);
 		}
 
@@ -58,6 +59,7 @@ const DismissSubcommand: Subcommand = {
 				nursery,
 				['Dismissed all of your alerts.', ...buildAlertsBlock(nursery.alerts)],
 				true,
+				true,
 			);
 		}
 
@@ -67,6 +69,7 @@ const DismissSubcommand: Subcommand = {
 			return nurseryViews.nurseryMessageResponse(
 				nursery,
 				['The count entered is not valid.', ...buildAlertsBlock(nursery.alerts)],
+				true,
 				true,
 			);
 		}
@@ -82,6 +85,7 @@ const DismissSubcommand: Subcommand = {
 		return nurseryViews.nurseryMessageResponse(
 			nursery,
 			[`Dismissed ${Math.abs(countToDismiss)} alerts.`, ...buildAlertsBlock(nursery.alerts)],
+			true,
 			true,
 		);
 	},

@@ -10,6 +10,7 @@ import type { Pelt } from '#cat/pelts.js';
 import type { Eyes } from '#cat/eyes.js';
 
 import * as config from '#config.js';
+import { Nursery } from '../game/nursery-manager.js';
 
 async function findNursery(prisma: D1PrismaClient, discordId: string) {
 	return await prisma.nursery.findFirst({
@@ -340,6 +341,79 @@ async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, 
 	]);
 }
 
+async function pauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Kit[]) {
+	const pauseTime = new Date();
+
+	return await prisma.$transaction([
+		...kits.map((kit) => {
+			return prisma.nurseryKit.update({
+				where: {
+					uuid: kit.uuid,
+				},
+				data: {
+					ageMoons: kit.age,
+					ageUpdated: pauseTime,
+
+					health: kit.health,
+					healthUpdated: pauseTime,
+
+					hunger: kit.hunger,
+					hungerUpdated: pauseTime,
+
+					bond: kit.bond,
+					bondUpdated: pauseTime,
+
+					temperature: kit.temperature,
+					temperatureUpdated: pauseTime,
+				},
+			});
+		}),
+		prisma.nursery.update({
+			where: {
+				uuid: nursery.uuid,
+			},
+			data: {
+				food: nursery.food.food,
+				foodUpdated: pauseTime,
+				isPaused: true,
+			},
+		}),
+	]);
+}
+
+async function unpauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Kit[]) {
+	const unpauseTime = new Date();
+
+	return await prisma.$transaction([
+		...kits.map((kit) => {
+			return prisma.nurseryKit.update({
+				where: {
+					uuid: kit.uuid,
+				},
+				data: {
+					ageUpdated: unpauseTime,
+					healthUpdated: unpauseTime,
+					hungerUpdated: unpauseTime,
+					bondUpdated: unpauseTime,
+					temperatureUpdated: unpauseTime,
+
+					sickSince: kit.sickSince !== undefined ? unpauseTime : null,
+					wanderingSince: kit.wanderingSince !== undefined ? unpauseTime : null,
+				},
+			});
+		}),
+		prisma.nursery.update({
+			where: {
+				uuid: nursery.uuid,
+			},
+			data: {
+				foodUpdated: unpauseTime,
+				isPaused: false,
+			},
+		}),
+	]);
+}
+
 export {
 	findNursery,
 	initializeNurseryForUser,
@@ -353,4 +427,6 @@ export {
 	updateKitTemperatures,
 	updateNurseryAlerts,
 	kitsDied,
+	pauseNursery,
+	unpauseNursery,
 };

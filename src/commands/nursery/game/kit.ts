@@ -47,6 +47,9 @@ type Kit = {
 	temperature: number;
 	temperatureClass: KitTemperature;
 
+	sickSince?: Date;
+	wanderingSince?: Date;
+
 	isDead?: boolean;
 };
 
@@ -186,11 +189,13 @@ function getKitDescription(kit: Kit) {
 	return `${kitPelt} ${gender} with ${kitEyes}`;
 }
 
-function getKit(kit: NurseryKit, index: number): Kit {
-	const age = calculateAgeMoons(kit);
-	const hunger = calculateHunger(kit);
-	const temperature = calculateTemperature(kit);
-	const health = calculateHealth(kit, hunger, temperature.temperature);
+function getKit(kit: NurseryKit, index: number, isPaused?: boolean): Kit {
+	const age = isPaused ? kit.ageMoons : calculateAgeMoons(kit);
+	const hunger = isPaused ? kit.hunger : calculateHunger(kit);
+	// prettier-ignore
+	const temperature = isPaused ? { temperature: kit.temperature, temperatureClass: getTemperatureClass(kit.temperature) } : calculateTemperature(kit);
+	const health = isPaused ? kit.health : calculateHealth(kit, hunger, temperature.temperature);
+	const bond = isPaused ? kit.bond : calculateBond(kit);
 
 	const events = (JSON.parse(kit.events) as KitEvent[]).toSorted((a, b) => b.timestamp - a.timestamp);
 
@@ -211,9 +216,12 @@ function getKit(kit: NurseryKit, index: number): Kit {
 		age,
 		health,
 		hunger: hunger > 0 ? hunger : 0,
-		bond: calculateBond(kit),
+		bond,
 		temperature: temperature.temperature,
 		temperatureClass: temperature.temperatureClass,
+
+		sickSince: kit.sickSince ?? undefined,
+		wanderingSince: kit.wanderingSince ?? undefined,
 
 		isDead: health <= 0 ? true : false,
 	};
