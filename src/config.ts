@@ -59,7 +59,7 @@ const NURSERY_REGENERATE_FOOD_POINT = 4500; // 4500s is 75min
 /**
  * How many moons should a kit age per second.
  */
-const NURSERY_KIT_AGE_PER_SECOND = 6 / 3 / 30 / 24 / 60 / 60; // 2 real-life months to fully grow up
+const NURSERY_KIT_AGE_PER_SECOND = 1 / 10 / 24 / 60 / 60; // 2 real-life months to fully grow up
 
 /**
  * How much hunger should be depleted from a kit each second.
@@ -121,6 +121,10 @@ const NURSERY_SHORT_ALERTS = 3;
 
 const NURSERY_BOND_PER_SECOND = 1 / 7 / 24 / 60 / 60; // 1 week
 
+const HISTORY_AGE_PER_SECOND = 1 / 15 / 24 / 60 / 60; // 1 moon is 15 days
+
+const HISTORY_PROMOTE_AGE = 12;
+
 // Crons
 const DAILY_CRON = '0 0 * * *'; // Every day at midnight UTC
 const WEEKLY_CRON = '0 0 * * MON'; // At midnight UTC every Monday
@@ -173,6 +177,8 @@ export {
 	NURSERY_MAX_ALERTS,
 	NURSERY_SHORT_ALERTS,
 	NURSERY_BOND_PER_SECOND,
+	HISTORY_AGE_PER_SECOND,
+	HISTORY_PROMOTE_AGE,
 	DAILY_CRON,
 	WEEKLY_CRON,
 };
