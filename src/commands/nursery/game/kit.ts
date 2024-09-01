@@ -1,4 +1,4 @@
-import { Gender, KitGender } from '#cat/gender.js';
+import { KitGender } from '#cat/gender.js';
 import * as pelt from '#cat/pelts.js';
 import * as eyes from '#cat/eyes.js';
 
@@ -34,7 +34,7 @@ type Kit = {
 	prefix: string;
 	fullName: string;
 
-	gender: Gender;
+	gender: KitGender;
 	pelt: Pelt;
 	eyes: Eyes;
 
@@ -186,7 +186,7 @@ function getKitDescription(kit: Kit) {
 	let gender = kit.gender?.toLowerCase() ?? 'kit';
 	if (gender === '') gender = 'kit';
 
-	return `${kitPelt} ${gender} with ${kitEyes}`;
+	return `${kitPelt} ${gender} with ${kitEyes}`.toLowerCase();
 }
 
 function getKit(kit: NurseryKit, index: number, isPaused?: boolean): Kit {
@@ -207,7 +207,7 @@ function getKit(kit: NurseryKit, index: number, isPaused?: boolean): Kit {
 		prefix: kit.namePrefix,
 		fullName: kit.namePrefix + 'kit',
 
-		gender: kit.gender as Gender,
+		gender: kit.gender as KitGender,
 		pelt: JSON.parse(kit.pelt) as Pelt,
 		eyes: JSON.parse(kit.eyes) as Eyes,
 

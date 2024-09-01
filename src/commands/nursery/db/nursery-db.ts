@@ -1,6 +1,6 @@
 import * as database from '#db/database.js';
 
-import { KitGender } from '#cat/gender.js';
+import { KitGender, Gender } from '#cat/gender.js';
 import { NurseryDifficulty } from '#commands/nursery/game/difficulty.js';
 import { Kit } from '#commands/nursery/game/kit.js';
 import { ClanRank } from '#utils/clans.js';
@@ -192,6 +192,14 @@ async function promoteKit(
 ) {
 	const timeOfStorage = new Date();
 
+	let gender: Gender = Gender.Other;
+
+	if (kit.gender === KitGender.TomKit) {
+		gender = Gender.Tom;
+	} else if (kit.gender === KitGender.SheKit) {
+		gender = Gender.SheCat;
+	}
+
 	return await prisma.$transaction([
 		prisma.historyCat.create({
 			data: {
@@ -200,6 +208,8 @@ async function promoteKit(
 
 				age: kit.age,
 				ageUpdated: timeOfStorage,
+
+				gender,
 
 				pelt: JSON.stringify(kit.pelt),
 				eyes: JSON.stringify(kit.eyes),
@@ -303,6 +313,14 @@ async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, 
 	return await prisma.$transaction([
 		prisma.historyCat.createMany({
 			data: kits.map((kit) => {
+				let gender: Gender = Gender.Other;
+
+				if (kit.gender === KitGender.TomKit) {
+					gender = Gender.Tom;
+				} else if (kit.gender === KitGender.SheKit) {
+					gender = Gender.SheCat;
+				}
+
 				return {
 					userUuid,
 
@@ -311,6 +329,8 @@ async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, 
 
 					age: kit.age,
 					ageUpdated: timeOfStorage,
+
+					gender,
 
 					pelt: JSON.stringify(kit.pelt),
 					eyes: JSON.stringify(kit.eyes),

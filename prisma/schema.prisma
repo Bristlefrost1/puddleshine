@@ -160,6 +160,8 @@ model HistoryCat {
 	age         Float
 	ageUpdated  DateTime  @map("age_updated")
 
+	gender  String?
+
 	pelt  String?
 	eyes  String?
 
