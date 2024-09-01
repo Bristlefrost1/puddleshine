@@ -1808,6 +1808,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/c/cb/Cinderpelt.FG-8.png/revision/latest?cb=20240703145812",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0145-cinderpelt/cinderpelt-falloutragez.png",
+				"credit": "falloutragez"
 			}
 		]
 	},
@@ -2227,7 +2231,14 @@
 		"name": "Cypresspaw",
 		"group": "RiverClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0189-cypresspaw/cypresspaw-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 190,
@@ -2835,7 +2846,14 @@
 		"name": "Duke",
 		"group": "Kittypet",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0251-duke/duke-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 252,
@@ -7194,7 +7212,14 @@
 		"name": "Nightmask",
 		"group": "SkyClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0703-nightmask/nightmask-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 704,
