@@ -10,6 +10,7 @@ import CatchaCommand from './catcha/catcha.js';
 import NameCommand from './name/name.js';
 import ProfileCommand from './profile/profile.js';
 import NurseryCommand from './nursery/nursery.js';
+import HistoryCommand from './history/history.js';
 
 /**
  * Command name -> command object mapping object.
@@ -23,6 +24,7 @@ const commands = {
 	[NameCommand.name]: NameCommand,
 	[ProfileCommand.name]: ProfileCommand,
 	[NurseryCommand.name]: NurseryCommand,
+	[HistoryCommand.name]: HistoryCommand,
 };
 
 export { commands };
