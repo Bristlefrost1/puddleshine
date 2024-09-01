@@ -29,5 +29,11 @@ function addNewEventToKit(kit: Kit, type: KitEventType, description: string, dat
 	kit.events = kit.events.slice(undefined, config.NURSERY_MAX_KIT_EVENTS);
 }
 
-export { KitEventType, addNewEventToKit };
+function findLastEventofType(kit: Kit, type: KitEventType) {
+	for (const event of kit.events) {
+		if (event.type === type) return event;
+	}
+}
+
+export { KitEventType, addNewEventToKit, findLastEventofType };
 export type { KitEvent };

@@ -7,7 +7,7 @@ import { parseList } from '#utils/parse-list.js';
 import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
 import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
 import * as nurseryViews from '#commands/nursery/nursery-views.js';
-import { addNewEventToKit, KitEventType } from '#commands/nursery/game/kit-events.js';
+import { addNewEventToKit, findLastEventofType, KitEventType } from '#commands/nursery/game/kit-events.js';
 
 import * as config from '#config.js';
 
@@ -39,6 +39,9 @@ const FeedSubcommand: Subcommand = {
 		if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String)
 			return simpleEphemeralResponse('No kits option provided.');
 
+		const feedMessages: string[] = [];
+		const feedTime = new Date();
+		const feedTimestamp = Math.floor(feedTime.getTime() / 1000);
 		const kitNamesToFeed = parseList(kitsOption.value) as string[];
 
 		const nursery = await nurseryManager.getNursery(options.user, options.env);
@@ -50,18 +53,31 @@ const FeedSubcommand: Subcommand = {
 		if (nursery.kits.length < 1)
 			return nurseryViews.nurseryMessageResponse(nursery, ["You don't have any kits to feed."], true);
 
-		const kitsToFeed = nurseryManager.locateKits(nursery, kitNamesToFeed);
+		let kitsToFeed = nurseryManager.locateKits(nursery, kitNamesToFeed);
 
 		if (kitsToFeed.length < 1)
 			return nurseryViews.nurseryMessageResponse(nursery, ["Couldn't find kits with the provided input."], true);
+
+		kitsToFeed = kitsToFeed.filter((kit) => {
+			const lastFeedEvent = findLastEventofType(kit, KitEventType.Feed);
+			if (!lastFeedEvent) return true;
+
+			const secondsSinceLastFeed = feedTimestamp - lastFeedEvent.timestamp;
+
+			if (secondsSinceLastFeed < config.NURSERY_FEED_COOLDOWN && kit.hunger >= 0.7) {
+				feedMessages.push(`${kit.fullName} complains about not being hungry and refuses to eat.`);
+				return false;
+			}
+
+			return true;
+		});
+
+		if (kitsToFeed.length < 1) return nurseryViews.nurseryMessageResponse(nursery, feedMessages, true);
 
 		const foodPointsNeeded = kitsToFeed.length * config.NURSERY_FEED_FOOD_POINTS;
 
 		if (foodPointsNeeded > nursery.food.foodPoints)
 			return nurseryViews.nurseryMessageResponse(nursery, ["You don't have enough food to feed the kits."], true);
-
-		const feedMessages: string[] = [];
-		const feedTime = new Date();
 
 		nursery.food.foodPoints -= foodPointsNeeded;
 		nursery.food.food -= foodPointsNeeded;

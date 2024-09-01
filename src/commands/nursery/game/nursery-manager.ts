@@ -18,6 +18,7 @@ type Nursery = {
 	season: Season;
 
 	lastBredAt?: Date;
+	lastCooledAt?: Date;
 
 	food: { food: number; max: number; foodPoints: number; nextFoodPointPercentage: number | undefined };
 
@@ -132,6 +133,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 		season: getCurrentSeason(),
 
 		lastBredAt: nursery.lastBredAt ?? undefined,
+		lastCooledAt: nursery.lastCooledAt ?? undefined,
 
 		food: {
 			food: food.food,
