@@ -10266,7 +10266,14 @@
 		"name": "Birchpaw",
 		"group": "ShadowClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/1025-birchpaw/birchpaw-chibi.png",
+				"credit": "Chibi"
+			}
+		]
 	},
 	{
 		"id": 1026,
