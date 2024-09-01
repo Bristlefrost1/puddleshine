@@ -51,5 +51,13 @@ function addNewAlertToAlerts(
 	alerts = alerts.slice(undefined, config.NURSERY_MAX_ALERTS);
 }
 
-export { NurseryAlertType, addNewAlertToNursery, addNewAlertToAlerts };
+function findPromotionAlert(alerts: NurseryAlert[], kitUuid: string) {
+	for (const alert of alerts) {
+		if (alert.type === NurseryAlertType.Promote && alert.kitUuid === kitUuid) {
+			return alert;
+		}
+	}
+}
+
+export { NurseryAlertType, addNewAlertToNursery, addNewAlertToAlerts, findPromotionAlert };
 export type { NurseryAlert };

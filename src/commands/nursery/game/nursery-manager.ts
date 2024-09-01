@@ -4,7 +4,13 @@ import * as db from '#db/database.js';
 import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
 import { getKit, type Kit } from '#commands/nursery/game/kit.js';
 import { Season, getCurrentSeason } from './seasons.js';
-import { addNewAlertToAlerts, addNewAlertToNursery, NurseryAlert, NurseryAlertType } from './nursery-alerts.js';
+import {
+	addNewAlertToAlerts,
+	addNewAlertToNursery,
+	findPromotionAlert,
+	NurseryAlert,
+	NurseryAlertType,
+} from './nursery-alerts.js';
 
 import * as config from '#config.js';
 
@@ -103,6 +109,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 
 	const food = getFood(nursery, nursery.isPaused);
 	const alerts = (JSON.parse(nursery.alerts) as NurseryAlert[]).toSorted((a, b) => b.timestamp - a.timestamp);
+	let updateAlerts = false;
 
 	const kits: Kit[] = [];
 	const deadKits: Kit[] = [];
@@ -116,6 +123,18 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 			addNewAlertToAlerts(alerts, NurseryAlertType.KitDied, `${kit.fullName} has died.`);
 			deadKits.push(kit);
 		} else {
+			if (kit.age >= config.NURSERY_PROMOTE_AGE && !findPromotionAlert(alerts, kit.uuid)) {
+				addNewAlertToAlerts(
+					alerts,
+					NurseryAlertType.Promote,
+					`${kit.fullName} wants to become an apprentice.`,
+					undefined,
+					kit.uuid,
+				);
+
+				updateAlerts = true;
+			}
+
 			kits.push(kit);
 			kitIndex++;
 		}
@@ -123,6 +142,10 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 
 	if (deadKits.length >= 1) {
 		await nurseryDB.kitsDied(env.PRISMA, nursery.uuid, profile?.group ?? '', deadKits, JSON.stringify(alerts));
+	}
+
+	if (updateAlerts) {
+		await nurseryDB.updateNurseryAlerts(env.PRISMA, nursery.uuid, JSON.stringify(alerts));
 	}
 
 	return {
