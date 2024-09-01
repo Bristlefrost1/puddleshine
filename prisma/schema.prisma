@@ -157,6 +157,9 @@ model HistoryCat {
 	namePrefix  String  @map("name_prefix")
 	nameSuffix  String  @map("name_suffix")
 
+	age         Float
+	ageUpdated  DateTime  @map("age_updated")
+
 	pelt  String?
 	eyes  String?
 

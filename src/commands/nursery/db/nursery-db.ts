@@ -198,6 +198,9 @@ async function promoteKit(
 				namePrefix: kit.prefix,
 				nameSuffix: 'paw',
 
+				age: kit.age,
+				ageUpdated: timeOfStorage,
+
 				pelt: JSON.stringify(kit.pelt),
 				eyes: JSON.stringify(kit.eyes),
 
@@ -305,6 +308,9 @@ async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, 
 
 					namePrefix: kit.prefix,
 					nameSuffix: 'kit',
+
+					age: kit.age,
+					ageUpdated: timeOfStorage,
 
 					pelt: JSON.stringify(kit.pelt),
 					eyes: JSON.stringify(kit.eyes),
