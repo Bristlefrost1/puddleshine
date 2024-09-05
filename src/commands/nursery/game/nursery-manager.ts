@@ -31,6 +31,7 @@ type Nursery = {
 	alerts: NurseryAlert[];
 
 	kits: Kit[];
+	kitsNeedingAttention: Kit[];
 };
 
 function getNurseryMetersMax() {
@@ -74,7 +75,7 @@ function getFood(nursery: DBNursery, isPaused: boolean) {
 	}
 }
 
-async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
+async function getNursery(user: DAPI.APIUser, env: Env, generateEvents?: boolean): Promise<Nursery> {
 	const discordId = user.id;
 
 	const profile = await db.findProfileWithDiscordId(env.PRISMA, discordId);
@@ -112,6 +113,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 	let updateAlerts = false;
 
 	const kits: Kit[] = [];
+	const kitsNeedingAttention: Kit[] = [];
 	const deadKits: Kit[] = [];
 
 	let kitIndex = 0;
@@ -123,19 +125,29 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 			addNewAlertToAlerts(alerts, NurseryAlertType.KitDied, `${kit.fullName} has died.`);
 			deadKits.push(kit);
 		} else {
-			if (kit.age >= config.NURSERY_PROMOTE_AGE && !findPromotionAlert(alerts, kit.uuid)) {
-				addNewAlertToAlerts(
-					alerts,
-					NurseryAlertType.Promote,
-					`${kit.fullName} wants to become an apprentice.`,
-					undefined,
-					kit.uuid,
-				);
+			let needsAttention = false;
 
-				updateAlerts = true;
+			if (kit.age >= config.NURSERY_PROMOTE_AGE) {
+				needsAttention = true;
+
+				if (!findPromotionAlert(alerts, kit.uuid)) {
+					addNewAlertToAlerts(
+						alerts,
+						NurseryAlertType.Promote,
+						`${kit.fullName} wants to become an apprentice.`,
+						undefined,
+						kit.uuid,
+					);
+
+					updateAlerts = true;
+				}
 			}
 
+			if (kit.sickSince !== undefined) needsAttention = true;
+
 			kits.push(kit);
+			if (needsAttention) kitsNeedingAttention.push(kit);
+
 			kitIndex++;
 		}
 	}
@@ -168,6 +180,7 @@ async function getNursery(user: DAPI.APIUser, env: Env): Promise<Nursery> {
 		alerts: alerts,
 
 		kits: kits,
+		kitsNeedingAttention,
 	};
 }
 
