@@ -54,6 +54,8 @@ function buildNurseryStatusView(nursery: Nursery, noAlerts?: boolean) {
 			const kitNumber = i + 1;
 			const kit = nursery.kits[i];
 
+			if (kit.wanderingSince !== undefined) continue;
+
 			const age = kit.age.toFixed(2);
 			const health = (kit.health * 100).toFixed(1);
 			const hunger = (kit.hunger * 100).toFixed(1);
@@ -67,6 +69,23 @@ function buildNurseryStatusView(nursery: Nursery, noAlerts?: boolean) {
 		}
 	} else {
 		lines.push("You don't have any kits. Try /nursery breed to get some!");
+	}
+
+	if (nursery.kitsNeedingAttention.length > 0) {
+		lines.push('');
+
+		if (nursery.kitsNeedingAttention.length === 1) {
+			lines.push(`${nursery.kitsNeedingAttention[0].fullName} needs your attention.`);
+		} else if (nursery.kitsNeedingAttention.length === 2) {
+			lines.push(
+				`${nursery.kitsNeedingAttention[0].fullName} and ${nursery.kitsNeedingAttention[1].fullName} need your attention.`,
+			);
+		} else {
+			const namesNeedingAttention = nursery.kitsNeedingAttention.map((kit) => kit.fullName);
+			const last = namesNeedingAttention.pop();
+
+			lines.push(`${namesNeedingAttention.join(', ')}, and ${last} need your attention.`);
+		}
 	}
 
 	lines.push('```');

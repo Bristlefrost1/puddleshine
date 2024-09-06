@@ -57,6 +57,10 @@ const PromoteSubcommand: Subcommand = {
 
 		const kit = foundKits[0];
 
+		if (kit.wanderingSince !== undefined)
+			// prettier-ignore
+			return nurseryViews.nurseryMessageResponse(nursery, [`You can't see ${kit.fullName} anywhere in the nursery for the apprentice ceremony.`], false);
+
 		if (kit.age < config.NURSERY_PROMOTE_AGE)
 			// prettier-ignore
 			return nurseryViews.nurseryMessageResponse(nursery, [`${kit.fullName} hasn't reached the age of ${config.NURSERY_PROMOTE_AGE} moons yet.`], false);
@@ -90,17 +94,13 @@ const PromoteSubcommand: Subcommand = {
 		if (apprenticeRank === ClanRank.MedicineCatApprentice) {
 			promotionMessage = [
 				`It has become time for ${kit.fullName}'s apprentice ceremony. However, ${pronouns.subject} says ${pronouns.subject} would like to become a medicine cat instead of a warrior. You agree, having noticed your kits connection to StarClan from a young age.`,
-				'\n',
 				`You follow ${kit.fullName} out of the den to the medicine den where the Clan's medicine cat takes ${pronouns.object} as their apprentice. The leader calls a Clan meeting and ${kit.fullName} is assigned to the Clan's medicine cat. Soon, it's time for ${apprenticeName}'s first half-moon meeting where ${pronouns.subject} is presented to StarClan as a medicine cat apprentice.`,
-				'\n',
 				`"${apprenticeName}! ${apprenticeName}! ${apprenticeName}!"`,
 			];
 		} else {
 			promotionMessage = [
 				`It has become time for ${kit.fullName}'s apprentice ceremony. You tell ${pronouns.object} about it and ${pronouns.subject} dashes out of the den with glowing eyes and in excitement.`,
-				'\n',
 				`You follow ${kit.fullName} out of the den to the Clan leader's yowls to gather for a Clan meeting. You watch as the leader calls ${pronouns.object} over and assigns ${pronouns.object} to a worthy mentor.`,
-				'\n',
 				`"${apprenticeName}! ${apprenticeName}! ${apprenticeName}!"`,
 			];
 		}

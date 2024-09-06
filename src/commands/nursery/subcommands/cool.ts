@@ -51,6 +51,8 @@ const CoolSubcommand: Subcommand = {
 		}
 
 		const newKitTemperatures = nursery.kits.map((kit, index) => {
+			if (kit.wanderingSince !== undefined) return;
+
 			const newTemperature = kit.temperature - config.NURSERY_COOL_TEMPERATURE;
 
 			nursery.kits[index].temperature = newTemperature;
@@ -59,7 +61,11 @@ const CoolSubcommand: Subcommand = {
 			return { uuid: kit.uuid, newTemperature };
 		});
 
-		await nurseryDB.coolNursery(options.env.PRISMA, nursery.uuid, newKitTemperatures);
+		await nurseryDB.coolNursery(
+			options.env.PRISMA,
+			nursery.uuid,
+			newKitTemperatures.filter((kit) => kit !== undefined) as any,
+		);
 
 		return nurseryViews.nurseryMessageResponse(nursery, ["You've cooled the nursery."], true);
 	},

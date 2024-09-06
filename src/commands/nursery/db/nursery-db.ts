@@ -440,6 +440,53 @@ async function unpauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Ki
 	]);
 }
 
+async function setKitsSickSince(prisma: D1PrismaClient, kits: Kit[], sickSince: Date | null) {
+	const updatedAt = new Date();
+
+	return await prisma.$transaction([
+		...kits.map((kit) => {
+			return prisma.nurseryKit.update({
+				where: {
+					uuid: kit.uuid,
+				},
+				data: {
+					health: kit.health,
+					healthUpdated: updatedAt,
+
+					bond: kit.bond,
+					bondUpdated: updatedAt,
+
+					sickSince,
+
+					events: JSON.stringify(kit.events),
+				},
+			});
+		}),
+	]);
+}
+
+async function setKitsWanderingSince(prisma: D1PrismaClient, kits: Kit[], wanderingSince: Date | null) {
+	const updatedAt = new Date();
+
+	return await prisma.$transaction([
+		...kits.map((kit) => {
+			return prisma.nurseryKit.update({
+				where: {
+					uuid: kit.uuid,
+				},
+				data: {
+					bond: kit.bond,
+					bondUpdated: updatedAt,
+
+					wanderingSince,
+
+					events: JSON.stringify(kit.events),
+				},
+			});
+		}),
+	]);
+}
+
 export {
 	findNursery,
 	initializeNurseryForUser,
@@ -455,4 +502,6 @@ export {
 	kitsDied,
 	pauseNursery,
 	unpauseNursery,
+	setKitsSickSince,
+	setKitsWanderingSince,
 };

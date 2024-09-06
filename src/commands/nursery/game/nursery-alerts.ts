@@ -5,6 +5,8 @@ import * as config from '#config.js';
 enum NurseryAlertType {
 	Promote = 'Promote',
 	KitDied = 'KitDied',
+	Sick = 'Sick',
+	Wandering = 'Wandering',
 	Other = 'Other',
 }
 

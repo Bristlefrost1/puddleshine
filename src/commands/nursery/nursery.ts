@@ -15,6 +15,8 @@ import GroomSubcommand from './subcommands/groom.js';
 import AlertsSubcommand from './subcommands/alerts.js';
 import DismissSubcommand from './subcommands/dismiss.js';
 import PauseSubcommand from './subcommands/pause.js';
+import FindSubcommand from './subcommands/find.js';
+import MedicineSubcommand from './subcommands/medicine.js';
 
 import type { Command } from '../command.js';
 import type { Subcommand } from '#commands/subcommand.js';
@@ -33,6 +35,8 @@ const subcommands: { [name: string]: Subcommand } = {
 	[AlertsSubcommand.name]: AlertsSubcommand,
 	[DismissSubcommand.name]: DismissSubcommand,
 	[PauseSubcommand.name]: PauseSubcommand,
+	[FindSubcommand.name]: FindSubcommand,
+	[MedicineSubcommand.name]: MedicineSubcommand,
 };
 
 const NurseryCommand: Command = {

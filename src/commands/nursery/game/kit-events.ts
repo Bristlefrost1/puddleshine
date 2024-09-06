@@ -7,6 +7,8 @@ enum KitEventType {
 	Comfort = 'Comfort',
 	Groom = 'Groom',
 	Play = 'Play',
+	Medicine = 'Medicine',
+	Found = 'Found',
 }
 
 type KitEvent = {

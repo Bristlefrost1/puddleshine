@@ -59,6 +59,11 @@ const FeedSubcommand: Subcommand = {
 			return nurseryViews.nurseryMessageResponse(nursery, ["Couldn't find kits with the provided input."], true);
 
 		kitsToFeed = kitsToFeed.filter((kit) => {
+			if (kit.wanderingSince !== undefined) {
+				feedMessages.push(`You can't see ${kit.fullName} anywhere.`);
+				return false;
+			}
+
 			const lastFeedEvent = findLastEventofType(kit, KitEventType.Feed);
 			if (!lastFeedEvent) return true;
 

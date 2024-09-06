@@ -80,13 +80,16 @@ function calculateHealth(kit: NurseryKit, hunger: number, temperature: number) {
 	const healthLastUpdatedAt = Math.floor(kit.healthUpdated.getTime() / 1000);
 	const secondsSinceLastUpdate = currentTimestamp - healthLastUpdatedAt;
 
-	// prettier-ignore
-	if (hunger > 0 && temperature >= config.NURSERY_HYPOTHERMIA_TEMPERATURE && temperature <= config.NURSERY_HEATSTROKE_TEMPERATURE) {
-		const newHealth = health + secondsSinceLastUpdate * config.NURSERY_KIT_HEALTH_REGEN;
+	const regenStartHealth = health;
+	let doRegen = true;
 
-		if (newHealth > 1) return 1;
+	if (kit.sickSince !== null) {
+		const secondsSick = currentTimestamp - Math.floor(kit.sickSince.getTime() / 1000);
 
-		return health + secondsSinceLastUpdate * config.NURSERY_KIT_HEALTH_REGEN;
+		health -= secondsSick * config.NURSERY_KIT_HEALTH_DECREASE;
+		if (health < 0) health = 0;
+
+		doRegen = false;
 	}
 
 	if (hunger <= 0) {
@@ -94,6 +97,8 @@ function calculateHealth(kit: NurseryKit, hunger: number, temperature: number) {
 
 		health -= secondsHungry * config.NURSERY_KIT_HEALTH_DECREASE;
 		if (health < 0) health = 0;
+
+		doRegen = false;
 	}
 
 	if (temperature > config.NURSERY_HEATSTROKE_TEMPERATURE) {
@@ -101,6 +106,8 @@ function calculateHealth(kit: NurseryKit, hunger: number, temperature: number) {
 
 		health -= degreesPastHeatstroke;
 		if (health < 0) health = 0;
+
+		doRegen = false;
 	}
 
 	if (temperature < config.NURSERY_HYPOTHERMIA_TEMPERATURE) {
@@ -108,6 +115,15 @@ function calculateHealth(kit: NurseryKit, hunger: number, temperature: number) {
 
 		health -= degreesPastHypothermia;
 		if (health < 0) health = 0;
+
+		doRegen = false;
+	}
+
+	if (doRegen) {
+		const newHealth = regenStartHealth + secondsSinceLastUpdate * config.NURSERY_KIT_HEALTH_REGEN;
+
+		if (newHealth > 1) return 1;
+		return health + secondsSinceLastUpdate * config.NURSERY_KIT_HEALTH_REGEN;
 	}
 
 	return health;

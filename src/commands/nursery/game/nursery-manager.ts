@@ -11,6 +11,8 @@ import {
 	NurseryAlert,
 	NurseryAlertType,
 } from './nursery-alerts.js';
+import { pickRandomWeighted, WeightedValue } from '#utils/random-utils.js';
+import { getPronouns } from '#cat/gender.js';
 
 import * as config from '#config.js';
 
@@ -123,16 +125,59 @@ async function getNursery(user: DAPI.APIUser, env: Env, generateEvents?: boolean
 	const kitsNeedingAttention: Kit[] = [];
 	const deadKits: Kit[] = [];
 
+	const sickKits: Kit[] = [];
+	const wanderingKits: Kit[] = [];
+
 	let kitIndex = 0;
 
 	for (const nurseryKit of nurseryKits) {
 		const kit = getKit(nurseryKit, kitIndex, nursery.isPaused);
+		const pronouns = getPronouns(kit.gender);
 
 		if (kit.isDead && env.ENV !== 'dev') {
 			addNewAlertToAlerts(alerts, NurseryAlertType.KitDied, `${kit.fullName} has died.`);
 			deadKits.push(kit);
 		} else {
 			let needsAttention = false;
+
+			if (generateEvents && kit.sickSince === undefined && kit.wanderingSince === undefined) {
+				const eventOdds: WeightedValue<'sick' | 'wander' | 'none'>[] = [
+					{ value: 'wander', probability: config.NURSERY_WANDER_CHANCE },
+					{ value: 'sick', probability: config.NURSERY_SICK_CHANCE },
+					{ value: 'none', probability: '*' },
+				];
+
+				const event = pickRandomWeighted(eventOdds);
+
+				if (event === 'sick') {
+					addNewAlertToAlerts(
+						alerts,
+						NurseryAlertType.Sick,
+						`${kit.fullName} isn't feeling well. Try taking ${pronouns.object} to the [medicine] cat.`,
+					);
+					updateAlerts = true;
+
+					kit.sickSince = new Date();
+					sickKits.push(kit);
+				} else if (event === 'wander') {
+					const shouldWander: WeightedValue<boolean>[] = [
+						{ value: false, probability: kit.bond / 1.5 },
+						{ value: true, probability: '*' },
+					];
+
+					if (pickRandomWeighted(shouldWander)) {
+						addNewAlertToAlerts(
+							alerts,
+							NurseryAlertType.Wandering,
+							`Wait...? Where did ${kit.fullName} go?`,
+						);
+						updateAlerts = true;
+
+						kit.wanderingSince = new Date();
+						wanderingKits.push(kit);
+					}
+				}
+			}
 
 			if (kit.age >= config.NURSERY_PROMOTE_AGE) {
 				needsAttention = true;
@@ -161,6 +206,14 @@ async function getNursery(user: DAPI.APIUser, env: Env, generateEvents?: boolean
 
 	if (deadKits.length >= 1) {
 		await nurseryDB.kitsDied(env.PRISMA, nursery.uuid, profile?.group ?? '', deadKits, JSON.stringify(alerts));
+	}
+
+	if (sickKits.length >= 1) {
+		await nurseryDB.setKitsSickSince(env.PRISMA, sickKits, new Date());
+	}
+
+	if (wanderingKits.length >= 1) {
+		await nurseryDB.setKitsWanderingSince(env.PRISMA, wanderingKits, new Date());
 	}
 
 	if (updateAlerts) {

@@ -59,6 +59,12 @@ const GroomSubcommand: Subcommand = {
 		const groomTime = new Date();
 
 		const newKitTemperatures = kits.map((kit, index) => {
+			if (kit.wanderingSince !== undefined) {
+				groomMessages.push(`You can't see ${kit.fullName} anywhere.`);
+
+				return;
+			}
+
 			const newTemperature = kit.temperature + config.NURSERY_GROOM_TEMPERATURE;
 
 			nursery.kits[index].temperature = newTemperature;
@@ -70,7 +76,10 @@ const GroomSubcommand: Subcommand = {
 			return { uuid: kit.uuid, newTemperature, events: JSON.stringify(kit.events) };
 		});
 
-		await nurseryDB.updateKitTemperatures(options.env.PRISMA, newKitTemperatures, groomTime);
+		const newTemperatures = newKitTemperatures.filter((kit) => kit !== undefined);
+		if (newTemperatures.length < 1) return nurseryViews.nurseryMessageResponse(nursery, groomMessages, true);
+
+		await nurseryDB.updateKitTemperatures(options.env.PRISMA, newTemperatures as any, groomTime);
 
 		return nurseryViews.nurseryMessageResponse(nursery, groomMessages, true);
 	},

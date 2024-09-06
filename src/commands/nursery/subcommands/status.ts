@@ -21,7 +21,7 @@ const StatusSubcommand: Subcommand = {
 	},
 
 	async execute(options) {
-		const nursery = await nurseryManager.getNursery(options.user, options.env);
+		const nursery = await nurseryManager.getNursery(options.user, options.env, true);
 
 		return messageResponse({
 			content: nurseryViews.buildNurseryStatusView(nursery),

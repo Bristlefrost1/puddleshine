@@ -59,6 +59,12 @@ const ComfortSubcommand: Subcommand = {
 		const comfortTime = new Date();
 
 		const newKitTemperatures = kits.map((kit, index) => {
+			if (kit.wanderingSince !== undefined) {
+				comfortMessages.push(`You can't see ${kit.fullName} anywhere.`);
+
+				return;
+			}
+
 			const newTemperature = kit.temperature + config.NURSERY_COMFORT_TEMPERATURE;
 
 			nursery.kits[index].temperature = newTemperature;
@@ -70,7 +76,10 @@ const ComfortSubcommand: Subcommand = {
 			return { uuid: kit.uuid, newTemperature, events: JSON.stringify(kit.events) };
 		});
 
-		await nurseryDB.updateKitTemperatures(options.env.PRISMA, newKitTemperatures, comfortTime);
+		const newTemperatures = newKitTemperatures.filter((kit) => kit !== undefined);
+		if (newTemperatures.length < 1) return nurseryViews.nurseryMessageResponse(nursery, comfortMessages, true);
+
+		await nurseryDB.updateKitTemperatures(options.env.PRISMA, newTemperatures as any, comfortTime);
 
 		return nurseryViews.nurseryMessageResponse(nursery, comfortMessages, true);
 	},

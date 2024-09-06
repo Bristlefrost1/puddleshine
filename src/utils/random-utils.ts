@@ -20,25 +20,33 @@ function gaussianRandom() {
 }
 
 function pickRandomWeighted<T>(values: WeightedValue<T>[]): T {
+	const sortedValues = values.toSorted((a, b) => {
+		if (a.probability === '*' && b.probability === '*') return 0;
+		if (a.probability === '*') return 1;
+		if (b.probability === '*') return -1;
+
+		return a.probability - b.probability;
+	});
+
 	let pickedValue: T | undefined;
 	let randomNumber = Math.random();
 	let threshold = 0;
 
-	for (let i = 0; i < values.length; i++) {
-		if (values[i].probability === '*') {
+	for (let i = 0; i < sortedValues.length; i++) {
+		if (sortedValues[i].probability === '*') {
 			continue;
 		}
 
-		threshold += values[i].probability as number;
+		threshold += sortedValues[i].probability as number;
 		if (threshold > randomNumber) {
-			pickedValue = values[i].value;
+			pickedValue = sortedValues[i].value;
 			break;
 		}
 	}
 
 	if (!pickedValue) {
 		//nothing found based on probability value, so pick element marked with wildcard
-		const wildcardValues = values.filter((value) => value.probability === '*');
+		const wildcardValues = sortedValues.filter((value) => value.probability === '*');
 		const randomElement = wildcardValues[Math.floor(Math.random() * wildcardValues.length)];
 		pickedValue = randomElement.value;
 	}

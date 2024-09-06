@@ -23,7 +23,7 @@ const CooldownsSubcommand: Subcommand = {
 	},
 
 	async execute(options) {
-		const nursery = await nurseryManager.getNursery(options.user, options.env);
+		const nursery = await nurseryManager.getNursery(options.user, options.env, true);
 		const nextSeason = getNextSeason();
 
 		const cooldowns: string[] = [];
