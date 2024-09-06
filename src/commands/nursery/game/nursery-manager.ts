@@ -34,17 +34,20 @@ type Nursery = {
 	kitsNeedingAttention: Kit[];
 };
 
-function getNurseryMetersMax() {
-	// TODO: Difficulty setting
-	return { food: 5 };
+function getNurseryMetersMax(numberOfKits: number) {
+	let maxFood = 5;
+
+	if (numberOfKits > 5) maxFood = 6;
+
+	return { food: maxFood };
 }
 
-function calculateFood(nursery: DBNursery) {
+function calculateFood(nursery: DBNursery, numberOfKits: number) {
 	const foodAtLastUpdate = nursery.food;
 	const lastUpdated = nursery.foodUpdated;
 	const currentDate = new Date();
 
-	const max = getNurseryMetersMax();
+	const max = getNurseryMetersMax(numberOfKits);
 
 	if (foodAtLastUpdate >= max.food) return max.food;
 
@@ -53,15 +56,19 @@ function calculateFood(nursery: DBNursery) {
 
 	const updatedSecondsAgo = currentTimestamp - lastUpdatedTimestamp;
 
-	const regenerated = foodAtLastUpdate + updatedSecondsAgo * (1 / config.NURSERY_REGENERATE_FOOD_POINT);
+	let secondsToRegnerateAFoodPoint = config.NURSERY_REGENERATE_FOOD_POINT;
+	if (numberOfKits > 4) secondsToRegnerateAFoodPoint = config.NURSERY_REGENERATE_FOOD_POINT - 300 * numberOfKits;
+	if (secondsToRegnerateAFoodPoint < 90) secondsToRegnerateAFoodPoint = 90;
+
+	const regenerated = foodAtLastUpdate + updatedSecondsAgo * (1 / secondsToRegnerateAFoodPoint);
 
 	if (regenerated >= max.food) return max.food;
 
 	return regenerated;
 }
 
-function getFood(nursery: DBNursery, isPaused: boolean) {
-	const food = isPaused ? nursery.food : calculateFood(nursery);
+function getFood(nursery: DBNursery, isPaused: boolean, numberOfKits: number) {
+	const food = isPaused ? nursery.food : calculateFood(nursery, numberOfKits);
 	const foodString = food.toString().split('.');
 
 	const foodPoints = Number.parseInt(foodString[0]);
@@ -108,7 +115,7 @@ async function getNursery(user: DAPI.APIUser, env: Env, generateEvents?: boolean
 	let displayName = user.username;
 	if (profile && profile.name) displayName = profile.name;
 
-	const food = getFood(nursery, nursery.isPaused);
+	const food = getFood(nursery, nursery.isPaused, nurseryKits.length);
 	const alerts = (JSON.parse(nursery.alerts) as NurseryAlert[]).toSorted((a, b) => b.timestamp - a.timestamp);
 	let updateAlerts = false;
 
@@ -172,7 +179,7 @@ async function getNursery(user: DAPI.APIUser, env: Env, generateEvents?: boolean
 
 		food: {
 			food: food.food,
-			max: getNurseryMetersMax().food,
+			max: getNurseryMetersMax(kits.length).food,
 			foodPoints: food.foodPoints,
 			nextFoodPointPercentage: food.nextFoodPointPercentage,
 		},
