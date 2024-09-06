@@ -45,7 +45,7 @@ const BreedSubcommand: Subcommand = {
 			const lastBreedTimestamp = Math.floor(nursery.lastBredAt.getTime() / 1000);
 			const canBreedAt = lastBreedTimestamp + config.NURSERY_BREED_COOLDOWN;
 
-			if (canBreedAt > breedTimestamp) {
+			if (canBreedAt > breedTimestamp && options.env.ENV !== 'dev') {
 				return nurseryViews.nurseryMessageResponse(nursery, [
 					`You can next breed on <t:${canBreedAt}:F> (<t:${canBreedAt}:R>).`,
 				]);

@@ -121,7 +121,7 @@ async function getNursery(user: DAPI.APIUser, env: Env, generateEvents?: boolean
 	for (const nurseryKit of nurseryKits) {
 		const kit = getKit(nurseryKit, kitIndex, nursery.isPaused);
 
-		if (kit.isDead) {
+		if (kit.isDead && env.ENV !== 'dev') {
 			addNewAlertToAlerts(alerts, NurseryAlertType.KitDied, `${kit.fullName} has died.`);
 			deadKits.push(kit);
 		} else {
