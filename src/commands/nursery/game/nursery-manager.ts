@@ -59,8 +59,8 @@ function calculateFood(nursery: DBNursery, numberOfKits: number) {
 	const updatedSecondsAgo = currentTimestamp - lastUpdatedTimestamp;
 
 	let secondsToRegnerateAFoodPoint = config.NURSERY_REGENERATE_FOOD_POINT;
-	if (numberOfKits > 4) secondsToRegnerateAFoodPoint = config.NURSERY_REGENERATE_FOOD_POINT - 300 * numberOfKits;
-	if (secondsToRegnerateAFoodPoint < 90) secondsToRegnerateAFoodPoint = 90;
+	if (numberOfKits > 4) secondsToRegnerateAFoodPoint = config.NURSERY_REGENERATE_FOOD_POINT - 90 * numberOfKits;
+	if (secondsToRegnerateAFoodPoint < 1200) secondsToRegnerateAFoodPoint = 1200;
 
 	const regenerated = foodAtLastUpdate + updatedSecondsAgo * (1 / secondsToRegnerateAFoodPoint);
 
