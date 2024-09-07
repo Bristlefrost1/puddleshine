@@ -11462,6 +11462,21 @@
 				"url": "$ART_URL_BASE$/1142-swiftpaw/swiftpaw-falloutragez.png",
 				"credit": "falloutragez"
 			}
+		],
+
+		"variants": [
+			{
+				"variant": "Taylor Swift",
+				"name": "Swiftie",
+				"description": "*\"You can't spell cats without T.S.\" - Taylor Swift*",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/1142-swiftpaw/variants/taylor-swift.png",
+						"credit": "falloutragez"
+					}
+				]
+			}
 		]
 	},
 	{
