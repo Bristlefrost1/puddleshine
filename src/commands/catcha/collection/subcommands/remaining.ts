@@ -68,29 +68,10 @@ async function listRemaining(
 ): Promise<string[]> {
 	const onlyInverted = options.onlyInverted ?? false;
 
-	const userCollection = await collection.getCollection(options.userId, env, {
-		rarity: options.onlyRarity,
-		onlyInverted,
-		onlyVariant: false, // Exclude variants
+	const remainingCardIds = await collection.getRemainingCardIds(options.userId, env, {
+		onlyRarity: options.onlyRarity,
+		onlyInverted: options.onlyInverted,
 	});
-
-	const hasCardId = new Map<number, boolean>();
-
-	for (const collectionCard of userCollection) hasCardId.set(collectionCard.card.cardId, true);
-
-	const allCardIds =
-		options.onlyRarity !== undefined ? archive.getCardIdsWithRarity(options.onlyRarity) : archive.getAllCardIds();
-	const remainingCardIds = allCardIds
-		.filter((cardId) => !hasCardId.get(cardId))
-		.toSorted((cardIdA, cardIdB) => {
-			const aFullName = archive.getCardFullName(cardIdA);
-			const bFullName = archive.getCardFullName(cardIdB);
-
-			return aFullName.localeCompare(bFullName, 'en');
-		});
-
-	if (remainingCardIds.length === 0) return [];
-
 	const remainingList: string[] = [];
 
 	remainingCardIds.forEach((cardId) => {

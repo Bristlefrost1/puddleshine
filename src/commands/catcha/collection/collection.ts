@@ -129,5 +129,40 @@ async function getCardCounts(
 	return cardCounts;
 }
 
-export { getCardKey, parseCardKey, getCollection, getCardCounts };
+async function getRemainingCardIds(
+	discordId: string,
+	env: Env,
+	searchOptions?: {
+		onlyRarity?: number;
+		onlyInverted?: boolean;
+	},
+) {
+	const userCollection = await getCollection(discordId, env, {
+		rarity: searchOptions?.onlyRarity,
+		onlyInverted: searchOptions?.onlyInverted,
+		onlyVariant: false, // Exclude variants
+	});
+
+	const hasCardId = new Map<number, boolean>();
+
+	for (const collectionCard of userCollection) hasCardId.set(collectionCard.card.cardId, true);
+
+	const allCardIds =
+		searchOptions?.onlyRarity !== undefined ?
+			archive.getCardIdsWithRarity(searchOptions.onlyRarity)
+		:	archive.getAllCardIds();
+
+	const remainingCardIds = allCardIds
+		.filter((cardId) => !hasCardId.get(cardId))
+		.toSorted((cardIdA, cardIdB) => {
+			const aFullName = archive.getCardFullName(cardIdA);
+			const bFullName = archive.getCardFullName(cardIdB);
+
+			return aFullName.localeCompare(bFullName, 'en');
+		});
+
+	return remainingCardIds;
+}
+
+export { getCardKey, parseCardKey, getCollection, getCardCounts, getRemainingCardIds };
 export type { Card, CollectionCard, Collection };
