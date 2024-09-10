@@ -15,10 +15,11 @@ import * as burn from './collection/subcommands/burn.js';
 import * as birthday from './birthday/birthday.js';
 import { onArtScroll } from './art/art-scroll.js';
 import ArtistSubcommand from './art/artist.js';
+import CompareSubcommand from './collection/subcommands/compare.js';
 import { getArtistAutocompleChoices } from './art/artist-autocomplete.js';
 import * as enums from './catcha-enums.js';
 import { getAutocompleteChoices } from './archive/autocomplete-card.js';
-import { CollectionSort } from './utils/sort.js';
+import { collectionSortChoices } from './utils/sort.js';
 
 import type { Command } from '../command.js';
 
@@ -114,40 +115,7 @@ const CatchaCommand: Command = {
 						description: 'Choose how to sort the cards',
 						required: false,
 
-						choices: [
-							{
-								name: 'Default - Claim Time (Ascending)',
-								value: CollectionSort.ClaimTimeAsc,
-							},
-							{
-								name: 'Claim Time (Descending)',
-								value: CollectionSort.ClaimTimeDesc,
-							},
-							{
-								name: 'Alphabetical (Ascending)',
-								value: CollectionSort.AlphabeticalAsc,
-							},
-							{
-								name: 'Alphabetical (Descending)',
-								value: CollectionSort.AlphabeticalDesc,
-							},
-							{
-								name: 'Card ID (Ascending)',
-								value: CollectionSort.CardIdAsc,
-							},
-							{
-								name: 'Card ID (Descending)',
-								value: CollectionSort.CardIdDesc,
-							},
-							{
-								name: 'Rarity (Ascending)',
-								value: CollectionSort.RarityAsc,
-							},
-							{
-								name: 'Rarity (Descending)',
-								value: CollectionSort.RarityDesc,
-							},
-						],
+						choices: collectionSortChoices,
 					},
 				],
 			},
@@ -327,6 +295,7 @@ const CatchaCommand: Command = {
 				],
 			},
 			ArtistSubcommand.subcommand,
+			CompareSubcommand.subcommand,
 		],
 	},
 
@@ -379,6 +348,8 @@ const CatchaCommand: Command = {
 				return await birthday.handleBirthdaySubcommand(interaction, options!, user, env, ctx);
 			case ArtistSubcommand.name:
 				return await ArtistSubcommand.execute({ interaction, user, commandOptions: options!, env, ctx });
+			case CompareSubcommand.name:
+				return await CompareSubcommand.execute({ interaction, user, commandOptions: options!, env, ctx });
 			default:
 			// Do nothing
 		}
@@ -412,6 +383,9 @@ const CatchaCommand: Command = {
 				return await birthday.handleBirthdayMessageComponent(interaction, parsedCustomId, user, env, ctx);
 			case ArtistSubcommand.name:
 				return await ArtistSubcommand.handleMessageComponent?.({ interaction, user, parsedCustomId, env, ctx });
+			case CompareSubcommand.name:
+				// prettier-ignore
+				return await CompareSubcommand.handleMessageComponent?.({ interaction, user, parsedCustomId, env, ctx });
 			default:
 			// Do nothing
 		}
