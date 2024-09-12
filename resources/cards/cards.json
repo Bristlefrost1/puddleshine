@@ -12765,7 +12765,14 @@
 		"name": "Wrenflight",
 		"group": "SkyClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/1274-wrenflight/wrenflight-violectrolysis.png",
+				"credit": "violectrolysis"
+			}
+		]
 	},
 	{
 		"id": 1275,
