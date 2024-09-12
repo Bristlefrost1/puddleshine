@@ -9,7 +9,7 @@ import { verifyKey } from 'discord-interactions';
 import { PrismaClient } from '@prisma/client';
 import { PrismaD1 } from '@prisma/adapter-d1';
 
-import { JsonResponse, InteractionResponse } from '#utils/responses.js';
+import { JsonResponse, InteractionResponse, FormDataResponse } from '#utils/responses.js';
 import { onInteractionReceived } from '#interactions.js';
 
 import { randomizeNewEvent } from '#commands/catcha/event/event.js';
@@ -65,6 +65,55 @@ async function handlePOST(request: Request, env: Env, ctx: ExecutionContext): Pr
 
 	// Call the interaction handler
 	const response = await onInteractionReceived(interaction, env, ctx);
+
+	// If the message is too long to post to Discord, post it as an attachment instead
+	if (response.type === DAPI.InteractionResponseType.ChannelMessageWithSource) {
+		if (response.data.content && response.data.content.length > 2000) {
+			ctx.waitUntil(
+				(async () => {
+					const webhookUrl = `https://discord.com/api/v10/webhooks/${env.DISCORD_APPLICATION_ID}/${interaction.token}/messages/@original`;
+					const messageContent = response.data.content ?? '';
+					const messageTxtFile = new File([messageContent], 'message.txt', { type: 'text/plain' });
+
+					response.data.content = 'Message too long for Discord.';
+
+					if (!response.data.attachments) response.data.attachments = [];
+					response.data.attachments.push({
+						id: 0,
+						description: 'Message that was too long for Discord',
+						filename: 'message.txt',
+					});
+
+					const formDataResponse = new FormDataResponse(response.data, [messageTxtFile]);
+					const responseBody = await formDataResponse.text();
+					const webhookResponse = await fetch(webhookUrl, {
+						headers: {
+							'Content-Type': formDataResponse.headers.get('Content-Type') ?? 'multipart/form-data',
+							Authorization: `Bot ${env.DISCORD_TOKEN}`,
+						},
+						method: 'PATCH',
+						body: responseBody,
+					});
+
+					if (!webhookResponse.ok) {
+						let json = '';
+
+						try {
+							json = JSON.stringify(await webhookResponse.json());
+						} catch {
+							json = 'No JSON in the response';
+						}
+
+						console.error(`HTTP ERROR ${webhookResponse.status}: ${json}`);
+					}
+				})(),
+			);
+
+			return new InteractionResponse({
+				type: DAPI.InteractionResponseType.DeferredChannelMessageWithSource,
+			});
+		}
+	}
 
 	// Return whatever it returned as an HTTP response
 	return new InteractionResponse(response);
