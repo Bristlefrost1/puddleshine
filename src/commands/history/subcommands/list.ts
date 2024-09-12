@@ -2,16 +2,8 @@ import * as DAPI from 'discord-api-types/v10';
 
 import * as listMessage from '#discord/list-message.js';
 import { parseCommandOptions } from '#discord/parse-options.js';
-import {
-	messageResponse,
-	simpleEphemeralResponse,
-	embedMessageResponse,
-	errorEmbed,
-	simpleMessageResponse,
-} from '#discord/responses.js';
+import { messageResponse, embedMessageResponse, errorEmbed } from '#discord/responses.js';
 
-import * as db from '#db/database.js';
-import * as historyDB from '#commands/history/db/history-db.js';
 import { getHistoryCats } from '#commands/history/history-cat/history-cat.js';
 
 import type { Subcommand } from '#commands/subcommand.js';
@@ -36,7 +28,7 @@ async function listHistoryCats(discordUserId: string, env: Env): Promise<string[
 			);
 		} else {
 			returnArray.push(
-				`p${historyCat.position}] ${historyCat.fullName}, a ${gender}, is ${Math.floor(historyCat.ageMoons)} moons`,
+				`[${historyCat.position}] ${historyCat.fullName}, a ${gender}, is ${Math.floor(historyCat.ageMoons)} moons`,
 			);
 		}
 	}
