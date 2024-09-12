@@ -7,6 +7,8 @@ import { generateRandomSuffix } from '#utils/clan-names.js';
 import { Gender } from '#cat/gender.js';
 
 import type { HistoryCat as DBHistoryCat } from '@prisma/client';
+import type { Pelt } from '#cat/pelts.js';
+import type { Eyes } from '#cat/eyes.js';
 
 import * as config from '#config.js';
 
@@ -25,7 +27,13 @@ type HistoryCat = {
 	ageMoons: number;
 	isDead: boolean;
 
+	clan?: string;
 	rank: ClanRank;
+
+	pelt?: Pelt;
+	eyes?: Eyes;
+
+	dateStored: Date;
 };
 
 function calculateAge(historyCat: DBHistoryCat) {
@@ -68,7 +76,13 @@ async function getHistoryCats(discordId: string, env: Env) {
 			ageMoons: age,
 			isDead: historyCat.isDead,
 
+			clan: historyCat.clan !== '' ? historyCat.clan : undefined,
 			rank: historyCat.rank as ClanRank,
+
+			pelt: historyCat.pelt ? JSON.parse(historyCat.pelt) : undefined,
+			eyes: historyCat.eyes ? JSON.parse(historyCat.eyes) : undefined,
+
+			dateStored: historyCat.dateStored,
 		};
 
 		i += 1;

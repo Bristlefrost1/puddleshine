@@ -3,12 +3,14 @@ import * as DAPI from 'discord-api-types/v10';
 import { simpleEphemeralResponse } from '#discord/responses.js';
 
 import ListSubcommand from './subcommands/list.js';
+import ViewSubcommand from './subcommands/view.js';
 
 import type { Command } from '../command.js';
 import type { Subcommand } from '#commands/subcommand.js';
 
 const subcommands: { [name: string]: Subcommand } = {
 	[ListSubcommand.name]: ListSubcommand,
+	[ViewSubcommand.name]: ViewSubcommand,
 };
 
 const HistoryCommand: Command = {
