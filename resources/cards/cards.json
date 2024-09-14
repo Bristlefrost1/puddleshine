@@ -521,6 +521,21 @@
 				"url": "$ART_URL_BASE$/0032-barley/barley-foxy9461.png",
 				"credit": "foxy9461"
 			}
+		],
+
+		"variants": [
+			{
+				"variant": "Pride",
+				"name": "Pridebarley",
+				"description": "'It is, of course, true that Ravenpaw and Barley were a couple. I intended it right from the start but the books were written at a different time when it was not possible to be open and honest about this sort of thing.' -Victoria Holmes",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/0032-barley/variants/pride.png",
+						"credit": "falloutragez"
+					}
+				]
+			}
 		]
 	},
 	{
