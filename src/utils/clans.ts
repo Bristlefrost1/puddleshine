@@ -11,4 +11,17 @@ enum ClanRank {
 	Leader = 'Leader',
 }
 
-export { ClanRank };
+enum ClanRankDisplay {
+	Kit = 'Kit',
+	WarriorApprentice = 'Warrior Apprentice',
+	MedicineCatApprentice = 'Medicine Cat Apprentice',
+	Warrior = 'Warrior',
+	Queen = 'Queen',
+	Elder = 'Elder',
+	MedicineCat = 'Medicine Cat',
+	Mediator = 'Mediator',
+	Deputy = 'Deputy',
+	Leader = 'Leader',
+}
+
+export { ClanRank, ClanRankDisplay };
