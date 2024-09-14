@@ -6,6 +6,7 @@ import { messageResponse, embedMessageResponse, errorEmbed, simpleEphemeralRespo
 import { getHistoryCats } from '#commands/history/history-cat/history-cat.js';
 import { stringifyPelt } from '#cat/pelts.js';
 import { stringifyEyes } from '#cat/eyes.js';
+import { ClanRankDisplay } from '#utils/clans.js';
 
 import type { Subcommand } from '#commands/subcommand.js';
 
@@ -50,9 +51,10 @@ const ViewSubcommand: Subcommand = {
 
 		let details = `
 Name: ${cat.fullName}
+Gender: ${cat.gender}
 ${cat.isDead ? `Died at: ${cat.ageMoons.toFixed(2)} moons` : `Age: ${cat.ageMoons.toFixed(2)} moons`}
 ${cat.clan !== undefined ? `Clan: ${cat.clan}` : ''}
-Rank: ${cat.rank}
+Rank: ${ClanRankDisplay[cat.rank]}
 `;
 
 		if (cat.pelt && cat.eyes) {
