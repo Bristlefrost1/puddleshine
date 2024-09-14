@@ -2190,6 +2190,21 @@
 				"url": "https://static.wikia.nocookie.net/warriors/images/a/ab/Crowfeather.SE-11-FC.png/revision/latest?cb=20240401200644",
 				"credit": "Owen Richardson / Official art"
 			}
+		],
+
+		"variants": [
+			{
+				"variant": "Father",
+				"name": "Crowfather",
+				"description": "'He lived in private torment, unable to connect with his difficult WindClan son, Breezepelt.'",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/0182-crowfeather/variants/father.png",
+						"credit": "falloutragez"
+					}
+				]
+			}
 		]
 	},
 	{
