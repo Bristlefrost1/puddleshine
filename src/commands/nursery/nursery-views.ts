@@ -58,7 +58,7 @@ function buildNurseryStatusView(nursery: Nursery, noAlerts?: boolean) {
 
 			if (kit.wanderingSince !== undefined) continue;
 
-			const age = kit.age.toFixed(2);
+			const age = kit.age.toString().slice(0, 4);
 			const health = (kit.health * 100).toFixed(1);
 			const hunger = (kit.hunger * 100).toFixed(1);
 			const bond = (kit.bond * 100).toFixed(1);
