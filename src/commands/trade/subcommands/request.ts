@@ -29,7 +29,7 @@ function buildTradeRequestEmbed(cardsString: string): DAPI.APIEmbed {
 		title: 'Requested a new trade',
 		description: `\`\`\`less\n${cardsString}\`\`\`\nHave this user trade back to confirm the trade.`,
 		footer: {
-			text: `Notice: Trading doesn't have a cooldown but is limited to 50 cards per trade.`,
+			text: `Notice: Trading doesn't have a cooldown but is limited to ${config.CATCHA_TRADE_MAX_CARDS} cards per trade.`,
 		},
 	};
 }

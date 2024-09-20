@@ -47,7 +47,7 @@ const CATCHA_VARIANT_CHANCE = 0.05; // 5% chance every time you roll a card that
 const CATCHA_LIST_PAGE_SIZE = 10;
 
 // Catcha trading config
-const CATCHA_TRADE_MAX_CARDS = 50; // The maximum number of cards per side per trade
+const CATCHA_TRADE_MAX_CARDS = 30; // The maximum number of cards per side per trade
 const CATCHA_TRADE_COOLDOWN = 0; // 1h. The trade cooldown **in seconds**. 21600 would be 6 hours
 const CATCHA_TRADE_MAX_STAR_VALUE_DIFFERENCE = 6; // Block trades that are more unbalanced than this in terms of star value
 
