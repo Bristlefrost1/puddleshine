@@ -11,6 +11,7 @@ import NameCommand from './name/name.js';
 import ProfileCommand from './profile/profile.js';
 import NurseryCommand from './nursery/nursery.js';
 import HistoryCommand from './history/history.js';
+import TradeCommand from './trade/trade-command.js';
 
 /**
  * Command name -> command object mapping object.
@@ -25,6 +26,7 @@ const commands = {
 	[ProfileCommand.name]: ProfileCommand,
 	[NurseryCommand.name]: NurseryCommand,
 	[HistoryCommand.name]: HistoryCommand,
+	[TradeCommand.name]: TradeCommand,
 };
 
 export { commands };

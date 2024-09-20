@@ -51,6 +51,9 @@ type Kit = {
 	wanderingSince?: Date;
 
 	isDead?: boolean;
+
+	pendingTradeUuid1?: string;
+	pendingTradeUuid2?: string;
 };
 
 function calculateAgeMoons(kit: NurseryKit) {
@@ -240,6 +243,9 @@ function getKit(kit: NurseryKit, index: number, isPaused?: boolean): Kit {
 		wanderingSince: kit.wanderingSince ?? undefined,
 
 		isDead: health <= 0 ? true : false,
+
+		pendingTradeUuid1: kit.pendingTradeUuid1 ?? undefined,
+		pendingTradeUuid2: kit.pendingTradeUuid2 ?? undefined,
 	};
 }
 

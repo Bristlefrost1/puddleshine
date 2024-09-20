@@ -14,6 +14,8 @@ async function findTrade(prisma: D1PrismaClient, tradeUuid: string, completed?: 
 			senderCards: true,
 			recipient: true,
 			recipientCards: true,
+			senderKits: true,
+			recipientKits: true,
 		},
 	});
 
@@ -56,6 +58,8 @@ async function findTradesBetweenUsers(
 			senderCards: true,
 			recipient: true,
 			recipientCards: true,
+			senderKits: true,
+			recipientKits: true,
 		},
 	});
 
@@ -89,9 +93,12 @@ async function createTrade(
 					userUuid: options.senderUserUuid,
 				},
 			},
-			senderCards: {
-				connect: sentCardUuids,
-			},
+			senderCards:
+				sentCardUuids !== undefined && sentCardUuids.length > 0 ?
+					{
+						connect: sentCardUuids,
+					}
+				:	undefined,
 			senderSideSent: true,
 			senderAccepted: false,
 
@@ -169,6 +176,8 @@ async function updateTrade(
 			senderCards: true,
 			recipient: true,
 			recipientCards: true,
+			senderKits: true,
+			recipientKits: true,
 		},
 	});
 
@@ -211,91 +220,101 @@ async function completeTrade(
 		tradeDate: Date;
 	},
 ) {
-	await prisma.$transaction([
-		// Cards from the trade request sender to the trade request recipient
-		prisma.catchaCard.updateMany({
-			where: {
-				ownerUuid: options.senderUserUuid,
-				OR: options.senderCardUuidsToTrade.map((cardUuid) => {
-					return { uuid: cardUuid };
-				}),
-			},
-			data: {
-				ownerUuid: options.recipientUserUuid,
-				obtainedAt: options.tradeDate,
-				obtainedFrom: 'TRADE',
+	await prisma.$transaction(
+		[
+			// Cards from the trade request sender to the trade request recipient
+			options.senderCardUuidsToTrade.length > 0 ?
+				prisma.catchaCard.updateMany({
+					where: {
+						ownerUuid: options.senderUserUuid,
+						OR: options.senderCardUuidsToTrade.map((cardUuid) => {
+							return { uuid: cardUuid };
+						}),
+					},
+					data: {
+						ownerUuid: options.recipientUserUuid,
+						obtainedAt: options.tradeDate,
+						obtainedFrom: 'TRADE',
 
-				pendingTradeUuid1: null,
-				pendingTradeUuid2: null,
-			},
-		}),
-		// Add the trade to the cards' histories
-		prisma.catchaCardHistoryEvent.createMany({
-			data: options.senderCardUuidsToTrade.map((cardUuid) => {
-				return {
-					cardUuid: cardUuid,
-					timestamp: options.tradeDate,
+						pendingTradeUuid1: null,
+						pendingTradeUuid2: null,
+					},
+				})
+			:	undefined,
+			// Add the trade to the cards' histories
+			options.senderCardUuidsToTrade.length > 0 ?
+				prisma.catchaCardHistoryEvent.createMany({
+					data: options.senderCardUuidsToTrade.map((cardUuid) => {
+						return {
+							cardUuid: cardUuid,
+							timestamp: options.tradeDate,
 
-					event: 'TRADE',
-					eventDetails: options.tradeUuid,
+							event: 'TRADE',
+							eventDetails: options.tradeUuid,
 
-					userUuid: options.recipientUserUuid,
-				};
+							userUuid: options.recipientUserUuid,
+						};
+					}),
+				})
+			:	undefined,
+			// Cards from the trade request recipient to the trade request sender
+			options.recipientCardUuidsToTrade.length > 0 ?
+				prisma.catchaCard.updateMany({
+					where: {
+						ownerUuid: options.recipientUserUuid,
+						OR: options.recipientCardUuidsToTrade.map((cardUuid) => {
+							return { uuid: cardUuid };
+						}),
+					},
+					data: {
+						ownerUuid: options.senderUserUuid,
+						obtainedAt: options.tradeDate,
+						obtainedFrom: 'TRADE',
+
+						pendingTradeUuid1: null,
+						pendingTradeUuid2: null,
+					},
+				})
+			:	undefined,
+			// Add the trade to the cards' histories
+			options.recipientCardUuidsToTrade.length > 0 ?
+				prisma.catchaCardHistoryEvent.createMany({
+					data: options.recipientCardUuidsToTrade.map((cardUuid) => {
+						return {
+							cardUuid: cardUuid,
+							timestamp: options.tradeDate,
+
+							event: 'TRADE',
+							eventDetails: options.tradeUuid,
+
+							userUuid: options.senderUserUuid,
+						};
+					}),
+				})
+			:	undefined,
+			// Set the users' lastTradedAt
+			prisma.catcha.updateMany({
+				where: {
+					OR: [options.senderUserUuid, options.recipientUserUuid].map((uuid) => {
+						return { userUuid: uuid };
+					}),
+				},
+				data: { lastTradedAt: options.tradeDate, rollCache: null },
 			}),
-		}),
-		// Cards from the trade request recipient to the trade request sender
-		prisma.catchaCard.updateMany({
-			where: {
-				ownerUuid: options.recipientUserUuid,
-				OR: options.recipientCardUuidsToTrade.map((cardUuid) => {
-					return { uuid: cardUuid };
-				}),
-			},
-			data: {
-				ownerUuid: options.senderUserUuid,
-				obtainedAt: options.tradeDate,
-				obtainedFrom: 'TRADE',
-
-				pendingTradeUuid1: null,
-				pendingTradeUuid2: null,
-			},
-		}),
-		// Add the trade to the cards' histories
-		prisma.catchaCardHistoryEvent.createMany({
-			data: options.recipientCardUuidsToTrade.map((cardUuid) => {
-				return {
-					cardUuid: cardUuid,
-					timestamp: options.tradeDate,
-
-					event: 'TRADE',
-					eventDetails: options.tradeUuid,
-
-					userUuid: options.senderUserUuid,
-				};
+			// Mark the trade as complete
+			prisma.catchaTrade.update({
+				where: {
+					tradeUuid: options.tradeUuid,
+				},
+				data: {
+					tradeCompleted: true,
+					tradedCompletedAt: options.tradeDate,
+					senderAccepted: true,
+					recipientAccepted: true,
+				},
 			}),
-		}),
-		// Set the users' lastTradedAt
-		prisma.catcha.updateMany({
-			where: {
-				OR: [options.senderUserUuid, options.recipientUserUuid].map((uuid) => {
-					return { userUuid: uuid };
-				}),
-			},
-			data: { lastTradedAt: options.tradeDate, rollCache: null },
-		}),
-		// Mark the trade as complete
-		prisma.catchaTrade.update({
-			where: {
-				tradeUuid: options.tradeUuid,
-			},
-			data: {
-				tradeCompleted: true,
-				tradedCompletedAt: options.tradeDate,
-				senderAccepted: true,
-				recipientAccepted: true,
-			},
-		}),
-	]);
+		].filter((value) => value !== undefined) as any,
+	);
 }
 
 export {

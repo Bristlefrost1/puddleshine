@@ -74,6 +74,26 @@ async function processTrade(
 		);
 	}
 
+	if (trade.tradeCompleted) {
+		return messageResponse({
+			content: 'This trade has already been completed.',
+			embeds: [newEmbed],
+			components: [],
+			update: true,
+		});
+	}
+
+	if (trade.senderCards.length === 0 && trade.recipientCards.length === 0) {
+		await tradeDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
+
+		return messageResponse({
+			content: "There's nothing to trade.",
+			embeds: [newEmbed],
+			components: [],
+			update: true,
+		});
+	}
+
 	// Check that neither side has been trade blocked
 	const senderTradeBlocked = getCurrentlyTradeBlocked(trade.sender as any, currentTimeMs);
 	const recipientTradeBlocked = getCurrentlyTradeBlocked(trade.recipient as any, currentTimeMs);

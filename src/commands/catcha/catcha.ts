@@ -8,7 +8,6 @@ import * as locate from './collection/subcommands/locate.js';
 import * as remaining from './collection/subcommands/remaining.js';
 import * as view from './collection/subcommands/view.js';
 import * as archiveSubcommand from './archive/archive-subcommand.js';
-import * as tradeInteractions from './trade/trade-interactions.js';
 import * as statsSubcommand from './stats/stats-subcommand.js';
 import * as eventSubcommand from './event/event-subcommand.js';
 import * as burn from './collection/subcommands/burn.js';
@@ -20,6 +19,8 @@ import { getArtistAutocompleChoices } from './art/artist-autocomplete.js';
 import * as enums from './catcha-enums.js';
 import { getAutocompleteChoices } from './archive/autocomplete-card.js';
 import { collectionSortChoices } from './utils/sort.js';
+
+import TradeCommand from '#commands/trade/trade-command.js';
 
 import type { Command } from '../command.js';
 
@@ -164,54 +165,6 @@ const CatchaCommand: Command = {
 				options: [...commonSearchOptions],
 			},
 			{
-				type: DAPI.ApplicationCommandOptionType.SubcommandGroup,
-				name: enums.Subcommand.Trade,
-				description: 'Trade cards with another user.',
-
-				options: [
-					{
-						type: DAPI.ApplicationCommandOptionType.Subcommand,
-						name: enums.Subcommand.TradeRequest,
-						description: 'Send a trade request to another user.',
-
-						options: [
-							{
-								type: DAPI.ApplicationCommandOptionType.User,
-								name: 'user',
-								description: "The user you'd like to trade with",
-								required: true,
-							},
-							{
-								type: DAPI.ApplicationCommandOptionType.String,
-								name: 'cards',
-								description:
-									'The cards in your collection by position to give the user, separated by commas',
-								required: true,
-							},
-						],
-					},
-					{
-						type: DAPI.ApplicationCommandOptionType.Subcommand,
-						name: enums.Subcommand.TradeCancel,
-						description: 'Cancel a trade request.',
-
-						options: [
-							{
-								type: DAPI.ApplicationCommandOptionType.User,
-								name: 'user',
-								description: "The user you've sent a trade request",
-								required: true,
-							},
-						],
-					},
-					{
-						type: DAPI.ApplicationCommandOptionType.Subcommand,
-						name: enums.Subcommand.TradeClear,
-						description: 'Clear all of your pending trades.',
-					},
-				],
-			},
-			{
 				type: DAPI.ApplicationCommandOptionType.Subcommand,
 				name: enums.Subcommand.View,
 				description: 'View a card in a collection.',
@@ -302,20 +255,6 @@ const CatchaCommand: Command = {
 	async execute({ interaction, user, subcommandGroup, subcommand, options, env, ctx }) {
 		if (!subcommand) throw 'No subcommand provided';
 
-		// Filter by group first
-		if (subcommandGroup?.name === enums.Subcommand.Trade) {
-			switch (subcommand.name) {
-				case enums.Subcommand.TradeRequest:
-					return await tradeInteractions.onTradeRequest(interaction, subcommand.options!, user, env, ctx);
-				case enums.Subcommand.TradeCancel:
-					return await tradeInteractions.onTradeCancel(interaction, subcommand.options!, user, env, ctx);
-				case enums.Subcommand.TradeClear:
-					return await tradeInteractions.onTradeClear(interaction, user, env, ctx);
-				default:
-				// Do nothing
-			}
-		}
-
 		// All of the ungrouped subcommands
 		switch (subcommand.name) {
 			case enums.Subcommand.Roll:
@@ -355,7 +294,8 @@ const CatchaCommand: Command = {
 		}
 	},
 
-	async onMessageComponent({ interaction, user, componentType, customId, parsedCustomId, values, env, ctx }) {
+	async onMessageComponent(options) {
+		const { interaction, user, componentType, customId, parsedCustomId, values, env, ctx } = options;
 		const action = parsedCustomId[1];
 
 		switch (action) {
@@ -372,7 +312,16 @@ const CatchaCommand: Command = {
 			case 'remaining':
 				return await remaining.handleRemainingScroll(interaction, user, parsedCustomId, env, ctx);
 			case 'trade':
-				return await tradeInteractions.onTradeMessageComponent(interaction, user, parsedCustomId, env, ctx);
+				/* eslint-disable no-case-declarations */
+				// I know what I'm doing and don't want to rewrite this entire switch block
+				// This is just for backwards-compatibility
+				const tradeCommandOptions = { ...options };
+
+				tradeCommandOptions.parsedCustomId.shift();
+				tradeCommandOptions.customId = parsedCustomId.join('/');
+
+				return await TradeCommand.onMessageComponent?.(tradeCommandOptions);
+			/* eslint-enable no-case-declarations */
 			case 'art':
 				return onArtScroll(interaction, user, parsedCustomId);
 			case 'burn':

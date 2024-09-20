@@ -309,6 +309,25 @@ async function updateNurseryAlerts(prisma: D1PrismaClient, uuid: string, alerts:
 
 async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, kits: Kit[], alerts: string) {
 	const timeOfStorage = new Date();
+	const tradeUuidsToCancel: string[] = [];
+
+	for (const kit of kits) {
+		if (kit.pendingTradeUuid1 && !tradeUuidsToCancel.includes(kit.pendingTradeUuid1))
+			tradeUuidsToCancel.push(kit.pendingTradeUuid1);
+
+		if (kit.pendingTradeUuid2 && !tradeUuidsToCancel.includes(kit.pendingTradeUuid2))
+			tradeUuidsToCancel.push(kit.pendingTradeUuid2);
+	}
+
+	if (tradeUuidsToCancel.length > 0) {
+		await prisma.catchaTrade.deleteMany({
+			where: {
+				OR: tradeUuidsToCancel.map((tradeUuid) => {
+					return { tradeUuid };
+				}),
+			},
+		});
+	}
 
 	return await prisma.$transaction([
 		prisma.historyCat.createMany({

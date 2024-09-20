@@ -61,11 +61,15 @@ async function processTradeRequest(
 	/**
 	 * The Catcha of the user that is sending the trade request.
 	 */
-	const userCatcha = await catchaDB.findCatcha(env.PRISMA, userDiscordId);
+	let userCatcha = await catchaDB.findCatcha(env.PRISMA, userDiscordId);
 
 	// The user doesn't have a Catcha so they've never rolled before. Thus, they cannot possibly have any cards to give.
 	if (!userCatcha) {
-		return messageResponse({ embeds: [errorEmbed("You don't have any cards to trade in your collection.")] });
+		if (options.cardPositions.length === 0) {
+			userCatcha = await catchaDB.initializeCatchaForUser(env.PRISMA, options.user.id);
+		} else {
+			return messageResponse({ embeds: [errorEmbed("You don't have any cards to trade in your collection.")] });
+		}
 	}
 
 	/**
@@ -75,7 +79,13 @@ async function processTradeRequest(
 
 	// Same thing. If they don't have a Catcha in the database, they're not a player
 	if (!otherUserCatcha) {
-		return messageResponse({ embeds: [errorEmbed("The user doesn't have any cards to trade.")] });
+		return messageResponse({
+			embeds: [
+				errorEmbed(
+					"The user you're trying to trade cannot be found in the bot's database. Maybe they haven't played Catcha before to initialize their data?",
+				),
+			],
+		});
 	}
 
 	const userTradeBlock = getCurrentlyTradeBlocked(userCatcha, currentTimeMs);
@@ -114,39 +124,43 @@ async function processTradeRequest(
 		});
 	}
 
-	const userCollection = await collection.getCollection(userDiscordId, env);
 	const cardsToTrade: CatchaCard[] = [];
+	const cardUuidsToTrade: string[] = [];
 
-	for (const cardPosition of options.cardPositions) {
-		const cardIndex = cardPosition - 1;
-		const card = userCollection[cardIndex];
+	if (options.cardPositions.length > 0) {
+		const userCollection = await collection.getCollection(userDiscordId, env);
 
-		if (!card) {
-			return messageResponse({ embeds: [errorEmbed(`No card found at position ${cardPosition}.`)] });
+		for (const cardPosition of options.cardPositions) {
+			const cardIndex = cardPosition - 1;
+			const card = userCollection[cardIndex];
+
+			if (!card) {
+				return messageResponse({ embeds: [errorEmbed(`No card found at position ${cardPosition}.`)] });
+			}
+
+			// We don't want anyone to find any crazy card duplication exploits so a card can only be in
+			// one pending trade at a time.
+			if (card.card.pendingTradeUuid1 !== null || card.card.pendingTradeUuid2 !== null) {
+				return messageResponse({
+					embeds: [
+						errorEmbed(
+							`The card at position ${cardPosition} is already in another pending trade. Complete or cancel that trade first.`,
+						),
+					],
+				});
+			}
+
+			if (card.card.untradeable) {
+				return messageResponse({
+					embeds: [errorEmbed(`The card at position ${cardPosition} is marked as untradeable.`)],
+				});
+			}
+
+			cardsToTrade.push(card.card);
+			cardUuidsToTrade.push(...cardsToTrade.map((card) => card.uuid)); // We need the UUIDs of the cards to be traded
 		}
-
-		// We don't want anyone to find any crazy card duplication exploits so a card can only be in
-		// one pending trade at a time.
-		if (card.card.pendingTradeUuid1 !== null || card.card.pendingTradeUuid2 !== null) {
-			return messageResponse({
-				embeds: [
-					errorEmbed(
-						`The card at position ${cardPosition} is already in another pending trade. Complete or cancel that trade first.`,
-					),
-				],
-			});
-		}
-
-		if (card.card.untradeable) {
-			return messageResponse({
-				embeds: [errorEmbed(`The card at position ${cardPosition} is marked as untradeable.`)],
-			});
-		}
-
-		cardsToTrade.push(card.card);
 	}
 
-	const cardUuidsToTrade = cardsToTrade.map((card) => card.uuid); // We need the UUIDs of the cards to be traded
 	const existingTrades = await tradeDB.findTradesBetweenUsers(
 		env.PRISMA,
 		userCatcha.userUuid,
@@ -204,7 +218,13 @@ async function processTradeRequest(
 				recipientUsername,
 			);
 		} else {
-			return messageResponse({ embeds: [buildTradeRequestEmbed(stringifyCards(cardsToTrade).join('\n'))] });
+			return messageResponse({
+				embeds: [
+					buildTradeRequestEmbed(
+						cardsToTrade.length > 0 ? stringifyCards(cardsToTrade).join('\n') : 'No cards',
+					),
+				],
+			});
 		}
 	} else {
 		// Create a brand new trade
@@ -214,7 +234,11 @@ async function processTradeRequest(
 			sentCardUuids: cardUuidsToTrade,
 		});
 
-		return messageResponse({ embeds: [buildTradeRequestEmbed(stringifyCards(cardsToTrade).join('\n'))] });
+		return messageResponse({
+			embeds: [
+				buildTradeRequestEmbed(cardsToTrade.length > 0 ? stringifyCards(cardsToTrade).join('\n') : 'No cards'),
+			],
+		});
 	}
 }
 
@@ -278,24 +302,24 @@ const RequestSubcommand: Subcommand = {
 		 */
 		let cardsString: string | undefined;
 
+		if (cardsOption && cardsOption.type === DAPI.ApplicationCommandOptionType.String)
+			cardsString = cardsOption.value;
+
 		/**
 		 * The value of the `kits` option (should be kit positions or names separated by commas).
 		 */
 		let kitsString: string | undefined;
 
-		if (cardsOption && cardsOption.type === DAPI.ApplicationCommandOptionType.String)
-			cardsString = cardsOption.value;
-
-		if (kitsOption && kitsOption.type === DAPI.ApplicationCommandOptionType.String) kitsString = kitsOption.value;
+		// prettier-ignore
+		if (kitsOption && kitsOption.type === DAPI.ApplicationCommandOptionType.String)
+			kitsString = kitsOption.value;
 
 		// Turn the string of card positions separated by commas into an array of card positions as numbers
 		// Trim the positions supplied by the user and filter out any NaNs (if the user entered something else than a number)
 		const cardPositions = parseList(cardsString ?? '', true) as number[];
 
-		// Check that the user actually supplied cards to trade and that there aren't too many cards
-		if (cardPositions.length < 1) {
-			return simpleEphemeralResponse("You haven't provided any cards.");
-		} else if (cardPositions.length > config.CATCHA_TRADE_MAX_CARDS) {
+		// Check that there aren't too many cards
+		if (cardPositions.length > config.CATCHA_TRADE_MAX_CARDS) {
 			return simpleEphemeralResponse(`You can only trade up to ${config.CATCHA_TRADE_MAX_CARDS} at once.`);
 		}
 

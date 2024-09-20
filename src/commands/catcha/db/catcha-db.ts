@@ -34,6 +34,9 @@ async function initializeCatchaForUser(prisma: D1PrismaClient, discordId: string
 				},
 			},
 		},
+		include: {
+			user: true,
+		},
 	});
 
 	return result;

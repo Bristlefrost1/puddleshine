@@ -20,6 +20,17 @@ function createTradeConfirmationResponse(
 	const senderCards = trade.senderCards;
 	const recipientCards = trade.recipientCards;
 
+	let senderCardsString = 'Cards:\n```less\nNo cards````';
+	let recipientCardsString = 'Cards:\n```less\nNo cards````';
+
+	if (senderCards && senderCards.length > 0) {
+		senderCardsString = `\`\`\`less\n${stringifyCards(senderCards).join('\n')}\`\`\``;
+	}
+
+	if (recipientCards && recipientCards.length > 0) {
+		recipientCardsString = `\`\`\`less\n${stringifyCards(recipientCards).join('\n')}\`\`\``;
+	}
+
 	return messageResponse({
 		embeds: [
 			{
@@ -27,12 +38,12 @@ function createTradeConfirmationResponse(
 				fields: [
 					{
 						name: `${senderUsername}`,
-						value: `Cards:\n\`\`\`less\n${stringifyCards(senderCards).join('\n')}\`\`\``,
+						value: senderCardsString,
 						inline: true,
 					},
 					{
 						name: `${recipientUsername}`,
-						value: `Cards:\n\`\`\`less\n${stringifyCards(recipientCards).join('\n')}\`\`\``,
+						value: recipientCardsString,
 						inline: true,
 					},
 				],

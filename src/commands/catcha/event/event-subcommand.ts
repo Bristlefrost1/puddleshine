@@ -5,7 +5,7 @@ import { embedMessageResponse } from '#discord/responses.js';
 import * as catchaDB from '#commands/catcha/db/catcha-db.js';
 import * as rollPeriod from '#commands/catcha/roll/roll-period.js';
 import { getCurrentEvent } from './event.js';
-import { getTradeCooldown } from '../trade/cooldown.js';
+import { getTradeCooldown } from '#commands/trade/restrictions/cooldown.js';
 import { hasRecentlyClaimed } from '#commands/catcha/roll/roll.js';
 
 import * as config from '#config.js';
