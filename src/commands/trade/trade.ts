@@ -5,7 +5,9 @@ import { messageResponse } from '#discord/responses.js';
 
 import * as archive from '#commands/catcha/archive/archive.js';
 import * as catchaDB from '#commands/catcha/db/catcha-db.js';
+import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
 import * as tradeDB from '#commands/trade/db/trade-db.js';
+import { getKit, Kit } from '#commands/nursery/game/kit.js';
 
 import * as tradeConfirmation from './confirmation.js';
 import { getCurrentlyTradeBlocked } from './restrictions/block.js';
@@ -83,7 +85,8 @@ async function processTrade(
 		});
 	}
 
-	if (trade.senderCards.length === 0 && trade.recipientCards.length === 0) {
+	// prettier-ignore
+	if (trade.senderCards.length === 0 && trade.senderKits.length === 0 && trade.recipientCards.length === 0 && trade.recipientKits.length === 0) {
 		await tradeDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
 
 		return messageResponse({
@@ -191,6 +194,76 @@ async function processTrade(
 	const senderCardUuidsToTrade = trade.senderCards.map((card) => card.uuid);
 	const recipientCardUuidsToTrade = trade.recipientCards.map((card) => card.uuid);
 
+	// Process the kits in the trade if there are any
+	const senderKits: Kit[] = [];
+	const recipientKits: Kit[] = [];
+
+	for (const senderKit of trade.senderKits) {
+		const kit = getKit(senderKit, 0);
+
+		if (kit.isDead) {
+			await tradeDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
+
+			return messageResponse({
+				content: "This trade has been canceled as it contains kits that've died.",
+				embeds: [newEmbed],
+				components: [],
+				update: true,
+			});
+		}
+
+		if (kit.wanderingSince !== undefined) {
+			await tradeDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
+
+			return messageResponse({
+				content: `${kit.fullName} cannot be found in the nursery.`,
+				embeds: [newEmbed],
+				components: [],
+				update: true,
+			});
+		}
+
+		senderKits.push(kit);
+	}
+
+	for (const recipientKit of trade.recipientKits) {
+		const kit = getKit(recipientKit, 0);
+
+		if (kit.isDead) {
+			await tradeDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
+
+			return messageResponse({
+				content: "This trade has been canceled as it contains kits that've died.",
+				embeds: [newEmbed],
+				components: [],
+				update: true,
+			});
+		}
+
+		if (kit.wanderingSince !== undefined) {
+			await tradeDB.deleteTrade(env.PRISMA, trade.tradeUuid); // Cancel the trade
+
+			return messageResponse({
+				content: `${kit.fullName} cannot be found in the nursery.`,
+				embeds: [newEmbed],
+				components: [],
+				update: true,
+			});
+		}
+
+		recipientKits.push(kit);
+	}
+
+	if (senderKits.length > 0) {
+		const recipientNursery = await nurseryDB.findNurseryByUuid(env.PRISMA, trade.recipientUserUuid);
+		if (!recipientNursery) await nurseryDB.initializeNurseryForUser(env.PRISMA, recipientDiscordId);
+	}
+
+	if (recipientKits.length > 0) {
+		const senderNursery = await nurseryDB.findNurseryByUuid(env.PRISMA, trade.senderUserUuid);
+		if (!senderNursery) await nurseryDB.initializeNurseryForUser(env.PRISMA, senderDiscordId);
+	}
+
 	// Write the trade to the database
 	await tradeDB.completeTrade(env.PRISMA, {
 		tradeUuid: trade.tradeUuid,
@@ -200,6 +273,9 @@ async function processTrade(
 
 		senderCardUuidsToTrade: senderCardUuidsToTrade,
 		recipientCardUuidsToTrade: recipientCardUuidsToTrade,
+
+		senderKitsToTrade: senderKits,
+		recipientKitsToTrade: recipientKits,
 
 		tradeDate: currentDate,
 	});

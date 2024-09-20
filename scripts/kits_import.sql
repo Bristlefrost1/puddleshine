@@ -1,140 +1,200 @@
 INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
-	'a5d0bea2-f00c-46e7-a00b-8c04d586bf4d',
-	'76913acc-a2ea-4dde-966e-ee744d47c320',
-	'Apple',
+	'e9fd3644-520d-4ed9-ba41-748f6e3386b6',
+	'62bdfd45-cb52-4b76-89fe-06918044cfde',
+	'Fawn',
 	'She-kit',
-	5.7, -- Age moons
-	IMPORT_TIME,
-	IMPORT_TIME,
+	5.77, -- Age moons
+	'2024-09-08T08:31:23.540Z',
+	'2024-09-08T08:31:23.540Z',
+	'{"type":"SolidColor","color":"Ginger"}',
+	'{"type":"Normal","eyeColor":"Amber"}',
+	1, -- Health
+	'2024-09-08T08:31:23.540Z',
+	0.627, -- Hunger
+	'2024-09-08T08:31:23.540Z',
+	1, -- Bond
+	'2024-09-08T08:31:23.540Z',
+	38.7, -- Temperature
+	'2024-09-08T08:31:23.540Z',
+	'[]'
+);
+INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
+	'fd363a83-0fd7-4ccf-b339-43e86c2172f4',
+	'62bdfd45-cb52-4b76-89fe-06918044cfde',
+	'Wren',
+	'She-kit',
+	5.65, -- Age moons
+	'2024-09-08T08:31:23.540Z',
+	'2024-09-08T08:31:23.540Z',
 	'{"type":"SolidColor","color":"Gray"}',
 	'{"type":"Normal","eyeColor":"Green"}',
-	0.883, -- Health
-	IMPORT_TIME,
-	0.585, -- Hunger
-	IMPORT_TIME,
-	0.373, -- Bond
-	IMPORT_TIME,
-	39.2, -- Temperature
-	IMPORT_TIME,
+	1, -- Health
+	'2024-09-08T08:31:23.540Z',
+	0.732, -- Hunger
+	'2024-09-08T08:31:23.540Z',
+	1, -- Bond
+	'2024-09-08T08:31:23.540Z',
+	38.7, -- Temperature
+	'2024-09-08T08:31:23.540Z',
 	'[]'
 );
 INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
-	'd5ac25ee-dea7-42f4-abbf-dc73753bcdfa',
-	'76913acc-a2ea-4dde-966e-ee744d47c320',
-	'Thorn',
+	'7af83534-53c5-476e-b472-a1d2c13f284e',
+	'62bdfd45-cb52-4b76-89fe-06918044cfde',
+	'Freckle',
 	'Tom-kit',
-	4.97, -- Age moons
-	IMPORT_TIME,
-	IMPORT_TIME,
+	5.39, -- Age moons
+	'2024-09-08T08:31:23.540Z',
+	'2024-09-08T08:31:23.540Z',
+	'{"type":"SolidColor","color":"Orange"}',
+	'{"type":"Normal","eyeColor":"Orange"}',
+	1, -- Health
+	'2024-09-08T08:31:23.540Z',
+	0.776, -- Hunger
+	'2024-09-08T08:31:23.540Z',
+	1, -- Bond
+	'2024-09-08T08:31:23.540Z',
+	38.7, -- Temperature
+	'2024-09-08T08:31:23.540Z',
+	'[]'
+);
+INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
+	'cba58ee4-9249-4e6b-ad4d-d494f697cc4c',
+	'62bdfd45-cb52-4b76-89fe-06918044cfde',
+	'Dawn',
+	'Tom-kit',
+	5.39, -- Age moons
+	'2024-09-08T08:31:23.540Z',
+	'2024-09-08T08:31:23.540Z',
 	'{"type":"SolidColor","color":"Blue"}',
-	'{"type":"Normal","eyeColor":"Aqua"}',
-	0.958, -- Health
-	IMPORT_TIME,
-	0.582, -- Hunger
-	IMPORT_TIME,
-	0.5, -- Bond
-	IMPORT_TIME,
-	39.2, -- Temperature
-	IMPORT_TIME,
+	'{"type":"Normal","eyeColor":"Blue"}',
+	1, -- Health
+	'2024-09-08T08:31:23.540Z',
+	0.793, -- Hunger
+	'2024-09-08T08:31:23.540Z',
+	1, -- Bond
+	'2024-09-08T08:31:23.540Z',
+	38.7, -- Temperature
+	'2024-09-08T08:31:23.540Z',
 	'[]'
 );
 INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
-	'71a35402-4652-4767-ac22-34062278c3c1',
-	'76913acc-a2ea-4dde-966e-ee744d47c320',
-	'Breeze',
+	'41af96f0-fae9-46a4-91db-dd49c02d0889',
+	'62bdfd45-cb52-4b76-89fe-06918044cfde',
+	'Big',
 	'She-kit',
-	3.97, -- Age moons
-	IMPORT_TIME,
-	IMPORT_TIME,
-	'{"type":"SolidColor","color":"Brown"}',
-	'{"type":"Normal","eyeColor":"Copper"}',
-	0.764, -- Health
-	IMPORT_TIME,
-	0.645, -- Hunger
-	IMPORT_TIME,
-	0.593, -- Bond
-	IMPORT_TIME,
-	39.2, -- Temperature
-	IMPORT_TIME,
-	'[]'
-);
-INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
-	'f2473bb3-3d1b-4935-ac0c-dac503230cb6',
-	'76913acc-a2ea-4dde-966e-ee744d47c320',
-	'Bristle',
-	'She-kit',
-	5.35, -- Age moons
-	IMPORT_TIME,
-	IMPORT_TIME,
-	'{"type":"SolidColor","color":"Black"}',
-	'{"type":"Normal","eyeColor":"Orange"}',
-	0.849, -- Health
-	IMPORT_TIME,
-	0.186, -- Hunger
-	IMPORT_TIME,
-	0.155, -- Bond
-	IMPORT_TIME,
-	39.2, -- Temperature
-	IMPORT_TIME,
-	'[]'
-);
-INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
-	'c76a9abf-210f-456a-9717-9989f2a4faa0',
-	'76913acc-a2ea-4dde-966e-ee744d47c320',
-	'Spotted',
-	'Tom-kit',
-	2.12, -- Age moons
-	IMPORT_TIME,
-	IMPORT_TIME,
-	'{"type":"SolidColor","color":"White"}',
-	'{"type":"Normal","eyeColor":"Orange"}',
-	0.826, -- Health
-	IMPORT_TIME,
-	0.328, -- Hunger
-	IMPORT_TIME,
-	0.462, -- Bond
-	IMPORT_TIME,
-	39.1, -- Temperature
-	IMPORT_TIME,
-	'[]'
-);
-INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
-	'31c977bb-0392-4c7b-ad2b-0413e3846209',
-	'76913acc-a2ea-4dde-966e-ee744d47c320',
-	'Duck',
-	'Tom-kit',
-	1.43, -- Age moons
-	IMPORT_TIME,
-	IMPORT_TIME,
-	'{"type":"SolidColor","color":"Gray"}',
-	'{"type":"Normal","eyeColor":"Amber"}',
-	0.854, -- Health
-	IMPORT_TIME,
-	0.578, -- Hunger
-	IMPORT_TIME,
-	0.518, -- Bond
-	IMPORT_TIME,
-	39.1, -- Temperature
-	IMPORT_TIME,
-	'[]'
-);
-INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
-	'35f4c048-c6d8-425c-9766-f6102bb18c99',
-	'76913acc-a2ea-4dde-966e-ee744d47c320',
-	'Pigeon',
-	'She-kit',
-	1.43, -- Age moons
-	IMPORT_TIME,
-	IMPORT_TIME,
-	'{"type":"SolidColor","color":"Amber"}',
+	5.39, -- Age moons
+	'2024-09-08T08:31:23.540Z',
+	'2024-09-08T08:31:23.540Z',
+	'{"type":"SolidColor","color":"Blue"}',
 	'{"type":"Normal","eyeColor":"Emerald"}',
 	1, -- Health
-	IMPORT_TIME,
-	0.327, -- Hunger
-	IMPORT_TIME,
-	0.606, -- Bond
-	IMPORT_TIME,
-	39.1, -- Temperature
-	IMPORT_TIME,
+	'2024-09-08T08:31:23.540Z',
+	0.891, -- Hunger
+	'2024-09-08T08:31:23.540Z',
+	1, -- Bond
+	'2024-09-08T08:31:23.540Z',
+	38.7, -- Temperature
+	'2024-09-08T08:31:23.540Z',
+	'[]'
+);
+INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
+	'3754623a-7ad6-44f2-b4f7-cfd33c7e8c42',
+	'62bdfd45-cb52-4b76-89fe-06918044cfde',
+	'One',
+	'Tom-kit',
+	4.5, -- Age moons
+	'2024-09-08T08:31:23.540Z',
+	'2024-09-08T08:31:23.540Z',
+	'{"type":"SolidColor","color":"Cinnamon"}',
+	'{"type":"Normal","eyeColor":"Golden"}',
+	1, -- Health
+	'2024-09-08T08:31:23.540Z',
+	0.902, -- Hunger
+	'2024-09-08T08:31:23.540Z',
+	1, -- Bond
+	'2024-09-08T08:31:23.540Z',
+	38.7, -- Temperature
+	'2024-09-08T08:31:23.540Z',
+	'[]'
+);
+INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
+	'da79c839-42a2-48c2-bcd9-a29374f8c14b',
+	'62bdfd45-cb52-4b76-89fe-06918044cfde',
+	'Shivering',
+	'Tom-kit',
+	4.77, -- Age moons
+	'2024-09-08T08:31:23.540Z',
+	'2024-09-08T08:31:23.540Z',
+	'{"type":"SolidColor","color":"Brown"}',
+	'{"type":"Normal","eyeColor":"Yellow"}',
+	1, -- Health
+	'2024-09-08T08:31:23.540Z',
+	0.756, -- Hunger
+	'2024-09-08T08:31:23.540Z',
+	1, -- Bond
+	'2024-09-08T08:31:23.540Z',
+	38.7, -- Temperature
+	'2024-09-08T08:31:23.540Z',
+	'[]'
+);
+INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
+	'16052013-3003-472f-922b-c4125b6a1411',
+	'62bdfd45-cb52-4b76-89fe-06918044cfde',
+	'Wolf',
+	'Tom-kit',
+	4.15, -- Age moons
+	'2024-09-08T08:31:23.540Z',
+	'2024-09-08T08:31:23.540Z',
+	'{"type":"SolidColor","color":"Black"}',
+	'{"type":"Normal","eyeColor":"Aqua"}',
+	1, -- Health
+	'2024-09-08T08:31:23.540Z',
+	0.958, -- Hunger
+	'2024-09-08T08:31:23.540Z',
+	0.387, -- Bond
+	'2024-09-08T08:31:23.540Z',
+	38.7, -- Temperature
+	'2024-09-08T08:31:23.540Z',
+	'[]'
+);
+INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
+	'98c04e6c-4671-41a0-8de9-0c2533feef00',
+	'62bdfd45-cb52-4b76-89fe-06918044cfde',
+	'Cloud',
+	'She-kit',
+	2.61, -- Age moons
+	'2024-09-08T08:31:23.540Z',
+	'2024-09-08T08:31:23.540Z',
+	'{"type":"SolidColor","color":"White"}',
+	'{"type":"Normal","eyeColor":"Blue"}',
+	1, -- Health
+	'2024-09-08T08:31:23.540Z',
+	0.656, -- Hunger
+	'2024-09-08T08:31:23.540Z',
+	0.232, -- Bond
+	'2024-09-08T08:31:23.540Z',
+	38.7, -- Temperature
+	'2024-09-08T08:31:23.540Z',
+	'[]'
+);
+INSERT INTO nursery_kits (uuid, nursery_uuid, name_prefix, gender, age_moons, age_updated, bred_at, pelt, eyes, health, health_updated, hunger, hunger_updated, bond, bond_updated, temperature, temperature_updated, events) VALUES (
+	'8edbfddc-501c-4444-bee9-e8984be78f40',
+	'62bdfd45-cb52-4b76-89fe-06918044cfde',
+	'Frost',
+	'Tom-kit',
+	3.24, -- Age moons
+	'2024-09-08T08:31:23.540Z',
+	'2024-09-08T08:31:23.540Z',
+	'{"type":"SolidColor","color":"White"}',
+	'{"type":"Normal","eyeColor":"Golden"}',
+	1, -- Health
+	'2024-09-08T08:31:23.540Z',
+	0.649, -- Hunger
+	'2024-09-08T08:31:23.540Z',
+	0.209, -- Bond
+	'2024-09-08T08:31:23.540Z',
+	38.7, -- Temperature
+	'2024-09-08T08:31:23.540Z',
 	'[]'
 );

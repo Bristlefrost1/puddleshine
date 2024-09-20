@@ -1,9 +1,31 @@
 import { messageResponse } from '#discord/responses.js';
-import { getKitDescription } from './game/kit.js';
+import { getKitDescription, Kit } from './game/kit.js';
 
 import type { Nursery } from './game/nursery-manager.js';
 
 import * as config from '#config.js';
+
+function stringifyKitDescription(kit: Kit, ansiColor?: boolean) {
+	if (ansiColor) {
+		return `\u001b[2;34m[${kit.position}]\u001b[0m \u001b[2;37m${kit.fullName}\u001b[0m: ${getKitDescription(kit)}`;
+	}
+
+	return `[${kit.position}] ${kit.fullName}: ${getKitDescription(kit)}`;
+}
+
+function stringifyKitStats(kit: Kit, ansiColor?: boolean) {
+	const age = kit.age.toString().slice(0, 4);
+	const health = (kit.health * 100).toFixed(1);
+	const hunger = (kit.hunger * 100).toFixed(1);
+	const bond = (kit.bond * 100).toFixed(1);
+	const temperature = kit.temperatureClass;
+
+	if (ansiColor) {
+		return `- Age: ${age} moons | Health: ${health}% | Hunger: ${hunger}% | Bond: ${bond}% | Temp: ${temperature}`;
+	}
+
+	return `- Age: ${age} moons | Health: ${health}% | Hunger: ${hunger}% | Bond: ${bond}% | Temp: ${temperature}`;
+}
 
 function buildNurseryStatusView(nursery: Nursery, noAlerts?: boolean) {
 	const lines: string[] = [];
@@ -58,16 +80,8 @@ function buildNurseryStatusView(nursery: Nursery, noAlerts?: boolean) {
 
 			if (kit.wanderingSince !== undefined) continue;
 
-			const age = kit.age.toString().slice(0, 4);
-			const health = (kit.health * 100).toFixed(1);
-			const hunger = (kit.hunger * 100).toFixed(1);
-			const bond = (kit.bond * 100).toFixed(1);
-			const temperature = kit.temperatureClass;
-
 			lines.push(`\u001b[2;34m[${kitNumber}]\u001b[0m \u001b[2;37m${kit.fullName}\u001b[0m:`);
-			lines.push(
-				`- Age: ${age} moons | Health: ${health}% | Hunger: ${hunger}% | Bond: ${bond}% | Temp: ${temperature}`,
-			);
+			lines.push(stringifyKitStats(kit, true));
 		}
 	} else {
 		lines.push("You don't have any kits. Try /nursery breed to get some!");
@@ -129,12 +143,9 @@ function buildNurseryHomeView(nursery: Nursery) {
 
 	if (nursery.kits && nursery.kits.length > 0) {
 		for (let i = 0; i < nursery.kits.length; i++) {
-			const kitNumber = i + 1;
 			const kit = nursery.kits[i];
 
-			lines.push(
-				`\u001b[2;34m[${kitNumber}]\u001b[0m \u001b[2;37m${kit.fullName}\u001b[0m: ${getKitDescription(kit)}`,
-			);
+			lines.push(stringifyKitDescription(kit, true));
 		}
 	} else {
 		lines.push("You don't have any kits. Try /nursery breed to get some!");
@@ -153,4 +164,10 @@ function nurseryMessageResponse(nursery: Nursery, messages: string[], showStatus
 	});
 }
 
-export { buildNurseryStatusView, buildNurseryHomeView, nurseryMessageResponse };
+export {
+	stringifyKitDescription,
+	stringifyKitStats,
+	buildNurseryStatusView,
+	buildNurseryHomeView,
+	nurseryMessageResponse,
+};

@@ -25,6 +25,17 @@ async function findNursery(prisma: D1PrismaClient, discordId: string) {
 	});
 }
 
+async function findNurseryByUuid(prisma: D1PrismaClient, uuid: string) {
+	return await prisma.nursery.findUnique({
+		where: {
+			uuid,
+		},
+		include: {
+			user: true,
+		},
+	});
+}
+
 async function initializeNurseryForUser(prisma: D1PrismaClient, discordId: string) {
 	const creationTime = new Date();
 
@@ -512,6 +523,7 @@ async function setKitsWanderingSince(prisma: D1PrismaClient, kits: Kit[], wander
 
 export {
 	findNursery,
+	findNurseryByUuid,
 	initializeNurseryForUser,
 	getNursery,
 	updateFood,

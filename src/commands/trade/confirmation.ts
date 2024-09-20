@@ -4,6 +4,8 @@ import { messageResponse } from '#discord/responses.js';
 
 import * as tradeDB from '#commands/trade/db/trade-db.js';
 import { stringifyCards } from '#commands/catcha/collection/list-utils.js';
+import { getKit } from '#commands/nursery/game/kit.js';
+import { stringifyKitDescription, stringifyKitStats } from '#commands/nursery/nursery-views.js';
 import { processTrade } from '#commands/trade/trade.js';
 
 type Trade = Awaited<ReturnType<typeof tradeDB.updateTrade>>;
@@ -19,16 +21,62 @@ function createTradeConfirmationResponse(
 ): DAPI.APIInteractionResponse {
 	const senderCards = trade.senderCards;
 	const recipientCards = trade.recipientCards;
+	const senderKits = trade.senderKits;
+	const recipientKits = trade.recipientKits;
 
-	let senderCardsString = 'Cards:\n```less\nNo cards````';
-	let recipientCardsString = 'Cards:\n```less\nNo cards````';
+	const senderDescriptionLines: string[] = [];
+	const recipientDescriptionLines: string[] = [];
 
-	if (senderCards && senderCards.length > 0) {
-		senderCardsString = `\`\`\`less\n${stringifyCards(senderCards).join('\n')}\`\`\``;
+	// Sender side
+	if (senderCards.length > 0) {
+		senderDescriptionLines.push('Cards:');
+		senderDescriptionLines.push('```less');
+		senderDescriptionLines.push(...stringifyCards(senderCards));
+		senderDescriptionLines.push('```');
 	}
 
-	if (recipientCards && recipientCards.length > 0) {
-		recipientCardsString = `\`\`\`less\n${stringifyCards(recipientCards).join('\n')}\`\`\``;
+	if (senderKits.length > 0) {
+		senderDescriptionLines.push('Kits:');
+		senderDescriptionLines.push('```ansi');
+
+		for (const kit of senderKits) {
+			senderDescriptionLines.push(stringifyKitDescription(getKit(kit, 0), true));
+			senderDescriptionLines.push(stringifyKitStats(getKit(kit, 0), true));
+		}
+
+		senderDescriptionLines.push('```');
+	}
+
+	if (senderCards.length === 0 && senderKits.length === 0) {
+		senderDescriptionLines.push('```less');
+		senderDescriptionLines.push('Nothing');
+		senderDescriptionLines.push('```');
+	}
+
+	// Recipient side
+	if (recipientCards.length > 0) {
+		recipientDescriptionLines.push('Cards:');
+		recipientDescriptionLines.push('```less');
+		recipientDescriptionLines.push(...stringifyCards(recipientCards));
+		recipientDescriptionLines.push('```');
+	}
+
+	if (recipientKits.length > 0) {
+		recipientDescriptionLines.push('Kits:');
+		recipientDescriptionLines.push('```ansi');
+
+		for (const kit of recipientKits) {
+			recipientDescriptionLines.push(stringifyKitDescription(getKit(kit, 0), true));
+			recipientDescriptionLines.push(stringifyKitStats(getKit(kit, 0), true));
+		}
+
+		recipientDescriptionLines.push('```');
+	}
+
+	if (recipientCards.length === 0 && recipientKits.length === 0) {
+		recipientDescriptionLines.push('```less');
+		recipientDescriptionLines.push('Nothing');
+		recipientDescriptionLines.push('```');
 	}
 
 	return messageResponse({
@@ -38,12 +86,12 @@ function createTradeConfirmationResponse(
 				fields: [
 					{
 						name: `${senderUsername}`,
-						value: senderCardsString,
+						value: senderDescriptionLines.join('\n'),
 						inline: true,
 					},
 					{
 						name: `${recipientUsername}`,
-						value: recipientCardsString,
+						value: recipientDescriptionLines.join('\n'),
 						inline: true,
 					},
 				],

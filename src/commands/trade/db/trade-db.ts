@@ -2,6 +2,7 @@ import * as database from '#db/database.js';
 
 import type { D1PrismaClient } from '#/db/database.js';
 import type { Prisma } from '@prisma/client';
+import type { Kit } from '#commands/nursery/game/kit.js';
 
 async function findTrade(prisma: D1PrismaClient, tradeUuid: string, completed?: boolean) {
 	const result = await prisma.catchaTrade.findFirst({
@@ -72,12 +73,19 @@ async function createTrade(
 		senderUserUuid: string;
 		recipientUserUuid: string;
 		sentCardUuids?: string[];
+		sentKitUuids?: string[];
 	},
 ) {
 	const sentCardUuids =
 		options.sentCardUuids ?
 			options.sentCardUuids.map((cardUuid) => {
 				return { uuid: cardUuid };
+			})
+		:	undefined;
+	const sentKitUuids =
+		options.sentKitUuids ?
+			options.sentKitUuids.map((kitUuid) => {
+				return { uuid: kitUuid };
 			})
 		:	undefined;
 	const createdAt = new Date();
@@ -97,6 +105,12 @@ async function createTrade(
 				sentCardUuids !== undefined && sentCardUuids.length > 0 ?
 					{
 						connect: sentCardUuids,
+					}
+				:	undefined,
+			senderKits:
+				sentKitUuids !== undefined && sentKitUuids.length > 0 ?
+					{
+						connect: sentKitUuids,
 					}
 				:	undefined,
 			senderSideSent: true,
@@ -129,10 +143,12 @@ async function updateTrade(
 		tradeCompletedAt?: Date;
 
 		senderCardUuids?: string[];
+		senderKitUuids?: string[];
 		senderSideSent?: boolean;
 		senderAccepted?: boolean;
 
 		recipientCardUuids?: string[];
+		recipientKitUuids?: string[];
 		recipientSideSent?: boolean;
 		recipientAccepted?: boolean;
 	},
@@ -157,6 +173,14 @@ async function updateTrade(
 						}),
 					}
 				:	undefined,
+			senderKits:
+				options.senderKitUuids ?
+					{
+						set: options.senderKitUuids.map((kitUuid) => {
+							return { uuid: kitUuid };
+						}),
+					}
+				:	undefined,
 			senderSideSent: options.senderSideSent,
 			senderAccepted: options.senderAccepted,
 
@@ -165,6 +189,14 @@ async function updateTrade(
 					{
 						set: options.recipientCardUuids.map((cardUuid) => {
 							return { uuid: cardUuid };
+						}),
+					}
+				:	undefined,
+			recipientKits:
+				options.recipientKitUuids ?
+					{
+						set: options.recipientKitUuids.map((kitUuid) => {
+							return { uuid: kitUuid };
 						}),
 					}
 				:	undefined,
@@ -216,6 +248,9 @@ async function completeTrade(
 
 		senderCardUuidsToTrade: string[];
 		recipientCardUuidsToTrade: string[];
+
+		senderKitsToTrade: Kit[];
+		recipientKitsToTrade: Kit[];
 
 		tradeDate: Date;
 	},
@@ -292,6 +327,84 @@ async function completeTrade(
 					}),
 				})
 			:	undefined,
+			// Sender kits
+			...options.senderKitsToTrade.map((kit) => {
+				return prisma.nurseryKit.update({
+					where: {
+						uuid: kit.uuid,
+					},
+					data: {
+						ageMoons: kit.age,
+						ageUpdated: options.tradeDate,
+
+						health: kit.health,
+						healthUpdated: options.tradeDate,
+
+						hunger: kit.hunger,
+						hungerUpdated: options.tradeDate,
+
+						bond: 0,
+						bondUpdated: options.tradeDate,
+
+						temperature: kit.temperature,
+						temperatureUpdated: options.tradeDate,
+
+						adoptedAt: options.tradeDate,
+
+						pendingTradeSide1: {
+							disconnect: true,
+						},
+						pendingTradeSide2: {
+							disconnect: true,
+						},
+
+						nursery: {
+							connect: {
+								uuid: options.recipientUserUuid,
+							},
+						},
+					},
+				});
+			}),
+			// Recipient kits
+			...options.recipientKitsToTrade.map((kit) => {
+				return prisma.nurseryKit.update({
+					where: {
+						uuid: kit.uuid,
+					},
+					data: {
+						ageMoons: kit.age,
+						ageUpdated: options.tradeDate,
+
+						health: kit.health,
+						healthUpdated: options.tradeDate,
+
+						hunger: kit.hunger,
+						hungerUpdated: options.tradeDate,
+
+						bond: 0,
+						bondUpdated: options.tradeDate,
+
+						temperature: kit.temperature,
+						temperatureUpdated: options.tradeDate,
+
+						adoptedAt: options.tradeDate,
+
+						pendingTradeSide1: {
+							disconnect: true,
+						},
+						pendingTradeSide2: {
+							disconnect: true,
+						},
+
+						nursery: {
+							connect: {
+								uuid: options.senderUserUuid,
+							},
+						},
+					},
+				});
+			}),
 			// Set the users' lastTradedAt
 			prisma.catcha.updateMany({
 				where: {

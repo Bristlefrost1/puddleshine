@@ -51,6 +51,8 @@ const CATCHA_TRADE_MAX_CARDS = 30; // The maximum number of cards per side per t
 const CATCHA_TRADE_COOLDOWN = 0; // 1h. The trade cooldown **in seconds**. 21600 would be 6 hours
 const CATCHA_TRADE_MAX_STAR_VALUE_DIFFERENCE = 6; // Block trades that are more unbalanced than this in terms of star value
 
+const CATCHA_TRADE_MAX_KITS = 5;
+
 /**
  * How long one food point should take to regenerate in seconds.
  */
@@ -162,6 +164,7 @@ export {
 	CATCHA_TRADE_MAX_CARDS,
 	CATCHA_TRADE_COOLDOWN,
 	CATCHA_TRADE_MAX_STAR_VALUE_DIFFERENCE,
+	CATCHA_TRADE_MAX_KITS,
 	NURSERY_REGENERATE_FOOD_POINT,
 	NURSERY_KIT_AGE_PER_SECOND,
 	NURSERY_KIT_HUNGER_PER_SECOND,

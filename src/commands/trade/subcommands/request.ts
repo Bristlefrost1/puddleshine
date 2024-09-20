@@ -2,10 +2,13 @@ import * as DAPI from 'discord-api-types/v10';
 
 import * as discordUserUtils from '#discord/api/discord-user.js';
 import { parseList } from '#utils/parse-list.js';
+import { getPronouns } from '#cat/gender.js';
 
 import * as catchaDB from '#commands/catcha/db/catcha-db.js';
 import * as collection from '#commands/catcha/collection/collection.js';
 import { stringifyCards } from '#commands/catcha/collection/list-utils.js';
+import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
+import { stringifyKitDescription, stringifyKitStats } from '#commands/nursery/nursery-views.js';
 
 import * as tradeDB from '#commands/trade/db/trade-db.js';
 import * as tradeConfirmation from '#commands/trade/confirmation.js';
@@ -17,17 +20,46 @@ import { messageResponse, simpleEphemeralResponse, errorEmbed } from '#discord/r
 
 import type { Subcommand } from '#commands/subcommand.js';
 import type { CatchaCard } from '@prisma/client';
+import type { Kit } from '#commands/nursery/game/kit.js';
 
 import * as config from '#config.js';
 
 const SUBCOMMAND_NAME = 'request';
 
-function buildTradeRequestEmbed(cardsString: string): DAPI.APIEmbed {
+function buildTradeRequestEmbed(cards: CatchaCard[], kits: Kit[]): DAPI.APIEmbed {
 	//const hours = Math.floor(config.CATCHA_TRADE_COOLDOWN / 3600);
+	const descriptionLines: string[] = [];
+
+	if (cards.length > 0) {
+		descriptionLines.push('Cards:');
+		descriptionLines.push('```less');
+		descriptionLines.push(...stringifyCards(cards));
+		descriptionLines.push('```');
+	}
+
+	if (kits.length > 0) {
+		descriptionLines.push('Kits:');
+		descriptionLines.push('```ansi');
+
+		for (const kit of kits) {
+			descriptionLines.push(stringifyKitDescription(kit, true));
+			descriptionLines.push(stringifyKitStats(kit, true));
+		}
+
+		descriptionLines.push('```');
+	}
+
+	if (cards.length === 0 && kits.length === 0) {
+		descriptionLines.push('```less');
+		descriptionLines.push('Nothing');
+		descriptionLines.push('```');
+	}
+
+	descriptionLines.push('Have this user trade back to begin the trade confirmation.');
 
 	return {
 		title: 'Requested a new trade',
-		description: `\`\`\`less\n${cardsString}\`\`\`\nHave this user trade back to confirm the trade.`,
+		description: descriptionLines.join('\n'),
 		footer: {
 			text: `Notice: Trading doesn't have a cooldown but is limited to ${config.CATCHA_TRADE_MAX_CARDS} cards per trade.`,
 		},
@@ -42,6 +74,7 @@ async function processTradeRequest(
 		user: DAPI.APIUser;
 		otherUserDiscordId: string;
 		cardPositions: number[];
+		kitsToTrade: string[];
 	},
 ): Promise<DAPI.APIInteractionResponse> {
 	// The bot's application ID and token
@@ -127,6 +160,9 @@ async function processTradeRequest(
 	const cardsToTrade: CatchaCard[] = [];
 	const cardUuidsToTrade: string[] = [];
 
+	const kitsToTrade: Kit[] = [];
+	const kitUuidsToTrade: string[] = [];
+
 	if (options.cardPositions.length > 0) {
 		const userCollection = await collection.getCollection(userDiscordId, env);
 
@@ -161,6 +197,40 @@ async function processTradeRequest(
 		}
 	}
 
+	if (options.kitsToTrade.length > 0) {
+		const nursery = await nurseryManager.getNursery(options.user, env, false);
+		const foundKits = nurseryManager.locateKits(nursery, options.kitsToTrade);
+
+		if (foundKits.length === 0) {
+			return messageResponse({
+				embeds: [errorEmbed("Couldn't find any kits with this input.")],
+			});
+		}
+
+		for (const kit of foundKits) {
+			if (kit.pendingTradeUuid1 !== undefined || kit.pendingTradeUuid2 !== undefined) {
+				return messageResponse({
+					embeds: [errorEmbed(`${kit.fullName} (${kit.position}) is already in another pending trade.`)],
+				});
+			}
+
+			if (kit.wanderingSince !== undefined) {
+				const pronouns = getPronouns(kit.gender);
+
+				return messageResponse({
+					embeds: [
+						errorEmbed(
+							`You cannot see ${kit.fullName} (${kit.position}) anywhere in the nursery so that you could trade ${pronouns.object}.`,
+						),
+					],
+				});
+			}
+
+			kitsToTrade.push(kit);
+			kitUuidsToTrade.push(kit.uuid);
+		}
+	}
+
 	const existingTrades = await tradeDB.findTradesBetweenUsers(
 		env.PRISMA,
 		userCatcha.userUuid,
@@ -189,6 +259,7 @@ async function processTradeRequest(
 
 			updatedTrade = await tradeDB.updateTrade(env.PRISMA, existingTrade.tradeUuid, {
 				recipientCardUuids: cardUuidsToTrade,
+				recipientKitUuids: kitUuidsToTrade,
 				recipientSideSent: true,
 			});
 		} else {
@@ -201,6 +272,7 @@ async function processTradeRequest(
 
 			updatedTrade = await tradeDB.updateTrade(env.PRISMA, existingTrade.tradeUuid, {
 				senderCardUuids: cardUuidsToTrade,
+				senderKitUuids: kitUuidsToTrade,
 				senderSideSent: true,
 			});
 		}
@@ -219,11 +291,7 @@ async function processTradeRequest(
 			);
 		} else {
 			return messageResponse({
-				embeds: [
-					buildTradeRequestEmbed(
-						cardsToTrade.length > 0 ? stringifyCards(cardsToTrade).join('\n') : 'No cards',
-					),
-				],
+				embeds: [buildTradeRequestEmbed(cardsToTrade, kitsToTrade)],
 			});
 		}
 	} else {
@@ -232,12 +300,11 @@ async function processTradeRequest(
 			senderUserUuid: userCatcha.userUuid,
 			recipientUserUuid: otherUserCatcha.userUuid,
 			sentCardUuids: cardUuidsToTrade,
+			sentKitUuids: kitUuidsToTrade,
 		});
 
 		return messageResponse({
-			embeds: [
-				buildTradeRequestEmbed(cardsToTrade.length > 0 ? stringifyCards(cardsToTrade).join('\n') : 'No cards'),
-			],
+			embeds: [buildTradeRequestEmbed(cardsToTrade, kitsToTrade)],
 		});
 	}
 }
@@ -315,12 +382,19 @@ const RequestSubcommand: Subcommand = {
 			kitsString = kitsOption.value;
 
 		// Turn the string of card positions separated by commas into an array of card positions as numbers
-		// Trim the positions supplied by the user and filter out any NaNs (if the user entered something else than a number)
 		const cardPositions = parseList(cardsString ?? '', true) as number[];
+
+		// Create an array of kit positions and/or names
+		const kitsToTrade = parseList(kitsString ?? '') as string[];
 
 		// Check that there aren't too many cards
 		if (cardPositions.length > config.CATCHA_TRADE_MAX_CARDS) {
-			return simpleEphemeralResponse(`You can only trade up to ${config.CATCHA_TRADE_MAX_CARDS} at once.`);
+			return simpleEphemeralResponse(`You can only trade up to ${config.CATCHA_TRADE_MAX_CARDS} cards at once.`);
+		}
+
+		// And do the same for kits
+		if (kitsToTrade.length > config.CATCHA_TRADE_MAX_KITS) {
+			return simpleEphemeralResponse(`You can only trade up to ${config.CATCHA_TRADE_MAX_KITS} kits at once.`);
 		}
 
 		// The trade request is valid, process it
@@ -328,6 +402,7 @@ const RequestSubcommand: Subcommand = {
 			user: options.user,
 			otherUserDiscordId: commandOptionUserId,
 			cardPositions: cardPositions,
+			kitsToTrade,
 		});
 	},
 };
