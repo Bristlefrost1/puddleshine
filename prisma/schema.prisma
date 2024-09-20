@@ -177,6 +177,8 @@ model HistoryCat {
 	dateStored  DateTime  @map("date_stored")
 	ageStored   Float     @map("age_stored")
 
+	biologicalNurseryUuid  String?  @map("biological_nursery_uuid")
+
 	user  User  @relation(fields: [userUuid], references: [uuid], onDelete: Cascade)
 
 	@@index([userUuid])

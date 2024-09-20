@@ -50,6 +50,8 @@ type Kit = {
 	sickSince?: Date;
 	wanderingSince?: Date;
 
+	biologicalNurseryUuid?: string;
+
 	isDead?: boolean;
 
 	pendingTradeUuid1?: string;
@@ -241,6 +243,8 @@ function getKit(kit: NurseryKit, index: number, isPaused?: boolean): Kit {
 
 		sickSince: kit.sickSince ?? undefined,
 		wanderingSince: kit.wanderingSince ?? undefined,
+
+		biologicalNurseryUuid: kit.bredBy ?? undefined,
 
 		isDead: health <= 0 ? true : false,
 

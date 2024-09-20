@@ -219,6 +219,8 @@ async function promoteKit(
 
 				isDead: false,
 
+				biologicalNurseryUuid: kit.biologicalNurseryUuid,
+
 				dateStored: timeOfStorage,
 				ageStored: kit.age,
 
@@ -359,6 +361,8 @@ async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, 
 
 					isDead: true,
 					diedAtMoons: kit.age,
+
+					biologicalNurseryUuid: kit.biologicalNurseryUuid,
 
 					dateStored: timeOfStorage,
 					ageStored: kit.age,
