@@ -125,12 +125,14 @@ model CatchaTrade {
 	senderUserUuid  String        @map("sender_user_uuid")
 	sender          Catcha        @relation("catcha_sent_trades", fields: [senderUserUuid], references: [userUuid], onDelete: Cascade)
 	senderCards     CatchaCard[]  @relation("catcha_sender_cards")
+	senderKits      NurseryKit[]  @relation("trade_sender_kits")
 	senderSideSent  Boolean       @map("sender_side_sent")
 	senderAccepted  Boolean       @map("sender_accepted")
 
 	recipientUserUuid  String        @map("recipient_user_uuid")
 	recipient          Catcha        @relation("catcha_received_trades", fields: [recipientUserUuid], references: [userUuid], onDelete: Cascade)
 	recipientCards     CatchaCard[]  @relation("catcha_recipient_cards")
+	recipientKits      NurseryKit[]  @relation("trade_recipient_kits")
 	recipientSideSent  Boolean       @map("recipient_side_sent")
 	recipientAccepted  Boolean       @map("recipient_accepted")
 
@@ -243,6 +245,12 @@ model NurseryKit {
 
 	nursery            Nursery   @relation("nursery", fields: [nurseryUuid], references: [uuid], onDelete: Cascade)
 	biologicalNursery  Nursery?  @relation("biological_nursery", fields: [bredBy], references: [uuid], onDelete: SetNull)
+
+	pendingTradeUuid1  String?       @map("pending_trade_uuid_1")
+	pendingTradeSide1  CatchaTrade?  @relation("trade_sender_kits", fields: [pendingTradeUuid1], references: [tradeUuid], onDelete: SetNull)
+
+	pendingTradeUuid2  String?       @map("pending_trade_uuid_2")
+	pendingTradeSide2  CatchaTrade?  @relation("trade_recipient_kits", fields: [pendingTradeUuid2], references: [tradeUuid], onDelete: SetNull)
 
 	@@index([nurseryUuid])
 	@@map("nursery_kits")
