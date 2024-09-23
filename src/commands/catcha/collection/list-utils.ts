@@ -51,12 +51,17 @@ function stringifyCollection(collection: Collection) {
 
 		const cardId = card.card.cardId;
 		const isInverted = card.card.isInverted;
-		const cardDetails = archive.getCardDetailsById(cardId)!;
-		const rarity = cardDetails.rarity;
+		const cardDetails = archive.getCardDetailsById(cardId);
 
-		stringifiedCards.push(
-			`[${position}] [#${cardId}] ${archive.getCardFullName(cardId, isInverted, variant ?? undefined)} ${starString.createStarString(rarity, isInverted)}`,
-		);
+		if (cardDetails === undefined) {
+			stringifiedCards.push(`[FAILED TO GET CARD DETAILS, CARDID ${cardId}]`);
+		} else {
+			const rarity = cardDetails.rarity;
+
+			stringifiedCards.push(
+				`[${position}] [#${cardId}] ${archive.getCardFullName(cardId, isInverted, variant ?? undefined)} ${starString.createStarString(rarity, isInverted)}`,
+			);
+		}
 	}
 
 	return stringifiedCards;
