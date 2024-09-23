@@ -178,10 +178,10 @@ function randomizePelt(): Pelt {
 	return { type: PeltType.SolidColor, furLength, color: PeltColor.Gray };
 }
 
-function stringifyPelt(pelt: Pelt): string {
+function stringifyPelt(pelt: Pelt, long?: boolean): string {
 	let peltString = '';
 
-	if (pelt.furLength) {
+	if (long && pelt.furLength) {
 		peltString += `${FurLength[pelt.furLength].toLowerCase()}hair `;
 	}
 

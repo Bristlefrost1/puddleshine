@@ -68,7 +68,7 @@ const CheckSubcommand: Subcommand = {
 		lines.push(
 			`> Temperature: ${temperature}°C (${(kit.temperature * (9 / 5) + 32).toFixed(1)}°F) [${kit.temperatureClass}]`,
 		);
-		lines.push(`> Description: ${getKitDescription(kit)}`);
+		lines.push(`> Description: ${getKitDescription(kit, true)}`);
 
 		lines.push('```');
 		lines.push('Last 15 events (newest first):');

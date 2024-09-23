@@ -200,8 +200,8 @@ function calculateBond(kit: NurseryKit) {
 	return newBond;
 }
 
-function getKitDescription(kit: Kit) {
-	const kitPelt = pelt.stringifyPelt(kit.pelt);
+function getKitDescription(kit: Kit, longPelt?: boolean) {
+	const kitPelt = pelt.stringifyPelt(kit.pelt, longPelt);
 	const kitEyes = eyes.stringifyEyes(kit.eyes);
 
 	let gender = kit.gender?.toLowerCase() ?? 'kit';
