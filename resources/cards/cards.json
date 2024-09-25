@@ -5064,7 +5064,7 @@
 	},
 	{
 		"id": 479,
-		"rarity": 4,
+		"rarity": 5,
 		"name": "Icewing",
 		"group": "RiverClan",
 		"gender": "She-cat",
@@ -10237,7 +10237,7 @@
 	},
 	{
 		"id": 1019,
-		"rarity": 4,
+		"rarity": 5,
 		"name": "Snow",
 		"group": "The Sisters",
 		"gender": "She-cat",
@@ -12439,7 +12439,7 @@
 	},
 	{
 		"id": 1239,
-		"rarity": 4,
+		"rarity": 5,
 		"name": "Whistlepaw",
 		"group": "WindClan",
 		"gender": "She-cat",
@@ -13799,5 +13799,285 @@
 				"credit": "Warriors Wiki"
 			}
 		]
+	},
+	{
+		"id": 1361,
+		"rarity": 2,
+		"name": "Beach",
+		"group": "Loner",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1362,
+		"rarity": 1,
+		"name": "Bound Hunt",
+		"group": "Wildcats",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1363,
+		"rarity": 2,
+		"name": "Claw Stretch",
+		"group": "Wildcats",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1364,
+		"rarity": 1,
+		"name": "Curry",
+		"group": "Kittypet",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1365,
+		"rarity": 4,
+		"name": "Galestar",
+		"group": "WindClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1366,
+		"rarity": 1,
+		"name": "Hop Scratch",
+		"group": "Wildcats",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1367,
+		"rarity": 1,
+		"name": "Hunt Growl",
+		"group": "Wildcats",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1368,
+		"rarity": 1,
+		"name": "Hunt Leap",
+		"group": "Wildcats",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1369,
+		"rarity": 1,
+		"name": "Jake",
+		"group": "Loner",
+		"gender": "Tom",
+		"disambiguator": "IH",
+
+		"art": []
+	},
+	{
+		"id": 1370,
+		"rarity": 1,
+		"name": "Leap Growl",
+		"group": "Wildcats",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1371,
+		"rarity": 1,
+		"name": "Pounce Whisper",
+		"group": "Wildcats",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1372,
+		"rarity": 2,
+		"name": "Prowl Sleek",
+		"group": "Wildcats",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1373,
+		"rarity": 1,
+		"name": "Pumpernickel",
+		"group": "Kittypet",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1374,
+		"rarity": 1,
+		"name": "Purr Roll",
+		"group": "Wildcats",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1375,
+		"rarity": 1,
+		"name": "Rosebush",
+		"group": "StarClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1376,
+		"rarity": 2,
+		"name": "Slate",
+		"group": "Loner",
+		"gender": "Tom",
+		"disambiguator": "IH",
+
+		"art": []
+	},
+	{
+		"id": 1377,
+		"rarity": 1,
+		"name": "Spring Claw",
+		"group": "Wildcats",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1378,
+		"rarity": 1,
+		"name": "Stalk Purr",
+		"group": "Wildcats",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1379,
+		"rarity": 1,
+		"name": "Stretch Blink",
+		"group": "Wildcats",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1380,
+		"rarity": 1,
+		"name": "Strike Slash",
+		"group": "Wildcats",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1381,
+		"rarity": 2,
+		"name": "Stripestar",
+		"group": "ThunderClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1382,
+		"rarity": 1,
+		"name": "Sweetums",
+		"group": "Kittypet",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1383,
+		"rarity": 1,
+		"name": "Swiftwing",
+		"group": "StarClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1384,
+		"rarity": 3,
+		"name": "Tumble Leap",
+		"group": "Wildcats",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1385,
+		"rarity": 1,
+		"name": "Whisper Claw",
+		"group": "Wildcats",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1386,
+		"rarity": 1,
+		"name": "Whitebreeze",
+		"group": "StarClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1387,
+		"rarity": 1,
+		"name": "Wish Stalk",
+		"group": "Wildcats",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1388,
+		"rarity": 1,
+		"name": "Zeke",
+		"group": "Kittypet",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
 	}
 ]
