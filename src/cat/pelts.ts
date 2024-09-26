@@ -24,6 +24,7 @@ enum PeltColor {
 
 	Orange = 'Orange',
 	Ginger = 'Ginger',
+	Red = 'Red',
 	LightGinger = 'Light Ginger',
 	DarkGinger = 'Dark Ginger',
 	Cream = 'Cream',
@@ -49,6 +50,7 @@ enum ColorpointColor {
 	Cream = 'Cream',
 
 	Orange = 'Orange',
+	Red = 'Red',
 	Yellow = 'Yellow',
 	Apricot = 'Apricot',
 
