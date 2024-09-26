@@ -9,12 +9,21 @@ import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
 import * as nurseryViews from '#commands/nursery/nursery-views.js';
 import { addNewEventToKit, KitEventType } from '#commands/nursery/game/kit-events.js';
 import { getTemperatureClass } from '../game/kit.js';
+import { getPronouns } from '#cat/gender.js';
 
 import * as config from '#config.js';
 
 import type { Subcommand } from '#commands/subcommand.js';
 
 const SUBCOMMAND_NAME = 'play';
+
+const messages = [
+	'{{fullName}} played with feathers in the nursery.',
+	'You gave {{fullName}} a badger ride.',
+	'{{fullName}} pretended {{subject}} was {{prefix}}star, the leader of {{prefix}}Clan.',
+	'{{fullName}} played with a moss ball.',
+	'{{fullName}} played with the other kits in the nursery.',
+];
 
 const PlaySubcommand: Subcommand = {
 	name: SUBCOMMAND_NAME,
@@ -70,8 +79,14 @@ const PlaySubcommand: Subcommand = {
 			nursery.kits[index].temperature = newTemperature;
 			nursery.kits[index].temperatureClass = getTemperatureClass(newTemperature);
 
-			playMessages.push(`You've played with ${kit.fullName}.`);
-			addNewEventToKit(kit, KitEventType.Play, '{{KIT_FULL_NAME}} played.', playTime);
+			const pronouns = getPronouns(kit.gender);
+			const randomMessage = messages[Math.floor(Math.random() * messages.length)]
+				.replaceAll('{{fullName}}', kit.fullName)
+				.replaceAll('{{prefix}}', kit.prefix)
+				.replaceAll('{{subject}}', pronouns.subject);
+
+			playMessages.push(randomMessage);
+			addNewEventToKit(kit, KitEventType.Play, randomMessage, playTime);
 
 			return { uuid: kit.uuid, newTemperature, events: JSON.stringify(kit.events) };
 		});

@@ -17,6 +17,7 @@ import DismissSubcommand from './subcommands/dismiss.js';
 import PauseSubcommand from './subcommands/pause.js';
 import FindSubcommand from './subcommands/find.js';
 import MedicineSubcommand from './subcommands/medicine.js';
+import PlaySubcommand from './subcommands/play.js';
 
 import type { Command } from '../command.js';
 import type { Subcommand } from '#commands/subcommand.js';
@@ -37,6 +38,7 @@ const subcommands: { [name: string]: Subcommand } = {
 	[PauseSubcommand.name]: PauseSubcommand,
 	[FindSubcommand.name]: FindSubcommand,
 	[MedicineSubcommand.name]: MedicineSubcommand,
+	[PlaySubcommand.name]: PlaySubcommand,
 };
 
 const NurseryCommand: Command = {
