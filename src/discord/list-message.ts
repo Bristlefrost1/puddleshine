@@ -6,6 +6,7 @@ import * as config from '#config.js';
 
 type ListMessage = {
 	embed: DAPI.APIEmbed;
+	content?: string;
 	scrollActionRow?: DAPI.APIActionRowComponent<DAPI.APIMessageActionRowComponent>;
 };
 
@@ -46,6 +47,9 @@ function scrollListMessage(options: {
 	title?: string;
 	author?: DAPI.APIEmbedAuthor;
 	description?: string;
+
+	noEmbed?: boolean;
+	noEmbedFooter?: string;
 }): ListMessage {
 	const pageData = options.pageData.split(':');
 	const nextOrPrev = pageData[0] as 'next' | 'prev';
@@ -78,6 +82,10 @@ function scrollListMessage(options: {
 			footer: { text: `Page ${newPageNumber}/${pages.length}` },
 			timestamp: new Date().toISOString(),
 		},
+		content:
+			options.noEmbed ?
+				`${options.description ?? ''}${newPage.join('\n')}\n${options.noEmbedFooter ?? ''}`
+			:	undefined,
 		scrollActionRow:
 			pages.length > 1 ?
 				{
@@ -98,6 +106,9 @@ function createListMessage(options: {
 	title?: string;
 	author?: DAPI.APIEmbedAuthor;
 	description?: string;
+
+	noEmbed?: boolean;
+	noEmbedFooter?: string;
 }): ListMessage {
 	if (options.items.length === 0) {
 		return {
@@ -118,13 +129,20 @@ function createListMessage(options: {
 	}
 
 	return {
-		embed: {
-			title: options.title,
-			author: options.author,
-			description: `${options.description ?? ''}${page.join('\n')}`,
-			footer: { text: `Page ${pageNumber}/${pages.length}` },
-			timestamp: new Date().toISOString(),
-		},
+		embed:
+			options.noEmbed ?
+				{}
+			:	{
+					title: options.title,
+					author: options.author,
+					description: `${options.description ?? ''}${page.join('\n')}`,
+					footer: { text: `Page ${pageNumber}/${pages.length}` },
+					timestamp: new Date().toISOString(),
+				},
+		content:
+			options.noEmbed ?
+				`${options.description ?? ''}${page.join('\n')}\n${options.noEmbedFooter ?? ''}`
+			:	undefined,
 		scrollActionRow:
 			pages.length > 1 ?
 				{

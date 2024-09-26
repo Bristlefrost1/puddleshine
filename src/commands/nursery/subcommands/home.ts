@@ -23,9 +23,7 @@ const HomeSubcommand: Subcommand = {
 	async execute(options) {
 		const nursery = await nurseryManager.getNursery(options.user, options.env, true);
 
-		return messageResponse({
-			content: nurseryViews.buildNurseryHomeView(nursery),
-		});
+		return nurseryViews.nurseryMessageResponse(nursery, { view: 'home' });
 	},
 };
 

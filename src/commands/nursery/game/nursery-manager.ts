@@ -20,6 +20,7 @@ import type { Nursery as DBNursery, NurseryKit } from '@prisma/client';
 
 type Nursery = {
 	uuid: string;
+	discordId: string;
 	displayName: string;
 	isPaused: boolean;
 	clan?: string;
@@ -222,6 +223,7 @@ async function getNursery(user: DAPI.APIUser, env: Env, generateEvents?: boolean
 
 	return {
 		uuid: nursery.uuid,
+		discordId: nursery.user.discordId,
 		displayName,
 		isPaused: nursery.isPaused,
 		clan: profile?.group ?? undefined,

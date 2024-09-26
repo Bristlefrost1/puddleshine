@@ -34,9 +34,11 @@ const BreedSubcommand: Subcommand = {
 	async execute(options) {
 		let nursery = await nurseryManager.getNursery(options.user, options.env);
 
-		if (nursery.isPaused) {
-			return nurseryViews.nurseryMessageResponse(nursery, ['Your nursery is currently paused.']);
-		}
+		if (nursery.isPaused)
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ['Your nursery is currently paused.'],
+			});
 
 		const breedTime = new Date();
 		const breedTimestamp = Math.floor(breedTime.getTime() / 1000);
@@ -46,9 +48,10 @@ const BreedSubcommand: Subcommand = {
 			const canBreedAt = lastBreedTimestamp + config.NURSERY_BREED_COOLDOWN;
 
 			if (canBreedAt > breedTimestamp && options.env.ENV !== 'dev') {
-				return nurseryViews.nurseryMessageResponse(nursery, [
-					`You can next breed on <t:${canBreedAt}:F> (<t:${canBreedAt}:R>).`,
-				]);
+				return nurseryViews.nurseryMessageResponse(nursery, {
+					view: 'home',
+					messages: [`You can next breed on <t:${canBreedAt}:F> (<t:${canBreedAt}:R>).`],
+				});
 			}
 		}
 
@@ -63,7 +66,11 @@ const BreedSubcommand: Subcommand = {
 			if (randomUtils.pickRandomWeighted(noKitsOdds)) numberOfKits = 0;
 		}
 
-		if (numberOfKits === 0) return nurseryViews.nurseryMessageResponse(nursery, ['There were no kits this time.']);
+		if (numberOfKits === 0)
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ['There were no kits this time.'],
+			});
 
 		const numberOfKitsOdds: WeightedValue<number>[] = [
 			{ value: 1, probability: config.NURSERY_1_KIT_CHANCE },
@@ -133,13 +140,16 @@ const BreedSubcommand: Subcommand = {
 				break;
 
 			default:
-				numberString = numberOfKits.toString();
+				numberString = `${numberOfKits.toString()} kits`;
 		}
 
 		// Refresh the nursery
 		nursery = await nurseryManager.getNursery(options.user, options.env);
 
-		return nurseryViews.nurseryMessageResponse(nursery, [`There was a litter of ${numberString}: ${kitsString}`]);
+		return nurseryViews.nurseryMessageResponse(nursery, {
+			view: 'home',
+			messages: [`There was a litter of ${numberString}: ${kitsString}`],
+		});
 	},
 };
 

@@ -26,13 +26,17 @@ const CoolSubcommand: Subcommand = {
 	async execute(options) {
 		const nursery = await nurseryManager.getNursery(options.user, options.env);
 
-		if (nursery.isPaused) {
-			return nurseryViews.nurseryMessageResponse(nursery, ['Your nursery is currently paused.']);
-		}
+		if (nursery.isPaused)
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ['Your nursery is currently paused.'],
+			});
 
-		if (nursery.kits.length === 0) {
-			return nurseryViews.nurseryMessageResponse(nursery, ["You don't have any kits to cool."], true);
-		}
+		if (nursery.kits.length < 1)
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ["You don't have any kits to cool."],
+			});
 
 		if (nursery.lastCooledAt) {
 			const currentTimestamp = Math.floor(new Date().getTime() / 1000);
@@ -42,11 +46,10 @@ const CoolSubcommand: Subcommand = {
 			if (secondsSinceLastCool < config.NURSERY_COOL_COOLDOWN) {
 				const canCoolIn = lastCooledAtTimestamp + config.NURSERY_COOL_COOLDOWN - currentTimestamp;
 
-				return nurseryViews.nurseryMessageResponse(
-					nursery,
-					[`You've recently cooled your nursery (${formatSeconds(canCoolIn)})`],
-					true,
-				);
+				return nurseryViews.nurseryMessageResponse(nursery, {
+					view: 'status',
+					messages: [`You've recently cooled your nursery (${formatSeconds(canCoolIn)})`],
+				});
 			}
 		}
 
@@ -67,7 +70,10 @@ const CoolSubcommand: Subcommand = {
 			newKitTemperatures.filter((kit) => kit !== undefined) as any,
 		);
 
-		return nurseryViews.nurseryMessageResponse(nursery, ["You've cooled the nursery."], true);
+		return nurseryViews.nurseryMessageResponse(nursery, {
+			view: 'status',
+			messages: ["You've cooled the nursery."],
+		});
 	},
 };
 

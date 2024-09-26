@@ -1,6 +1,9 @@
 import * as DAPI from 'discord-api-types/v10';
 
 import { simpleEphemeralResponse } from '#discord/responses.js';
+import * as listMessage from '#discord/list-message.js';
+import * as nurseryManager from './game/nursery-manager.js';
+import * as nurseryViews from './nursery-views.js';
 
 import StatusSubcommand from './subcommands/status.js';
 import HomeSubcommand from './subcommands/home.js';
@@ -68,7 +71,43 @@ const NurseryCommand: Command = {
 			return await subcommands[subcommandName].execute({ interaction, user, commandOptions: options, env, ctx });
 	},
 
-	async onMessageComponent({ interaction, user, componentType, customId, parsedCustomId, values, env, ctx }) {},
+	async onMessageComponent({ interaction, user, componentType, customId, parsedCustomId, values, env, ctx }) {
+		if (parsedCustomId[1] === 'status') {
+			const userDiscordId = parsedCustomId[3];
+
+			if (user.id !== userDiscordId) return simpleEphemeralResponse('This is not your nursery.');
+
+			const nursery = await nurseryManager.getNursery(user, env, false);
+			const messages = interaction.message.content.split('```ansi')[0];
+
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'status',
+
+				messages: [messages],
+				preserveMessageFormatting: true,
+
+				scroll: true,
+				scrollPageData: parsedCustomId[2],
+			});
+		} else if (parsedCustomId[1] === 'home') {
+			const userDiscordId = parsedCustomId[3];
+
+			if (user.id !== userDiscordId) return simpleEphemeralResponse('This is not your nursery.');
+
+			const nursery = await nurseryManager.getNursery(user, env, false);
+			const messages = interaction.message.content.split('```ansi')[0];
+
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+
+				messages: [messages],
+				preserveMessageFormatting: true,
+
+				scroll: true,
+				scrollPageData: parsedCustomId[2],
+			});
+		}
+	},
 };
 
 export default NurseryCommand;

@@ -46,17 +46,25 @@ const FeedSubcommand: Subcommand = {
 
 		const nursery = await nurseryManager.getNursery(options.user, options.env);
 
-		if (nursery.isPaused) {
-			return nurseryViews.nurseryMessageResponse(nursery, ['Your nursery is currently paused.']);
-		}
+		if (nursery.isPaused)
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ['Your nursery is currently paused.'],
+			});
 
 		if (nursery.kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, ["You don't have any kits to feed."], true);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ["You don't have any kits to feed."],
+			});
 
 		let kitsToFeed = nurseryManager.locateKits(nursery, kitNamesToFeed);
 
 		if (kitsToFeed.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, ["Couldn't find kits with the provided input."], true);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'status',
+				messages: ["Couldn't find kits with the provided input."],
+			});
 
 		kitsToFeed = kitsToFeed.filter((kit) => {
 			if (kit.wanderingSince !== undefined) {
@@ -77,12 +85,19 @@ const FeedSubcommand: Subcommand = {
 			return true;
 		});
 
-		if (kitsToFeed.length < 1) return nurseryViews.nurseryMessageResponse(nursery, feedMessages, true);
+		if (kitsToFeed.length < 1)
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'status',
+				messages: feedMessages,
+			});
 
 		const foodPointsNeeded = kitsToFeed.length * config.NURSERY_FEED_FOOD_POINTS;
 
 		if (foodPointsNeeded > nursery.food.foodPoints)
-			return nurseryViews.nurseryMessageResponse(nursery, ["You don't have enough food to feed the kits."], true);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'status',
+				messages: ["You don't have enough food to feed the kits."],
+			});
 
 		nursery.food.foodPoints -= foodPointsNeeded;
 		nursery.food.food -= foodPointsNeeded;
@@ -101,7 +116,10 @@ const FeedSubcommand: Subcommand = {
 
 		await nurseryDB.feedKits(options.env.PRISMA, nursery.uuid, feedTime, nursery.food.food, dbUpdate);
 
-		return nurseryViews.nurseryMessageResponse(nursery, feedMessages, true);
+		return nurseryViews.nurseryMessageResponse(nursery, {
+			view: 'status',
+			messages: feedMessages,
+		});
 	},
 };
 

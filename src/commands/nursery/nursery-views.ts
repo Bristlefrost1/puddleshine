@@ -1,4 +1,5 @@
 import { messageResponse } from '#discord/responses.js';
+import * as listMessage from '#discord/list-message.js';
 import { getKitDescription, Kit } from './game/kit.js';
 
 import type { Nursery } from './game/nursery-manager.js';
@@ -13,7 +14,7 @@ function stringifyKitDescription(kit: Kit, ansiColor?: boolean) {
 	return `[${kit.position}] ${kit.fullName}: ${getKitDescription(kit)}`;
 }
 
-function stringifyKitStats(kit: Kit, ansiColor?: boolean) {
+function stringifyKitStatus(kit: Kit, ansiColor?: boolean) {
 	const age = kit.age.toString().slice(0, 4);
 	const health = (kit.health * 100).toFixed(1);
 	const hunger = (kit.hunger * 100).toFixed(1);
@@ -27,7 +28,7 @@ function stringifyKitStats(kit: Kit, ansiColor?: boolean) {
 	return `- Age: ${age} moons | Health: ${health}% | Hunger: ${hunger}% | Bond: ${bond}% | Temp: ${temperature}`;
 }
 
-function buildNurseryStatusView(nursery: Nursery, noAlerts?: boolean) {
+function stringifyNurseryStatus(nursery: Nursery, noAlerts?: boolean) {
 	const lines: string[] = [];
 
 	let nextFoodPoint = '';
@@ -42,8 +43,6 @@ function buildNurseryStatusView(nursery: Nursery, noAlerts?: boolean) {
 		}
 	}
 
-	lines.push('```ansi');
-
 	if (nursery.isPaused) {
 		lines.push(
 			`\u001b[1;2m${nursery.displayName}\u001b[0m's nursery \u001b[2;34m[${nursery.season}]\u001b[0m \u001b[2;31m[PAUSED]\u001b[0m`,
@@ -53,9 +52,10 @@ function buildNurseryStatusView(nursery: Nursery, noAlerts?: boolean) {
 	}
 
 	lines.push(`Food Meter: ${nursery.food.foodPoints} (${nextFoodPoint})`);
-	lines.push('');
 
 	if (!noAlerts) {
+		lines.push('');
+
 		if (nursery.alerts.length > 0) {
 			const mostRecentAlerts = nursery.alerts.slice(undefined, config.NURSERY_SHORT_ALERTS);
 
@@ -69,105 +69,108 @@ function buildNurseryStatusView(nursery: Nursery, noAlerts?: boolean) {
 		} else {
 			lines.push('You have no alerts.');
 		}
-
-		lines.push('');
 	}
 
-	if (nursery.kits && nursery.kits.length > 0) {
-		for (let i = 0; i < nursery.kits.length; i++) {
-			const kitNumber = i + 1;
-			const kit = nursery.kits[i];
+	return lines.join('\n');
+}
 
-			if (kit.wanderingSince !== undefined) continue;
+function buildKitList(nursery: Nursery, view: 'status' | 'home') {
+	const list: string[] = [];
 
-			lines.push(`\u001b[2;34m[${kitNumber}]\u001b[0m \u001b[2;37m${kit.fullName}\u001b[0m:`);
-			lines.push(stringifyKitStats(kit, true));
+	if (nursery.kits.length === 0) {
+		list.push("You don't have any kits. Try /nursery breed to get some!");
+		return list;
+	}
+
+	for (let i = 0; i < nursery.kits.length; i++) {
+		const kitNumber = i + 1;
+		const kit = nursery.kits[i];
+
+		if (kit.wanderingSince !== undefined) continue;
+
+		if (view === 'status') {
+			list.push(
+				`\u001b[2;34m[${kitNumber}]\u001b[0m \u001b[2;37m${kit.fullName}\u001b[0m:\n${stringifyKitStatus(kit, true)}`,
+			);
+		} else {
+			list.push(stringifyKitDescription(kit, true));
 		}
-	} else {
-		lines.push("You don't have any kits. Try /nursery breed to get some!");
 	}
 
-	if (nursery.kitsNeedingAttention.length > 0) {
-		lines.push('');
+	return list;
+}
 
+function stringifyNurseryFooter(nursery: Nursery) {
+	if (nursery.kitsNeedingAttention.length > 0) {
 		if (nursery.kitsNeedingAttention.length === 1) {
-			lines.push(
-				`\u001b[2;41m\u001b[2;37m[!] ${nursery.kitsNeedingAttention[0].fullName} needs your attention.\u001b[0m\u001b[2;41m\u001b[0m`,
-			);
+			return `\u001b[2;41m\u001b[2;37m[!] ${nursery.kitsNeedingAttention[0].fullName} needs your attention.\u001b[0m\u001b[2;41m\u001b[0m`;
 		} else if (nursery.kitsNeedingAttention.length === 2) {
-			lines.push(
-				`\u001b[2;41m\u001b[2;37m[!] ${nursery.kitsNeedingAttention[0].fullName} and ${nursery.kitsNeedingAttention[1].fullName} need your attention.\u001b[0m\u001b[2;41m\u001b[0m`,
-			);
+			return `\u001b[2;41m\u001b[2;37m[!] ${nursery.kitsNeedingAttention[0].fullName} and ${nursery.kitsNeedingAttention[1].fullName} need your attention.\u001b[0m\u001b[2;41m\u001b[0m`;
 		} else {
 			const namesNeedingAttention = nursery.kitsNeedingAttention.map((kit) => kit.fullName);
 			const last = namesNeedingAttention.pop();
 
-			lines.push(
-				`\u001b[2;41m\u001b[2;37m[!] ${namesNeedingAttention.join(', ')}, and ${last} need your attention.\u001b[0m\u001b[2;41m\u001b[0m`,
-			);
+			return `\u001b[2;41m\u001b[2;37m[!] ${namesNeedingAttention.join(', ')}, and ${last} need your attention.\u001b[0m\u001b[2;41m\u001b[0m`;
 		}
 	}
 
-	lines.push('```');
-
-	return lines.join('\n');
+	return '';
 }
 
-function buildNurseryHomeView(nursery: Nursery) {
-	const lines: string[] = [];
+function nurseryMessageResponse(
+	nursery: Nursery,
+	options: {
+		view: 'status' | 'home';
+		messages?: string[];
+		preserveMessageFormatting?: boolean;
+		noAlerts?: boolean;
+		scroll?: boolean;
+		scrollPageData?: string;
+	},
+) {
+	let messages = '';
 
-	let nextFoodPoint = '';
-
-	if (nursery.food.foodPoints >= nursery.food.max) {
-		nextFoodPoint = 'Full';
-	} else {
-		if (nursery.food.nextFoodPointPercentage) {
-			nextFoodPoint = nursery.food.nextFoodPointPercentage.toFixed(1).toString() + '%';
-		} else {
-			nextFoodPoint = '0%';
-		}
+	if (options.messages && options.messages.length > 0) {
+		// prettier-ignore
+		messages = options.messages.map((message) => options.preserveMessageFormatting ? message : `> ${message}\n`).join('');
 	}
 
-	lines.push('```ansi');
+	const nurseryStatus = stringifyNurseryStatus(nursery, options.noAlerts);
+	const kitList = buildKitList(nursery, options.view);
+	const nurseryFooter = stringifyNurseryFooter(nursery);
 
-	if (nursery.isPaused) {
-		lines.push(
-			`\u001b[1;2m${nursery.displayName}\u001b[0m's nursery \u001b[2;34m[${nursery.season}]\u001b[0m \u001b[2;31m[PAUSED]\u001b[0m`,
-		);
+	let list;
+
+	if (!options.scroll) {
+		list = listMessage.createListMessage({
+			action: `nursery/${options.view}`,
+			listDataString: nursery.discordId,
+
+			description: messages + '```ansi\n' + nurseryStatus + '\n\n',
+			items: kitList,
+
+			noEmbed: true,
+			noEmbedFooter: nurseryFooter + '```',
+		});
 	} else {
-		lines.push(`\u001b[1;2m${nursery.displayName}\u001b[0m's nursery \u001b[2;34m[${nursery.season}]\u001b[0m`);
+		list = listMessage.scrollListMessage({
+			action: `nursery/${options.view}`,
+			pageData: options.scrollPageData!,
+			listDataString: nursery.discordId,
+
+			description: messages + '```ansi\n' + nurseryStatus + '\n\n',
+			items: kitList,
+
+			noEmbed: true,
+			noEmbedFooter: nurseryFooter + '```',
+		});
 	}
-
-	lines.push(`Food Meter: ${nursery.food.foodPoints} (${nextFoodPoint})`);
-	lines.push('');
-
-	if (nursery.kits && nursery.kits.length > 0) {
-		for (let i = 0; i < nursery.kits.length; i++) {
-			const kit = nursery.kits[i];
-
-			lines.push(stringifyKitDescription(kit, true));
-		}
-	} else {
-		lines.push("You don't have any kits. Try /nursery breed to get some!");
-	}
-
-	lines.push('```');
-
-	return lines.join('\n');
-}
-
-function nurseryMessageResponse(nursery: Nursery, messages: string[], showStatus?: boolean, noAlerts?: boolean) {
-	const nurseryView = showStatus ? buildNurseryStatusView(nursery, noAlerts) : buildNurseryHomeView(nursery);
 
 	return messageResponse({
-		content: messages.map((message) => `> ${message}`).join('\n') + '\n' + nurseryView,
+		content: list.content,
+		components: list.scrollActionRow ? [list.scrollActionRow] : undefined,
+		update: options.scroll,
 	});
 }
 
-export {
-	stringifyKitDescription,
-	stringifyKitStats,
-	buildNurseryStatusView,
-	buildNurseryHomeView,
-	nurseryMessageResponse,
-};
+export { stringifyKitDescription, stringifyKitStatus, stringifyNurseryStatus, nurseryMessageResponse };

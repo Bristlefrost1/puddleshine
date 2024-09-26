@@ -17,7 +17,7 @@ import * as config from '#config.js';
 
 const kitFoundMessages: WeightedValue<string>[] = [
 	{
-		value: 'You find {{KIT_FULL_NAME}} wandering outside the camp. You scold your kit not to wander off.',
+		value: 'You found {{KIT_FULL_NAME}} wandering outside the camp. You scold your kit not to wander off.',
 		probability: '*',
 	},
 	{
@@ -59,17 +59,25 @@ const FindSubcommand: Subcommand = {
 		const kitNames = parseList(kitsOption.value) as string[];
 		const nursery = await nurseryManager.getNursery(options.user, options.env);
 
-		if (nursery.isPaused) {
-			return nurseryViews.nurseryMessageResponse(nursery, ['Your nursery is currently paused.']);
-		}
+		if (nursery.isPaused)
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ['Your nursery is currently paused.'],
+			});
 
 		if (nursery.kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, ["You don't have any kits to search for."], true);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ["You don't have any kits to search for."],
+			});
 
 		const kits = nurseryManager.locateKits(nursery, kitNames);
 
 		if (kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, ["Couldn't find kits with the provided input."], true);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ["Couldn't find kits with the provided input."],
+			});
 
 		const messages: string[] = [];
 		const foundKits: Kit[] = [];
@@ -103,10 +111,18 @@ const FindSubcommand: Subcommand = {
 			nursery.kits[kit.index] = kit;
 		}
 
-		if (foundKits.length < 1) return nurseryViews.nurseryMessageResponse(nursery, messages, true);
+		if (foundKits.length < 1)
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'status',
+				messages: messages,
+			});
 
 		await nurseryDB.setKitsWanderingSince(options.env.PRISMA, foundKits, null);
-		return nurseryViews.nurseryMessageResponse(nursery, messages, true);
+
+		return nurseryViews.nurseryMessageResponse(nursery, {
+			view: 'status',
+			messages: messages,
+		});
 	},
 };
 

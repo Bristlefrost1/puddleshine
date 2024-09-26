@@ -42,12 +42,11 @@ const DismissSubcommand: Subcommand = {
 		const nursery = await nurseryManager.getNursery(options.user, options.env);
 
 		if (nursery.alerts.length === 0) {
-			return nurseryViews.nurseryMessageResponse(
-				nursery,
-				['No alerts to dismiss.', ...buildAlertsBlock(nursery.alerts)],
-				true,
-				true,
-			);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ['No alerts to dismiss.', ...buildAlertsBlock(nursery.alerts)],
+				noAlerts: true,
+			});
 		}
 
 		if (countOption.value.trim().toLowerCase() === 'all') {
@@ -55,23 +54,21 @@ const DismissSubcommand: Subcommand = {
 
 			await nurseryDB.updateNurseryAlerts(options.env.PRISMA, nursery.uuid, JSON.stringify(nursery.alerts));
 
-			return nurseryViews.nurseryMessageResponse(
-				nursery,
-				['Dismissed all of your alerts.', ...buildAlertsBlock(nursery.alerts)],
-				true,
-				true,
-			);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ['Dismissed all of your alerts.', ...buildAlertsBlock(nursery.alerts)],
+				noAlerts: true,
+			});
 		}
 
 		const countToDismiss = Number.parseInt(countOption.value.trim());
 
 		if (isNaN(countToDismiss) || countToDismiss === 0) {
-			return nurseryViews.nurseryMessageResponse(
-				nursery,
-				['The count entered is not valid.', ...buildAlertsBlock(nursery.alerts)],
-				true,
-				true,
-			);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ['The count entered is not valid.', ...buildAlertsBlock(nursery.alerts)],
+				noAlerts: true,
+			});
 		}
 
 		if (countToDismiss > 0) {
@@ -82,12 +79,11 @@ const DismissSubcommand: Subcommand = {
 
 		await nurseryDB.updateNurseryAlerts(options.env.PRISMA, nursery.uuid, JSON.stringify(nursery.alerts));
 
-		return nurseryViews.nurseryMessageResponse(
-			nursery,
-			[`Dismissed ${Math.abs(countToDismiss)} alerts.`, ...buildAlertsBlock(nursery.alerts)],
-			true,
-			true,
-		);
+		return nurseryViews.nurseryMessageResponse(nursery, {
+			view: 'home',
+			messages: [`Dismissed ${Math.abs(countToDismiss)} alerts.`, ...buildAlertsBlock(nursery.alerts)],
+			noAlerts: true,
+		});
 	},
 };
 

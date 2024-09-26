@@ -27,20 +27,22 @@ const PauseSubcommand: Subcommand = {
 
 			nursery.isPaused = false;
 
-			return nurseryViews.nurseryMessageResponse(nursery, ["You've returned to take care of your kits."], false);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ["You've returned to take care of your kits."],
+			});
 		} else {
 			await nurseryDB.pauseNursery(options.env.PRISMA, nursery, nursery.kits);
 
 			nursery.isPaused = true;
 
-			return nurseryViews.nurseryMessageResponse(
-				nursery,
-				[
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: [
 					"You let the other cats in the nursery to take care of your kits while you're gone.",
 					'Do [pause] again to resume.',
 				],
-				false,
-			);
+			});
 		}
 	},
 };

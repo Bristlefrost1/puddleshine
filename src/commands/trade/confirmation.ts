@@ -5,7 +5,7 @@ import { messageResponse } from '#discord/responses.js';
 import * as tradeDB from '#commands/trade/db/trade-db.js';
 import { stringifyCards } from '#commands/catcha/collection/list-utils.js';
 import { getKit } from '#commands/nursery/game/kit.js';
-import { stringifyKitDescription, stringifyKitStats } from '#commands/nursery/nursery-views.js';
+import { stringifyKitDescription, stringifyKitStatus } from '#commands/nursery/nursery-views.js';
 import { processTrade } from '#commands/trade/trade.js';
 
 type Trade = Awaited<ReturnType<typeof tradeDB.updateTrade>>;
@@ -41,7 +41,7 @@ function createTradeConfirmationResponse(
 
 		for (const kit of senderKits) {
 			senderDescriptionLines.push(stringifyKitDescription(getKit(kit, 0), true));
-			senderDescriptionLines.push(stringifyKitStats(getKit(kit, 0), true));
+			senderDescriptionLines.push(stringifyKitStatus(getKit(kit, 0), true));
 		}
 
 		senderDescriptionLines.push('```');
@@ -67,7 +67,7 @@ function createTradeConfirmationResponse(
 
 		for (const kit of recipientKits) {
 			recipientDescriptionLines.push(stringifyKitDescription(getKit(kit, 0), true));
-			recipientDescriptionLines.push(stringifyKitStats(getKit(kit, 0), true));
+			recipientDescriptionLines.push(stringifyKitStatus(getKit(kit, 0), true));
 		}
 
 		recipientDescriptionLines.push('```');

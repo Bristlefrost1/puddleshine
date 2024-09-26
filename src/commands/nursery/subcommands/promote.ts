@@ -40,7 +40,10 @@ const PromoteSubcommand: Subcommand = {
 		const nursery = await nurseryManager.getNursery(options.user, options.env);
 
 		if (nursery.isPaused) {
-			return nurseryViews.nurseryMessageResponse(nursery, ['Your nursery is currently paused.']);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ['Your nursery is currently paused.'],
+			});
 		}
 
 		const { kit: kitOption } = parseCommandOptions(options.commandOptions);
@@ -52,18 +55,24 @@ const PromoteSubcommand: Subcommand = {
 		const foundKits = nurseryManager.locateKits(nursery, kitNames);
 
 		if (foundKits.length < 1)
-			// prettier-ignore
-			return nurseryViews.nurseryMessageResponse(nursery, ["Couldn't find a kit with the provided input."], false);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ["Couldn't find a kit with the provided input."],
+			});
 
 		const kit = foundKits[0];
 
 		if (kit.wanderingSince !== undefined)
-			// prettier-ignore
-			return nurseryViews.nurseryMessageResponse(nursery, [`You can't see ${kit.fullName} anywhere in the nursery for the apprentice ceremony.`], false);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: [`You can't see ${kit.fullName} anywhere in the nursery for the apprentice ceremony.`],
+			});
 
 		if (kit.age < config.NURSERY_PROMOTE_AGE)
-			// prettier-ignore
-			return nurseryViews.nurseryMessageResponse(nursery, [`${kit.fullName} hasn't reached the age of ${config.NURSERY_PROMOTE_AGE} moons yet.`], false);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: [`${kit.fullName} hasn't reached the age of ${config.NURSERY_PROMOTE_AGE} moons yet.`],
+			});
 
 		// Alright, the kit is old enough, promotion time
 		const rankOdds: WeightedValue<ClanRank.MedicineCatApprentice | ClanRank.WarriorApprentice>[] = [
@@ -105,7 +114,10 @@ const PromoteSubcommand: Subcommand = {
 			];
 		}
 
-		return nurseryViews.nurseryMessageResponse(nursery, promotionMessage, false);
+		return nurseryViews.nurseryMessageResponse(nursery, {
+			view: 'home',
+			messages: promotionMessage,
+		});
 	},
 };
 

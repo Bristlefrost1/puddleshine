@@ -52,17 +52,25 @@ const PlaySubcommand: Subcommand = {
 		const kitNames = parseList(kitsOption.value) as string[];
 		const nursery = await nurseryManager.getNursery(options.user, options.env);
 
-		if (nursery.isPaused) {
-			return nurseryViews.nurseryMessageResponse(nursery, ['Your nursery is currently paused.']);
-		}
+		if (nursery.isPaused)
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ['Your nursery is currently paused.'],
+			});
 
 		if (nursery.kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, ["You don't have any kits to play with."], true);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'home',
+				messages: ["You don't have any kits to play with."],
+			});
 
 		const kits = nurseryManager.locateKits(nursery, kitNames);
 
 		if (kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, ["Couldn't find kits with the provided input."], true);
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'status',
+				messages: ["Couldn't find kits with the provided input."],
+			});
 
 		const playMessages: string[] = [];
 		const playTime = new Date();
@@ -92,11 +100,18 @@ const PlaySubcommand: Subcommand = {
 		});
 
 		const newTemperatures = newKitTemperatures.filter((kit) => kit !== undefined);
-		if (newTemperatures.length < 1) return nurseryViews.nurseryMessageResponse(nursery, playMessages, true);
+		if (newTemperatures.length < 1)
+			return nurseryViews.nurseryMessageResponse(nursery, {
+				view: 'status',
+				messages: playMessages,
+			});
 
 		await nurseryDB.updateKitTemperatures(options.env.PRISMA, newTemperatures as any, playTime);
 
-		return nurseryViews.nurseryMessageResponse(nursery, playMessages, true);
+		return nurseryViews.nurseryMessageResponse(nursery, {
+			view: 'status',
+			messages: playMessages,
+		});
 	},
 };
 

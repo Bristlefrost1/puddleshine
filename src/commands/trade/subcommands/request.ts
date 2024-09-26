@@ -8,7 +8,7 @@ import * as catchaDB from '#commands/catcha/db/catcha-db.js';
 import * as collection from '#commands/catcha/collection/collection.js';
 import { stringifyCards } from '#commands/catcha/collection/list-utils.js';
 import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
-import { stringifyKitDescription, stringifyKitStats } from '#commands/nursery/nursery-views.js';
+import { stringifyKitDescription, stringifyKitStatus } from '#commands/nursery/nursery-views.js';
 
 import * as tradeDB from '#commands/trade/db/trade-db.js';
 import * as tradeConfirmation from '#commands/trade/confirmation.js';
@@ -43,7 +43,7 @@ function buildTradeRequestEmbed(cards: CatchaCard[], kits: Kit[]): DAPI.APIEmbed
 
 		for (const kit of kits) {
 			descriptionLines.push(stringifyKitDescription(kit, true));
-			descriptionLines.push(stringifyKitStats(kit, true));
+			descriptionLines.push(stringifyKitStatus(kit, true));
 		}
 
 		descriptionLines.push('```');

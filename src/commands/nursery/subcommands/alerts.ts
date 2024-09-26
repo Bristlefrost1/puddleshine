@@ -53,7 +53,11 @@ const AlertsSubcommand: Subcommand = {
 		lines.push('Dismiss oldest alerts by using /nursery dismiss (count | "all")');
 		lines.push(...buildAlertsBlock(nursery.alerts));
 
-		return nurseryViews.nurseryMessageResponse(nursery, lines, true, true);
+		return nurseryViews.nurseryMessageResponse(nursery, {
+			view: 'home',
+			messages: lines,
+			noAlerts: true,
+		});
 	},
 };
 

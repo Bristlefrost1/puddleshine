@@ -80,8 +80,10 @@ const CheckSubcommand: Subcommand = {
 		});
 		lines.push('```');
 
-		return messageResponse({
-			content: lines.join('\n') + '\n' + nurseryViews.buildNurseryHomeView(nursery),
+		return nurseryViews.nurseryMessageResponse(nursery, {
+			view: 'status',
+			messages: lines,
+			preserveMessageFormatting: true,
 		});
 	},
 };
