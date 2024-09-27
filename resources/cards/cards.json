@@ -477,7 +477,7 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/0030-badgerfang/badgerfang-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			},
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/f/f1/Badgerfang.apprentice.png/revision/latest?cb=20230703154628",
@@ -532,7 +532,7 @@
 				"art": [
 					{
 						"url": "$ART_URL_BASE$/0032-barley/variants/pride.png",
-						"credit": "falloutragez"
+						"credit": "lostviolyn"
 					}
 				]
 			}
@@ -1826,7 +1826,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0145-cinderpelt/cinderpelt-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -1971,7 +1971,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0158-cloudtail/cloudtail-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -2201,7 +2201,7 @@
 				"art": [
 					{
 						"url": "$ART_URL_BASE$/0182-crowfeather/variants/father.png",
-						"credit": "falloutragez"
+						"credit": "lostviolyn"
 					}
 				]
 			}
@@ -2456,7 +2456,7 @@
 				"art": [
 					{
 						"url": "$ART_URL_BASE$/0208-darkstripe/variants/dirt.png",
-						"credit": "falloutragez"
+						"credit": "lostviolyn"
 					}
 				]
 			}
@@ -5598,7 +5598,7 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/0532-leafpool/leafpool-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			},
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/d/dc/Leafpool.FG-6.png/revision/latest?cb=20240614232002",
@@ -5777,7 +5777,7 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/0548-lilyflower/lilyflower-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -5848,7 +5848,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0555-lionblaze/lionblaze-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -5871,7 +5871,7 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/0557-lionheart/lionheart-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			},
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/8/8e/Lionheart.star.png/revision/latest?cb=20240401200717",
@@ -6451,8 +6451,8 @@
 
 		"art": [
 			{
-				"url": "$ART_URL_BASE$/0621-mistfeather/mistfeather-falloutragez.png",
-				"credit": "falloutragez"
+				"url": "$ART_URL_BASE$/0621-mistfeather/mistfeather-lostviolyn.png",
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -6491,7 +6491,7 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/0625-mistlekit/mistlekit-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -6790,7 +6790,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0657-mosskit/mosskit-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -7899,7 +7899,7 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/0772-beepaw/beepaw-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -8093,7 +8093,7 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/0794-plumstone/plumstone-falloutragez.jpg",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -10331,7 +10331,7 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/1027-snowkit/snowkit-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -10358,7 +10358,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/1029-snowtuft/snowtuft-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -10504,7 +10504,7 @@
 				"art": [
 					{
 						"url": "$ART_URL_BASE$/1042-sparkpelt/variants/sparky.png",
-						"credit": "falloutragez"
+						"credit": "lostviolyn"
 					}
 				]
 			}
@@ -11089,7 +11089,7 @@
 				"art": [
 					{
 						"url": "$ART_URL_BASE$/1097-stonefur/variants/stone.png",
-						"credit": "falloutragez"
+						"credit": "lostviolyn"
 					}
 				]
 			}
@@ -11490,7 +11490,7 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/1142-swiftpaw/swiftpaw-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		],
 
@@ -11503,7 +11503,7 @@
 				"art": [
 					{
 						"url": "$ART_URL_BASE$/1142-swiftpaw/variants/taylor-swift.png",
-						"credit": "falloutragez"
+						"credit": "lostviolyn"
 					}
 				]
 			}
@@ -12377,7 +12377,7 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/1231-webkit/webkit-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -12686,7 +12686,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/1262-willowshine/willowshine-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -12831,7 +12831,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/1276-yellowfang/yellowfang-falloutragez.png",
-				"credit": "falloutragez"
+				"credit": "lostviolyn"
 			}
 		]
 	},
