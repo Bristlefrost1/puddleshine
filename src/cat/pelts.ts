@@ -7,6 +7,7 @@ enum PeltType {
 	Bicolor = 'Bicolor',
 	Tabby = 'Tabby',
 	Tortoiseshell = 'Tortoiseshell',
+	Calico = 'Calico',
 	Colorpoint = 'Colorpoint',
 }
 
@@ -96,20 +97,27 @@ type TortoiseshellPelt = {
 	chimeraFace?: boolean;
 };
 
+type CalicoPelt = {
+	type: PeltType.Calico;
+
+	dilute: boolean;
+};
+
 type ColorpointPelt = {
 	type: PeltType.Colorpoint;
 
 	color: ColorpointColor;
 };
 
-type Pelt = PeltBase & (SolidColorPelt | BicolorPelt | TabbyPelt | TortoiseshellPelt | ColorpointPelt);
+type Pelt = PeltBase & (SolidColorPelt | BicolorPelt | TabbyPelt | TortoiseshellPelt | CalicoPelt | ColorpointPelt);
 
 function randomizePelt(): Pelt {
 	const peltTypeOdds: WeightedValue<PeltType>[] = [
 		{ value: PeltType.Bicolor, probability: 0.2 },
 		{ value: PeltType.Tabby, probability: 0.25 },
-		{ value: PeltType.Tortoiseshell, probability: 0.15 },
-		{ value: PeltType.Colorpoint, probability: 0.15 },
+		{ value: PeltType.Tortoiseshell, probability: 0.1 },
+		{ value: PeltType.Calico, probability: 0.1 },
+		{ value: PeltType.Colorpoint, probability: 0.1 },
 		{ value: PeltType.SolidColor, probability: '*' },
 	];
 	const peltType = randomUtils.pickRandomWeighted(peltTypeOdds);
@@ -175,6 +183,14 @@ function randomizePelt(): Pelt {
 			Object.values(ColorpointColor)[Math.floor(Math.random() * Object.keys(ColorpointColor).length)];
 
 		return { type: PeltType.Colorpoint, furLength, color: randomColorpointColor };
+	} else if (peltType === PeltType.Calico) {
+		const diluteOdds: WeightedValue<boolean>[] = [
+			{ value: true, probability: 0.33 },
+			{ value: false, probability: '*' },
+		];
+		const isDilute = randomUtils.pickRandomWeighted(diluteOdds);
+
+		return { type: PeltType.Calico, furLength, dilute: isDilute };
 	}
 
 	return { type: PeltType.SolidColor, furLength, color: PeltColor.Gray };
@@ -213,6 +229,14 @@ function stringifyPelt(pelt: Pelt, long?: boolean): string {
 				peltString += 'dilute tortoiseshell';
 			} else {
 				peltString += 'tortoiseshell';
+			}
+			break;
+
+		case PeltType.Calico:
+			if (pelt.dilute) {
+				peltString += 'dilute calico';
+			} else {
+				peltString += 'calico';
 			}
 			break;
 
