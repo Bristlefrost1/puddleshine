@@ -1,7 +1,7 @@
 import * as DAPI from 'discord-api-types/v10';
 
 import { KitGender } from '#cat/gender.js';
-import { randomizePelt } from '#cat/pelts.js';
+import { PeltColor, PeltType, randomizePelt } from '#cat/pelts.js';
 import { randomizeEyes } from '#cat/eyes.js';
 
 import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
@@ -91,15 +91,26 @@ const BreedSubcommand: Subcommand = {
 		const kitNames: string[] = [];
 
 		for (let i = 0; i < numberOfKits; i++) {
+			const prefix = generateRandomPrefix();
+			const kitPelt = randomizePelt();
+			const kitEyes = randomizeEyes();
+
+			let sheKitProbability = 0.5;
+
+			if (kitPelt.type === PeltType.SolidColor || kitPelt.type === PeltType.Tabby) {
+				if (kitPelt.color === PeltColor.Orange || kitPelt.color === PeltColor.Ginger) {
+					sheKitProbability = 0.2;
+				}
+			} else if (kitPelt.type === PeltType.Calico) {
+				sheKitProbability = 1 - 0.00033;
+			}
+
 			const genderOdds: WeightedValue<KitGender>[] = [
-				{ value: KitGender.SheKit, probability: 0.5 },
+				{ value: KitGender.SheKit, probability: sheKitProbability },
 				{ value: KitGender.TomKit, probability: '*' },
 			];
 
 			const gender = randomUtils.pickRandomWeighted(genderOdds);
-			const prefix = generateRandomPrefix();
-			const kitPelt = randomizePelt();
-			const kitEyes = randomizeEyes();
 
 			kitNames.push(`${prefix}kit`);
 			bredKits.push({ prefix, gender, pelt: kitPelt, eyes: kitEyes });
