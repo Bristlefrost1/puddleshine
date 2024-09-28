@@ -44,19 +44,38 @@ const ListSubcommand: Subcommand = {
 		name: SUBCOMMAND_NAME,
 		description: 'List the cats in your history.',
 
-		options: [],
+		options: [
+			{
+				type: DAPI.ApplicationCommandOptionType.User,
+				name: 'user',
+				description: "The user whose list you'd like to view",
+
+				required: false,
+			},
+		],
 	},
 
 	async execute(options) {
-		const listOfCats = await listHistoryCats(options.user.id, options.env);
+		let listUserId = options.user.id;
+		const { user: userOption } = parseCommandOptions(options.commandOptions);
+
+		if (userOption && userOption.type === DAPI.ApplicationCommandOptionType.User) {
+			listUserId = userOption.value;
+		}
+
+		const listOfCats = await listHistoryCats(listUserId, options.env);
 
 		if (listOfCats.length === 0) {
-			return embedMessageResponse(errorEmbed('Nothing found in your history.'));
+			if (listUserId === options.user.id) {
+				return embedMessageResponse(errorEmbed('Nothing found in your history.'));
+			} else {
+				return embedMessageResponse(errorEmbed("Nothing found in this user's history."));
+			}
 		}
 
 		const list = listMessage.createListMessage({
 			action: 'history/list',
-			listDataString: options.user.id,
+			listDataString: listUserId,
 
 			items: listOfCats,
 

@@ -27,20 +27,36 @@ const ViewSubcommand: Subcommand = {
 				description: "The cat's position",
 				required: true,
 			},
+			{
+				type: DAPI.ApplicationCommandOptionType.User,
+				name: 'user',
+				description: 'The user whose history to view',
+
+				required: false,
+			},
 		],
 	},
 
 	async execute(options) {
-		const { position: positionOption } = parseCommandOptions(options.commandOptions);
+		let historyUserId = options.user.id;
+		const { position: positionOption, user: userOption } = parseCommandOptions(options.commandOptions);
 
 		if (!positionOption || positionOption.type !== DAPI.ApplicationCommandOptionType.Integer)
 			return simpleEphemeralResponse('No `position` provided.');
 
-		const historyCats = await getHistoryCats(options.user.id, options.env);
+		if (userOption && userOption.type === DAPI.ApplicationCommandOptionType.User) {
+			historyUserId = userOption.value;
+		}
+
+		const historyCats = await getHistoryCats(historyUserId, options.env);
 		const position = positionOption.value;
 
 		if (historyCats.length === 0) {
-			return embedMessageResponse(errorEmbed('Nothing found in your history.'));
+			if (historyUserId === options.user.id) {
+				return embedMessageResponse(errorEmbed('Nothing found in your history.'));
+			} else {
+				return embedMessageResponse(errorEmbed("Nothing found in this user's history."));
+			}
 		}
 
 		const cat = historyCats[position - 1];
