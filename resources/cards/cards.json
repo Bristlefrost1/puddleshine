@@ -4907,6 +4907,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/e/e5/Hollyleaf.OTS-5-RR.png/revision/latest?cb=20240625033655",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0459-hollyleaf/hollyleaf-shadedsights.png",
+				"credit": "shadedsights."
 			}
 		]
 	},
@@ -10893,6 +10897,10 @@
 			{
 				"url": "$ART_URL_BASE$/1078-squirrelstar/squirrelstar-bingo2561.png",
 				"credit": "bingo2561"
+			},
+			{
+				"url": "$ART_URL_BASE$/1078-squirrelstar/squirrelstar-shadedsights.png",
+				"credit": "shadedsights."
 			}
 		]
 	},
@@ -11565,6 +11573,25 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/0/01/Tallstar.FG-8.png/revision/latest?cb=20240713065409",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/1148-tallstar/tallstar-shadedsights.png",
+				"credit": "shadedsights."
+			}
+		],
+
+		"variants": [
+			{
+				"variant": "Pride",
+				"name": "Pridestar",
+				"description": "*”Kate Cary has said that his heart always belonged \"to his Jake\". In her head she sees Tallstar and Jake as mates.”*",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/1148-tallstar/variants/pridestar.png",
+						"credit": "shadedsights."
+					}
+				]
 			}
 		]
 	},
