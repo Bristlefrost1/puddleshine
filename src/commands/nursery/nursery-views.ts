@@ -132,7 +132,7 @@ function nurseryMessageResponse(
 
 	if (options.messages && options.messages.length > 0) {
 		// prettier-ignore
-		messages = options.messages.map((message) => options.preserveMessageFormatting ? `${message}\n` : `> ${message}\n`).join('');
+		messages = options.messages.map((message) => options.preserveMessageFormatting ? message : `> ${message}`).join('\n');
 	}
 
 	const nurseryStatus = stringifyNurseryStatus(nursery, options.noAlerts);
