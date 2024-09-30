@@ -74,10 +74,15 @@ const NurseryCommand: Command = {
 	async onMessageComponent({ interaction, user, componentType, customId, parsedCustomId, values, env, ctx }) {
 		if (parsedCustomId[1] === 'status') {
 			const userDiscordId = parsedCustomId[3];
+			const username = interaction.message.content
+				.split("'s nursery")[0]
+				.replaceAll('\u001b[1;2m', '')
+				.replaceAll('\u001b[0m', '');
 
-			if (user.id !== userDiscordId) return simpleEphemeralResponse('This is not your nursery.');
-
-			const nursery = await nurseryManager.getNursery(user, env, false);
+			const nursery =
+				user.id === userDiscordId ?
+					await nurseryManager.getNursery(user, env, false)
+				:	await nurseryManager.getNursery({ id: userDiscordId, username } as any, env, false);
 			const messages = interaction.message.content.split('```ansi')[0];
 
 			return nurseryViews.nurseryMessageResponse(nursery, {
@@ -91,10 +96,15 @@ const NurseryCommand: Command = {
 			});
 		} else if (parsedCustomId[1] === 'home') {
 			const userDiscordId = parsedCustomId[3];
+			const username = interaction.message.content
+				.split("'s nursery")[0]
+				.replaceAll('\u001b[1;2m', '')
+				.replaceAll('\u001b[0m', '');
 
-			if (user.id !== userDiscordId) return simpleEphemeralResponse('This is not your nursery.');
-
-			const nursery = await nurseryManager.getNursery(user, env, false);
+			const nursery =
+				user.id === userDiscordId ?
+					await nurseryManager.getNursery(user, env, false)
+				:	await nurseryManager.getNursery({ id: userDiscordId, username } as any, env, false);
 			const messages = interaction.message.content.split('```ansi')[0];
 
 			return nurseryViews.nurseryMessageResponse(nursery, {
