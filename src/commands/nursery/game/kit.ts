@@ -109,7 +109,7 @@ function calculateHealth(kit: NurseryKit, hunger: number, temperature: number) {
 	if (temperature > config.NURSERY_HEATSTROKE_TEMPERATURE) {
 		const degreesPastHeatstroke = Math.abs(config.NURSERY_HEATSTROKE_TEMPERATURE - temperature);
 
-		health -= degreesPastHeatstroke;
+		health -= degreesPastHeatstroke * 0.3;
 		if (health < 0) health = 0;
 
 		doRegen = false;
@@ -118,7 +118,7 @@ function calculateHealth(kit: NurseryKit, hunger: number, temperature: number) {
 	if (temperature < config.NURSERY_HYPOTHERMIA_TEMPERATURE) {
 		const degreesPastHypothermia = Math.abs(config.NURSERY_HYPOTHERMIA_TEMPERATURE - temperature);
 
-		health -= degreesPastHypothermia;
+		health -= degreesPastHypothermia * 0.3;
 		if (health < 0) health = 0;
 
 		doRegen = false;
