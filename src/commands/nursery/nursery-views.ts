@@ -135,6 +135,8 @@ function nurseryMessageResponse(
 		messages = options.messages.map((message) => options.preserveMessageFormatting ? message : `> ${message}`).join('\n');
 	}
 
+	if (!messages.endsWith('\n')) messages += '\n';
+
 	const nurseryStatus = stringifyNurseryStatus(nursery, options.noAlerts);
 	const kitList = buildKitList(nursery, options.view);
 	const nurseryFooter = stringifyNurseryFooter(nursery);
