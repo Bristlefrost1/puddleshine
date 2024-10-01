@@ -414,6 +414,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/b/b4/Ashfur_%28TC%29.ghost.png/revision/latest?cb=20230402194149",
 				"credit": "Warriors Wiki"
+			},
+			{
+				"url": "$ART_URL_BASE$/0026-ashfur/ashfur-shadedsights.png",
+				"credit": "shadedsights."
 			}
 		]
 	},
@@ -1327,6 +1331,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/a/a0/Brambleclaw.NP-1-RR.png/revision/latest?cb=20200202010134",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0097-brambleclaw/brambleclaw-losviolyn.png",
+				"credit": "lostviolyn"
 			}
 		]
 	},
@@ -9538,6 +9546,10 @@
 		"art": [
 			{
 				"url": "$ART_URL_BASE$/0946-tall-shadow/tall-shadow-chibi.png",
+				"credit": "Chibi"
+			},
+			{
+				"url": "$ART_URL_BASE$/0946-tall-shadow/tall-shadow-chibi-2.png",
 				"credit": "Chibi"
 			},
 			{
