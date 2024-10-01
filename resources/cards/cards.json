@@ -5107,6 +5107,10 @@
 
 		"art": [
 			{
+				"url": "$ART_URL_BASE$/0481-ivypool/ivypool-bristlefrost.png",
+				"credit": "Bristlefrost"
+			},
+			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/a/ac/Ivypool.FG-6.png/revision/latest?cb=20220929115533",
 				"credit": "Wayne McLoughlin / Official art"
 			},
