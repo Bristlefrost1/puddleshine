@@ -27,6 +27,8 @@ const NON_FLAMMABLE_CARD_IDS = [
 	306, // Fernsong
 ];
 
+const NEW_USER_UUID = 'ebbd7bda-0407-4b0f-9208-2dc012c524c1'; // Move the non-flammable cards there
+
 function resetEmbed(embed: DAPI.APIEmbed) {
 	const newEmbed = embed;
 
@@ -82,6 +84,7 @@ async function handleBurnMessageComponent(
 		const collectionLines = collectionString.split('\n');
 
 		const cardUuidsToBurn: string[] = [];
+		const cardUuidsToMove: string[] = [];
 
 		for (const line of collectionLines) {
 			const splitLine = line.split(' ');
@@ -99,10 +102,21 @@ async function handleBurnMessageComponent(
 				});
 			}
 
+			if (NON_FLAMMABLE_CARD_IDS.includes(cardId)) {
+				cardUuidsToMove.push(userCollection[cardIndex].card.uuid);
+				continue;
+			}
+
 			cardUuidsToBurn.push(userCollection[cardIndex].card.uuid);
 		}
 
-		await catchaDB.burnCardUuids(env.PRISMA, userCatcha.userUuid, cardUuidsToBurn);
+		if (cardUuidsToMove.length > 0) {
+			await catchaDB.burnMoveCardUuids(env.PRISMA, cardUuidsToMove, NEW_USER_UUID);
+		}
+
+		if (cardUuidsToBurn.length > 0) {
+			await catchaDB.burnCardUuids(env.PRISMA, userCatcha.userUuid, cardUuidsToBurn);
+		}
 
 		return messageResponse({
 			content: 'Cards successfully burned.',
@@ -153,12 +167,14 @@ async function handleBurn(
 
 		if (!card) return embedMessageResponse(errorEmbed(`There is no card at position ${cardPosition}.`));
 
+		/*
 		// Little easter egg
 		if (NON_FLAMMABLE_CARD_IDS.includes(card.card.cardId)) {
 			const cardDetails = archive.getCardDetailsById(card.card.cardId);
 
 			return embedMessageResponse(errorEmbed(`What has ${cardDetails?.name} done to deserve to be burned?`));
 		}
+		*/
 
 		if (card.card.pendingTradeUuid1 !== null || card.card.pendingTradeUuid2 !== null) {
 			return embedMessageResponse(errorEmbed(`The card at position ${cardPosition} is in a pending trade.`));

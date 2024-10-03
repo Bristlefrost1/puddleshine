@@ -283,6 +283,37 @@ async function burnCardUuids(prisma: D1PrismaClient, userUuid: string, cardUuids
 	]);
 }
 
+async function burnMoveCardUuids(prisma: D1PrismaClient, cardUuids: string[], newOwnerUuid: string) {
+	const burnTimestamp = new Date();
+
+	await prisma.$transaction([
+		prisma.catchaCard.updateMany({
+			where: {
+				OR: cardUuids.map((cardUuid) => {
+					return { uuid: cardUuid };
+				}),
+			},
+			data: {
+				ownerUuid: newOwnerUuid,
+				obtainedAt: new Date(),
+				obtainedFrom: 'BURN',
+			},
+		}),
+		prisma.catchaCardHistoryEvent.createMany({
+			data: cardUuids.map((cardUuid) => {
+				return {
+					cardUuid: cardUuid,
+					timestamp: burnTimestamp,
+
+					event: 'BURN',
+
+					userUuid: newOwnerUuid,
+				};
+			}),
+		}),
+	]);
+}
+
 async function getCardCollection(prisma: D1PrismaClient, discordId: string) {
 	const result = await prisma.catchaCard.findMany({
 		where: {
@@ -339,6 +370,7 @@ export {
 	insertCard,
 	inserCardHistoryEvent,
 	burnCardUuids,
+	burnMoveCardUuids,
 	getCardCollection,
 	getCardHistoryEvents,
 	claimCard,
