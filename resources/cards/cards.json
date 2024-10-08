@@ -2429,7 +2429,7 @@
 		"rarity": 2,
 		"name": "Darkstar",
 		"group": "RiverClan",
-		"gender": "",
+		"gender": "She-cat",
 		"disambiguator": ""
 	},
 	{
@@ -3860,7 +3860,7 @@
 	{
 		"id": 352,
 		"rarity": 2,
-		"name": "Flypaw",
+		"name": "Flytail",
 		"group": "WindClan",
 		"gender": "Tom",
 		"disambiguator": ""
@@ -7199,7 +7199,7 @@
 	{
 		"id": 696,
 		"rarity": 2,
-		"name": "Night",
+		"name": "Nightstar",
 		"group": "RiverClan",
 		"gender": "She-cat",
 		"disambiguator": ""
@@ -7605,7 +7605,7 @@
 	{
 		"id": 740,
 		"rarity": 4,
-		"name": "Owl Eyes",
+		"name": "Owlstar",
 		"group": "ThunderClan",
 		"gender": "Tom",
 		"disambiguator": "",
@@ -8406,7 +8406,7 @@
 	{
 		"id": 826,
 		"rarity": 1,
-		"name": "Rabbitpaw",
+		"name": "Rabbitear",
 		"group": "WindClan",
 		"gender": "She-cat",
 		"disambiguator": ""
@@ -8617,7 +8617,7 @@
 	{
 		"id": 851,
 		"rarity": 2,
-		"name": "Raven Pelt",
+		"name": "Ravenstar",
 		"group": "ShadowClan",
 		"gender": "Tom",
 		"disambiguator": ""
@@ -12325,9 +12325,9 @@
 	{
 		"id": 1221,
 		"rarity": 1,
-		"name": "Volepaw",
+		"name": "Wanderkit",
 		"group": "ShadowClan",
-		"gender": "Tom",
+		"gender": "",
 		"disambiguator": ""
 	},
 	{
@@ -14119,6 +14119,336 @@
 		"name": "Zeke",
 		"group": "Kittypet",
 		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1389,
+		"rarity": 1,
+		"name": "Brandy",
+		"group": "Kittypet",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1390,
+		"rarity": 1,
+		"name": "Beechpaw",
+		"group": "SkyClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1391,
+		"rarity": 1,
+		"name": "Buzzardkit",
+		"group": "WindClan",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1392,
+		"rarity": 1,
+		"name": "Barley's Mother",
+		"group": "BloodClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1393,
+		"rarity": 1,
+		"name": "Casper",
+		"group": "Kittypet",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1394,
+		"rarity": 1,
+		"name": "Cherrypaw",
+		"group": "ShadowClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1395,
+		"rarity": 1,
+		"name": "Darkstar III",
+		"group": "RiverClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1396,
+		"rarity": 1,
+		"name": "Dewstar",
+		"group": "SkyClan",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1397,
+		"rarity": 1,
+		"name": "Dewstar",
+		"group": "SkyClan",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1398,
+		"rarity": 1,
+		"name": "Dovestar",
+		"group": "RiverClan",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1399,
+		"rarity": 1,
+		"name": "Dusk Smoke",
+		"group": "RiverClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1400,
+		"rarity": 1,
+		"name": "Fallowpaw",
+		"group": "ThunderClan",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1401,
+		"rarity": 1,
+		"name": "Fallowstar",
+		"group": "WindClan",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1402,
+		"rarity": 1,
+		"name": "Flower Stream",
+		"group": "RiverClan",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1403,
+		"rarity": 1,
+		"name": "Flower",
+		"group": "Loner",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1404,
+		"rarity": 1,
+		"name": "Gorseclaw",
+		"group": "WindClan",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1405,
+		"rarity": 1,
+		"name": "Hawk",
+		"group": "Rogue",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1406,
+		"rarity": 1,
+		"name": "Hawk",
+		"group": "Rogue",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1407,
+		"rarity": 2,
+		"name": "Hollow",
+		"group": "RiverClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1408,
+		"rarity": 1,
+		"name": "Snail",
+		"group": "Rogue",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1409,
+		"rarity": 2,
+		"name": "Mist",
+		"group": "RiverClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1410,
+		"rarity": 1,
+		"name": "Nutmeg",
+		"group": "Loner",
+		"gender": "She-cat",
+		"disambiguator": "TR",
+
+		"art": []
+	},
+	{
+		"id": 1411,
+		"rarity": 1,
+		"name": "Owlstar II",
+		"group": "ThunderClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1412,
+		"rarity": 1,
+		"name": "Rufus",
+		"group": "Unknown Residence",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1413,
+		"rarity": 1,
+		"name": "Shyfrost",
+		"group": "Unknown Residence",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1414,
+		"rarity": 1,
+		"name": "Silver",
+		"group": "Loner",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1415,
+		"rarity": 1,
+		"name": "Slatepelt",
+		"group": "WindClan",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1416,
+		"rarity": 1,
+		"name": "Snow Tail",
+		"group": "RiverClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1417,
+		"rarity": 1,
+		"name": "Sparrow",
+		"group": "Cats of the Park",
+		"gender": "",
+		"disambiguator": "RH",
+
+		"art": []
+	},
+	{
+		"id": 1418,
+		"rarity": 1,
+		"name": "Splahpaw",
+		"group": "RiverClan",
+		"gender": "",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1419,
+		"rarity": 1,
+		"name": "Thistlepaw",
+		"group": "WindClan",
+		"gender": "",
+		"disambiguator": "TNP",
+
+		"art": []
+	},
+	{
+		"id": 1420,
+		"rarity": 1,
+		"name": "Thistlepaw",
+		"group": "WindClan",
+		"gender": "",
+		"disambiguator": "CotC",
+
+		"art": []
+	},
+	{
+		"id": 1421,
+		"rarity": 1,
+		"name": "Weaselkit",
+		"group": "ShadowClan",
+		"gender": "",
 		"disambiguator": "",
 
 		"art": []
