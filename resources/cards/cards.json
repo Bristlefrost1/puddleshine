@@ -14421,7 +14421,22 @@
 		"gender": "",
 		"disambiguator": "",
 
-		"art": []
+		"art": [],
+
+		"variants": [
+			{
+				"variant": "Mistake",
+				"name": "Splahpaw",
+				"description": "'Fuck.'",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/1418-splashpaw/variants/splahpaw-mistake-chibi.png",
+						"credit": "Chibi"
+					}
+				]
+			}
+		]
 	},
 	{
 		"id": 1419,
