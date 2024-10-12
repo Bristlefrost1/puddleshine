@@ -141,6 +141,8 @@ async function getNursery(user: DAPI.APIUser, env: Env, generateEvents?: boolean
 		} else {
 			let needsAttention = false;
 
+			if (nursery.isPaused) generateEvents = false;
+
 			if (generateEvents && kit.sickSince === undefined && kit.wanderingSince === undefined) {
 				const eventOdds: WeightedValue<'sick' | 'wander' | 'none'>[] = [
 					{ value: 'wander', probability: config.NURSERY_WANDER_CHANCE },
