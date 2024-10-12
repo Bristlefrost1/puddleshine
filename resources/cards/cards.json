@@ -3791,7 +3791,14 @@
 		"name": "Crest of Snowy Mountain",
 		"group": "Tribe of Rushing Water",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0343-crest-of-snowy-mountain/crest-of-snowy-mountain-lostviolyn.png",
+				"credit": "lostviolyn"
+			}
+		]
 	},
 	{
 		"id": 344,
