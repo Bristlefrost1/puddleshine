@@ -73,7 +73,15 @@ const GroomSubcommand: Subcommand = {
 				return;
 			}
 
-			const newTemperature = kit.temperature + config.NURSERY_GROOM_TEMPERATURE;
+			let newTemperature: number;
+
+			if (kit.temperature > 38) {
+				newTemperature = kit.temperature - config.NURSERY_GROOM_TEMPERATURE;
+			} else if (kit.temperature < 38) {
+				newTemperature = kit.temperature + config.NURSERY_GROOM_TEMPERATURE;
+			} else {
+				newTemperature = kit.temperature;
+			}
 
 			nursery.kits[index].temperature = newTemperature;
 			nursery.kits[index].temperatureClass = getTemperatureClass(newTemperature);
