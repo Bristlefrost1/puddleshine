@@ -58,7 +58,7 @@ function getSeasonsBetweenDates(date1: Date, date2: Date): { season: Season; tim
 		];
 	} else {
 		const seasons = [];
-		const numberOfSeasons = date2SeasonsSinceEpoch - date1SeasonsSinceEpoch;
+		const numberOfSeasons = Math.abs(date2SeasonsSinceEpoch - date1SeasonsSinceEpoch);
 
 		for (let i = 0; i < numberOfSeasons; i++) {
 			const seasonNumber = date1SeasonsSinceEpoch + i;
