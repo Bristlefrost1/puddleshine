@@ -7,6 +7,9 @@
 
 import clanNames from '#resources/clan/names.json' with { type: 'json' };
 
+const prefixes = clanNames.prefixes;
+const suffixes = clanNames.suffixes;
+
 /**
  * Checks if the specified string is a valid Clan name
  *
@@ -43,4 +46,4 @@ function generateRandomName(): string {
 	return randomPrefix + randomSuffix;
 }
 
-export { validateName, generateRandomPrefix, generateRandomSuffix, generateRandomName };
+export { prefixes, suffixes, validateName, generateRandomPrefix, generateRandomSuffix, generateRandomName };
