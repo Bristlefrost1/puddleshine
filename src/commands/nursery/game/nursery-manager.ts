@@ -41,6 +41,10 @@ function getNurseryMetersMax(numberOfKits: number) {
 	let maxFood = 5;
 
 	if (numberOfKits > 5) maxFood = 6;
+	if (numberOfKits > 8) maxFood = 7;
+	if (numberOfKits > 10) maxFood = 8;
+	if (numberOfKits > 12) maxFood = 9;
+	if (numberOfKits > 14) maxFood = 10;
 
 	return { food: maxFood };
 }
