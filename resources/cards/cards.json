@@ -4924,7 +4924,7 @@
 				"credit": "Owen Richardson / Official art"
 			},
 			{
-				"url": "$ART_URL_BASE$/0459-hollyleaf/hollyleaf-shadedsights.png",
+				"url": "$ART_URL_BASE$/0459-hollyleaf/hollyleaf-shadedsights-2.png",
 				"credit": "shadedsights."
 			}
 		]
@@ -5307,6 +5307,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/f/f9/Jayfeather.PO3-1-RR.png/revision/latest?cb=20190127234856",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0498-jayfeather/jayfeather-shadedsights.png",
+				"credit": "shadedsights."
 			}
 		],
 
@@ -5872,6 +5876,10 @@
 			{
 				"url": "$ART_URL_BASE$/0555-lionblaze/lionblaze-falloutragez.png",
 				"credit": "lostviolyn"
+			},
+			{
+				"url": "$ART_URL_BASE$/0555-lionblaze/lionblaze-shadedsights.png",
+				"credit": "shadedsights."
 			}
 		]
 	},
@@ -7124,10 +7132,6 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/1/1a/Needletail.VOS-3.png/revision/latest?cb=20210901080908",
 				"credit": "Owen Richardson / Official art"
-			},
-			{
-				"url": "$ART_URL_BASE$/0686-needletail/needletail-bingo2561.png",
-				"credit": "bingo2561"
 			}
 		]
 	},
@@ -9522,11 +9526,7 @@
 				"credit": "Owen Richardson / Official art"
 			},
 			{
-				"url": "$ART_URL_BASE$/0945-shadowsight/shadowsight-bingo2561.png",
-				"credit": "bingo2561"
-			},
-			{
-				"url": "$ART_URL_BASE$/0945-shadowsight/shadowsight-shadedsights.png",
+				"url": "$ART_URL_BASE$/0945-shadowsight/shadowsight-shadedsights-2.png",
 				"credit": "shadedsights."
 			}
 		]
@@ -10113,10 +10113,6 @@
 		"disambiguator": "TNP",
 
 		"art": [
-			{
-				"url": "$ART_URL_BASE$/1001-smokepaw/smokepaw-bingo2561.png",
-				"credit": "bingo2561"
-			}
 		]
 	},
 	{
@@ -10379,10 +10375,6 @@
 		"disambiguator": "",
 
 		"art": [
-			{
-				"url": "$ART_URL_BASE$/1029-snowtuft/snowtuft-bingo2561.png",
-				"credit": "bingo2561"
-			},
 			{
 				"url": "$ART_URL_BASE$/1029-snowtuft/snowtuft-falloutragez.png",
 				"credit": "lostviolyn"
@@ -10916,10 +10908,6 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/5/53/Squirrelstar.NP-3-RR.png/revision/latest?cb=20190929214752",
 				"credit": "Owen Richardson / Official art"
-			},
-			{
-				"url": "$ART_URL_BASE$/1078-squirrelstar/squirrelstar-bingo2561.png",
-				"credit": "bingo2561"
 			},
 			{
 				"url": "$ART_URL_BASE$/1078-squirrelstar/squirrelstar-shadedsights.png",
@@ -12731,10 +12719,6 @@
 				"credit": "Warriors Wiki"
 			},
 			{
-				"url": "$ART_URL_BASE$/1262-willowshine/willowshine-bingo2561.png",
-				"credit": "bingo2561"
-			},
-			{
 				"url": "$ART_URL_BASE$/1262-willowshine/willowshine-falloutragez.png",
 				"credit": "lostviolyn"
 			}
@@ -13160,10 +13144,6 @@
 			{
 				"url": "$ART_URL_BASE$/1309-moonpaw/moonpaw-satzzzart.jpg",
 				"credit": "SatzzzArt"
-			},
-			{
-				"url": "$ART_URL_BASE$/1309-moonpaw/moonpaw-bingo2561.png",
-				"credit": "bingo2561"
 			}
 		]
 	},
