@@ -87,7 +87,10 @@ async function handleLocateScroll(
 
 		const searchResults = await search(env, {
 			searchString: searchString,
-			searchTerms: searchString.split(','),
+			searchTerms: searchString
+				.split(',')
+				.map((value) => value.trim())
+				.filter((value) => value.length > 0),
 			userId: listData.userId,
 
 			onlyRarity: listData.onlyRarity,
@@ -160,7 +163,10 @@ async function handleLocateSubcommand(
 
 	const searchResults = await search(env, {
 		searchString: searchString,
-		searchTerms: searchString.split(','),
+		searchTerms: searchString
+			.split(',')
+			.map((value) => value.trim())
+			.filter((value) => value.length > 0),
 		userId: listUserId,
 
 		onlyRarity,
