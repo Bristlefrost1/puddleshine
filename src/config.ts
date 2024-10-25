@@ -134,7 +134,7 @@ const NURSERY_WANDER_BOND_DECREASE = 0.08;
 const NURSERY_SICK_CHANCE = 0.02;
 const NURSERY_WANDER_CHANCE = 0.01;
 
-const HISTORY_AGE_PER_SECOND = 1 / 15 / 24 / 60 / 60; // 1 moon is 15 days
+const HISTORY_AGE_PER_SECOND = 1 / 10 / 24 / 60 / 60; // 2 real-life months is 6 moons
 
 const HISTORY_PROMOTE_AGE = 12;
 
