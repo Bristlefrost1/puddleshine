@@ -9539,6 +9539,10 @@
 			{
 				"url": "$ART_URL_BASE$/0945-shadowsight/shadowsight-shadedsights-2.png",
 				"credit": "shadedsights."
+			},
+			{
+				"url": "$ART_URL_BASE$/0945-shadowsight/shadowsight-chibi.png",
+				"credit": "Chibi"
 			}
 		]
 	},
