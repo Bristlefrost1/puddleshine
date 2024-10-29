@@ -4680,7 +4680,14 @@
 		"name": "Hawkheart",
 		"group": "WindClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0435-hawkheart/hawkheart-lostviolyn.png",
+				"credit": "lostviolyn"
+			}
+		]
 	},
 	{
 		"id": 436,
@@ -4926,6 +4933,10 @@
 			{
 				"url": "$ART_URL_BASE$/0459-hollyleaf/hollyleaf-shadedsights-2.png",
 				"credit": "shadedsights."
+			},
+			{
+				"url": "$ART_URL_BASE$/0459-hollyleaf/hollyleaf-jvn1p3r7.png",
+				"credit": "jvn1p3r7"
 			}
 		]
 	},
@@ -10850,6 +10861,21 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/8/8d/Spottedleaf.FG-8.png/revision/latest?cb=20240627103427",
 				"credit": "Owen Richardson / Official art"
+			}
+		],
+
+		"variants": [
+			{
+				"variant": "Ghost Wife",
+				"name": "Ghost Wife Spottedleaf",
+				"description": "*\"The truth is, I love Firestar now as much as I ever did, and I'll watch over him forever, knowing that he can never be mine. He belongs to Sandstorm and to ThunderClan. But my heart is his, and always will be.\"*",
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/1074-spottedleaf/variants/ghost-wife.png",
+						"credit": "jvn1p3r7"
+					}
+				]
 			}
 		]
 	},
