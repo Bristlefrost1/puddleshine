@@ -9544,6 +9544,23 @@
 				"url": "$ART_URL_BASE$/0945-shadowsight/shadowsight-chibi.png",
 				"credit": "Chibi"
 			}
+		],
+
+		"variants": [
+			{
+				"variant": "Sadwow",
+				"name": "Sadwow Sigh",
+				"description": "*'YES YES I SECOND SHADOW\nsadwow sigh' - vi\n'sadwow sight describes his life perfectly' - shadow*",
+
+				"unrollable": true,
+
+				"art": [
+					{
+						"url": "$ART_URL_BASE$/0945-shadowsight/variants/sadwow.png",
+						"credit": "lostviolyn"
+					}
+				]
+			}
 		]
 	},
 	{
@@ -10533,7 +10550,7 @@
 			{
 				"variant": "Sparky",
 				"name": "Pikapelt",
-				"description": "*'I don't know how to justify this, just go figure' -falloutragez*",
+				"description": "*Sparky*",
 
 				"art": [
 					{
