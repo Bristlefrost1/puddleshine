@@ -34,7 +34,33 @@ function randomizeRarity() {
 	return rarity;
 }
 
-function randomizeCardId(rarity: number, event: Event) {
+function chooseRandom(cardIds: number[], guildId?: string) {
+	let randomIndex = Math.floor(Math.random() * cardIds.length);
+
+	if (guildId) {
+		let cardDetails = archive.getCardDetailsById(cardIds[randomIndex])!;
+
+		while (
+			cardDetails.onlyServers &&
+			cardDetails.onlyServers.length > 0 &&
+			!cardDetails.onlyServers.includes(guildId)
+		) {
+			randomIndex = Math.floor(Math.random() * cardIds.length);
+			cardDetails = archive.getCardDetailsById(cardIds[randomIndex])!;
+		}
+	} else {
+		let cardDetails = archive.getCardDetailsById(cardIds[randomIndex])!;
+
+		while (cardDetails.onlyServers && cardDetails.onlyServers.length > 0) {
+			randomIndex = Math.floor(Math.random() * cardIds.length);
+			cardDetails = archive.getCardDetailsById(cardIds[randomIndex])!;
+		}
+	}
+
+	return cardIds[randomIndex];
+}
+
+function randomizeCardId(rarity: number, event: Event, guildId?: string) {
 	const cardIdsInRarity = archive.getCardIdsWithRarity(rarity);
 
 	if (event && event.increase && event.increase.group) {
@@ -51,19 +77,19 @@ function randomizeCardId(rarity: number, event: Event) {
 			});
 
 			if (cardIdsInGroup.length > 0) {
-				return cardIdsInGroup[Math.floor(Math.random() * cardIdsInGroup.length)];
+				return chooseRandom(cardIdsInGroup, guildId);
 			} else {
-				return cardIdsInRarity[Math.floor(Math.random() * cardIdsInRarity.length)];
+				return chooseRandom(cardIdsInRarity, guildId);
 			}
 		} else {
-			return cardIdsInRarity[Math.floor(Math.random() * cardIdsInRarity.length)];
+			return chooseRandom(cardIdsInRarity, guildId);
 		}
 	} else {
-		return cardIdsInRarity[Math.floor(Math.random() * cardIdsInRarity.length)];
+		return chooseRandom(cardIdsInRarity, guildId);
 	}
 }
 
-function randomizeCard(currentEvent: Event): RandomCard {
+function randomizeCard(currentEvent: Event, guildId?: string): RandomCard {
 	let rarity;
 
 	if (currentEvent && currentEvent.increaseRarity) {
@@ -80,8 +106,7 @@ function randomizeCard(currentEvent: Event): RandomCard {
 		rarity = randomizeRarity();
 	}
 
-	const randomCardId = randomizeCardId(rarity, currentEvent);
-
+	const randomCardId = randomizeCardId(rarity, currentEvent, guildId);
 	const randomCardDetails = archive.getCardDetailsById(randomCardId);
 
 	let variant: string | undefined;

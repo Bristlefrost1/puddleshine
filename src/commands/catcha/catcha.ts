@@ -343,7 +343,7 @@ const CatchaCommand: Command = {
 	async onAutocomplete({ interaction, user, subcommandGroup, subcommand, options, focusedOption, env, ctx }) {
 		// If the focused option name is 'card', autofill card names from the archive
 		if (focusedOption.name === 'card' && focusedOption.type === DAPI.ApplicationCommandOptionType.String) {
-			return { choices: getAutocompleteChoices(focusedOption.value) };
+			return { choices: getAutocompleteChoices(focusedOption.value, interaction.guild_id) };
 		} else if (focusedOption.name === 'artist' && focusedOption.type === DAPI.ApplicationCommandOptionType.String) {
 			return { choices: getArtistAutocompleChoices(focusedOption.value) };
 		}

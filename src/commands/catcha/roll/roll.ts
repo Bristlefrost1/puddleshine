@@ -227,7 +227,7 @@ async function rollCard(
 		isInverted = rollFromCache.isInverted;
 		alreadyInCollection = rollFromCache.alreadyInCollection;
 	} else {
-		const rebuiltCache = await rollCache.generateCache(user.id, userCatcha.userUuid, env);
+		const rebuiltCache = await rollCache.generateCache(user.id, userCatcha.userUuid, env, interaction.guild_id);
 		const rollFromRebultCache = rebuiltCache.rolls[currentRoll - 1];
 
 		if (rollFromRebultCache) {
@@ -240,7 +240,7 @@ async function rollCard(
 			setRollCache = JSON.stringify(rebuiltCache);
 		} else {
 			const currentEvent = await getCurrentEvent(env);
-			const randomCard = randomizer.randomizeCard(currentEvent);
+			const randomCard = randomizer.randomizeCard(currentEvent, interaction.guild_id);
 
 			let alreadyHasCards = await catchaDB.findUserCardsWithCardId(
 				env.PRISMA,

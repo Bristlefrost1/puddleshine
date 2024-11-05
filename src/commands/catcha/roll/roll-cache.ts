@@ -42,7 +42,7 @@ function getRollFromCache(catcha: Catcha, rollNumber: number): CachedRoll | void
 	return rollFromCache;
 }
 
-async function generateCache(userDiscordId: string, userUuid: string, env: Env): Promise<RollCache> {
+async function generateCache(userDiscordId: string, userUuid: string, env: Env, guildId?: string): Promise<RollCache> {
 	const currentRollPeriod = rollPeriod.getCurrentRollPeriod();
 	const currentUnixTime = Math.floor(new Date().getTime() / 1000);
 
@@ -52,7 +52,7 @@ async function generateCache(userDiscordId: string, userUuid: string, env: Env):
 	const rolls: CachedRoll[] = [];
 
 	for (let roll = 1; roll <= config.CATCHA_MAX_ROLLS; roll++) {
-		const randomCard = randomizer.randomizeCard(currentEvent);
+		const randomCard = randomizer.randomizeCard(currentEvent, guildId);
 		let cardsAlreadyInCollection =
 			cardCounts.get(collection.getCardKey(randomCard.cardId, false, randomCard.variant)) ?? 0;
 		const isInverted = randomizer.randomizeInverted(cardsAlreadyInCollection);
