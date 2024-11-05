@@ -14484,5 +14484,53 @@
 		"disambiguator": "",
 
 		"art": []
+	},
+	{
+		"id": 1422,
+		"rarity": 1,
+		"name": "Splashkit",
+		"group": "ThunderClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"onlyServers": ["634816554948755486"],
+
+		"art": []
+	},
+	{
+		"id": 1423,
+		"rarity": 1,
+		"name": "Leafkit",
+		"group": "ThunderClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"onlyServers": ["634816554948755486"],
+
+		"art": []
+	},
+	{
+		"id": 1424,
+		"rarity": 1,
+		"name": "Willowkit",
+		"group": "ThunderClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"onlyServers": ["634816554948755486"],
+
+		"art": []
+	},
+	{
+		"id": 1425,
+		"rarity": 1,
+		"name": "Wild",
+		"group": "Kittypet",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"onlyServers": ["634816554948755486"],
+
+		"art": []
 	}
 ]
