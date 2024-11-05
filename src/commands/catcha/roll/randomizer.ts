@@ -123,6 +123,11 @@ function randomizeCard(currentEvent: Event, guildId?: string): RandomCard {
 		if (isVariant) {
 			variantIndex = Math.floor(Math.random() * randomCardDetails.variants.length);
 			variant = randomCardDetails.variants[variantIndex].variant;
+
+			if ((randomCardDetails.variants[variantIndex] as any).unrollable === true) {
+				variantIndex = undefined;
+				variant = undefined;
+			}
 		}
 	}
 
