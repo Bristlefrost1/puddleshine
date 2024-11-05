@@ -64,6 +64,8 @@ async function listRemaining(
 
 		onlyRarity?: number;
 		onlyInverted?: boolean;
+
+		guildId?: string;
 	},
 ): Promise<string[]> {
 	const onlyInverted = options.onlyInverted ?? false;
@@ -71,6 +73,7 @@ async function listRemaining(
 	const remainingCardIds = await collection.getRemainingCardIds(options.userId, env, {
 		onlyRarity: options.onlyRarity,
 		onlyInverted: options.onlyInverted,
+		guildId: options.guildId,
 	});
 	const remainingList: string[] = [];
 
@@ -100,6 +103,7 @@ async function handleRemainingScroll(
 		userId: listData.userId,
 		onlyRarity: listData.onlyRarity,
 		onlyInverted: listData.onlyInverted,
+		guildId: interaction.guild_id,
 	});
 
 	if (remainingList.length === 0) {
@@ -166,6 +170,7 @@ async function handleRemainingSubcommand(
 		userId: listUserId,
 		onlyRarity: onlyRarity,
 		onlyInverted: onlyInverted,
+		guildId: interaction.guild_id,
 	});
 
 	if (remainingList.length === 0) {

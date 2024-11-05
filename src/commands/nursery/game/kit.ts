@@ -106,6 +106,7 @@ function calculateHealth(kit: NurseryKit, hunger: number, temperature: number) {
 		doRegen = false;
 	}
 
+	/*
 	if (temperature > config.NURSERY_HEATSTROKE_TEMPERATURE) {
 		const degreesPastHeatstroke = Math.abs(config.NURSERY_HEATSTROKE_TEMPERATURE - temperature);
 
@@ -123,6 +124,7 @@ function calculateHealth(kit: NurseryKit, hunger: number, temperature: number) {
 
 		doRegen = false;
 	}
+	*/
 
 	if (doRegen) {
 		const newHealth = regenStartHealth + secondsSinceLastUpdate * config.NURSERY_KIT_HEALTH_REGEN;

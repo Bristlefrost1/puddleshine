@@ -135,6 +135,8 @@ async function getRemainingCardIds(
 	searchOptions?: {
 		onlyRarity?: number;
 		onlyInverted?: boolean;
+
+		guildId?: string;
 	},
 ) {
 	const userCollection = await getCollection(discordId, env, {
@@ -152,7 +154,7 @@ async function getRemainingCardIds(
 			archive.getCardIdsWithRarity(searchOptions.onlyRarity)
 		:	archive.getAllCardIds();
 
-	const remainingCardIds = allCardIds
+	let remainingCardIds = allCardIds
 		.filter((cardId) => !hasCardId.get(cardId))
 		.toSorted((cardIdA, cardIdB) => {
 			const aFullName = archive.getCardFullName(cardIdA);
@@ -160,6 +162,24 @@ async function getRemainingCardIds(
 
 			return aFullName.localeCompare(bFullName, 'en');
 		});
+
+	remainingCardIds = remainingCardIds.filter((cardId) => {
+		const details = archive.getCardDetailsById(cardId)!;
+
+		if (searchOptions?.guildId) {
+			if (
+				details.onlyServers &&
+				details.onlyServers.length > 0 &&
+				!details.onlyServers.includes(searchOptions.guildId)
+			) {
+				return false;
+			}
+		} else {
+			if (details.onlyServers && details.onlyServers.length > 0) return false;
+		}
+
+		return true;
+	});
 
 	return remainingCardIds;
 }
