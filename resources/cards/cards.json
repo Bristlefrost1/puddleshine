@@ -417,7 +417,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0026-ashfur/ashfur-shadedsights.png",
-				"credit": "shadedsights."
+				"credit": "shadedsights"
 			}
 		]
 	},
@@ -2812,7 +2812,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0245-dovewing/dovewing-shadedsights.png",
-				"credit": "shadedsights."
+				"credit": "shadedsights"
 			}
 		],
 
@@ -2825,7 +2825,7 @@
 				"art": [
 					{
 						"url": "$ART_URL_BASE$/0245-dovewing/variants/rainbow.png",
-						"credit": "shadedsights."
+						"credit": "shadedsights"
 					}
 				]
 			}
@@ -4932,7 +4932,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0459-hollyleaf/hollyleaf-shadedsights-2.png",
-				"credit": "shadedsights."
+				"credit": "shadedsights"
 			},
 			{
 				"url": "$ART_URL_BASE$/0459-hollyleaf/hollyleaf-jvn1p3r7.png",
@@ -5321,7 +5321,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0498-jayfeather/jayfeather-shadedsights.png",
-				"credit": "shadedsights."
+				"credit": "shadedsights"
 			}
 		],
 
@@ -5890,7 +5890,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0555-lionblaze/lionblaze-shadedsights.png",
-				"credit": "shadedsights."
+				"credit": "shadedsights"
 			}
 		]
 	},
@@ -9008,7 +9008,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0891-rootspring/rootspring-shadedsights.jpg",
-				"credit": "shadedsights."
+				"credit": "shadedsights"
 			}
 		]
 	},
@@ -9538,7 +9538,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/0945-shadowsight/shadowsight-shadedsights-2.png",
-				"credit": "shadedsights."
+				"credit": "shadedsights"
 			},
 			{
 				"url": "$ART_URL_BASE$/0945-shadowsight/shadowsight-chibi.png",
@@ -10962,7 +10962,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/1078-squirrelstar/squirrelstar-shadedsights.png",
-				"credit": "shadedsights."
+				"credit": "shadedsights"
 			}
 		]
 	},
@@ -11638,7 +11638,7 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/1148-tallstar/tallstar-shadedsights.png",
-				"credit": "shadedsights."
+				"credit": "shadedsights"
 			}
 		],
 
@@ -11651,7 +11651,7 @@
 				"art": [
 					{
 						"url": "$ART_URL_BASE$/1148-tallstar/variants/pridestar.png",
-						"credit": "shadedsights."
+						"credit": "shadedsights"
 					}
 				]
 			}
