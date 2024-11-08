@@ -99,11 +99,15 @@ function cancelConfirmationResponse(
  * @param message The message text.
  * @returns A message interaction response that is the given `message`.
  */
-function simpleMessageResponse(message: string): DAPI.APIInteractionResponse {
+function simpleMessageResponse(
+	message: string,
+	allowedMentions?: DAPI.APIAllowedMentions,
+): DAPI.APIInteractionResponse {
 	return {
 		type: DAPI.InteractionResponseType.ChannelMessageWithSource,
 		data: {
 			content: message,
+			allowed_mentions: allowedMentions,
 		},
 	};
 }
