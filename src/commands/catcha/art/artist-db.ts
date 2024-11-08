@@ -36,6 +36,17 @@ async function linkArtistProfile(name: string, discordId: string, prisma: D1Pris
 	});
 }
 
+async function renameArtist(name: string, newName: string, prisma: D1PrismaClient) {
+	return await prisma.artistProfile.update({
+		where: {
+			name: name.toLowerCase(),
+		},
+		data: {
+			name: newName,
+		},
+	});
+}
+
 async function updateDisplayName(name: string, displayName: string, prisma: D1PrismaClient) {
 	return await prisma.artistProfile.update({
 		where: {
@@ -63,6 +74,7 @@ export {
 	findArtistProfileWithDiscordId,
 	initializeArtistProfile,
 	linkArtistProfile,
+	renameArtist,
 	updateDisplayName,
 	updateDescription,
 };

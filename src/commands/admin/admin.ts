@@ -299,6 +299,27 @@ const AdminCommand: Command = {
 					},
 					{
 						type: DAPI.ApplicationCommandOptionType.Subcommand,
+						name: 'rename',
+						description: "Rename an artist profile if it has been updated in the bot's files",
+
+						options: [
+							{
+								type: DAPI.ApplicationCommandOptionType.String,
+								name: 'artist',
+								description: 'The artist profile to update',
+								required: true,
+								autocomplete: true,
+							},
+							{
+								type: DAPI.ApplicationCommandOptionType.String,
+								name: 'new_name',
+								description: 'The new name of the artist profile',
+								required: true,
+							},
+						],
+					},
+					{
+						type: DAPI.ApplicationCommandOptionType.Subcommand,
 						name: 'display_name',
 						description: 'Edit an artist profile display name',
 

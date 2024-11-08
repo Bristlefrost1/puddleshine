@@ -46,6 +46,33 @@ async function handleArtistAdminCommand(
 		await artistDB.linkArtistProfile(artist.value, userOption.value, env.PRISMA);
 
 		return simpleMessageResponse('Artist profile linked with user.');
+	} else if (subcommand.name === 'rename') {
+		const { artist, new_name: newName } = parseCommandOptions(options);
+
+		if (!artist || artist.type !== DAPI.ApplicationCommandOptionType.String)
+			return simpleEphemeralResponse('No artist option provided');
+
+		if (!newName || newName.type !== DAPI.ApplicationCommandOptionType.String)
+			return simpleEphemeralResponse('No new name provided');
+
+		const renameTo = newName.value.trim();
+
+		const artistProfile = await artistDB.findArtistProfile(artist.value, env.PRISMA);
+		if (!artistProfile) return simpleMessageResponse('No artist profile found.');
+
+		const newNameProfile = await artistDB.findArtistProfile(renameTo, env.PRISMA);
+		if (newNameProfile)
+			return simpleMessageResponse(`An artist profile with the name \`${renameTo}\` already exists.`, {
+				roles: [],
+				users: [],
+			});
+
+		await artistDB.renameArtist(artist.value, renameTo, env.PRISMA);
+
+		return simpleMessageResponse(`Artist profile \`${artist.value}\` renamed to \`${renameTo}\`.`, {
+			roles: [],
+			users: [],
+		});
 	} else if (subcommand.name === 'display_name') {
 		const { artist, display_name: displayName } = parseCommandOptions(options);
 
