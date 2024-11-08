@@ -4113,6 +4113,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/7/70/Frostpaw_%28RC%29.ASC-3.png/revision/latest?cb=20240627090625",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0378-frostdawn/frostdawn-shadedsights.png",
+				"credit": "shadedsights"
 			}
 		]
 	},
@@ -4937,6 +4941,10 @@
 			{
 				"url": "$ART_URL_BASE$/0459-hollyleaf/hollyleaf-jvn1p3r7.png",
 				"credit": "jvn1p3r7"
+			},
+			{
+				"url": "$ART_URL_BASE$/0459-hollyleaf/hollyleaf-shadedsights-3.png",
+				"credit": "shadedsights"
 			}
 		]
 	},
@@ -12542,6 +12550,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/9/9a/Whistlepaw.ASC-5.png/revision/latest?cb=20230710140518",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/1239-whistlebreeze/whistlebreeze-shadedsights.png",
+				"credit": "shadedsights"
 			}
 		]
 	},
