@@ -2100,7 +2100,14 @@
 		"name": "Coriander",
 		"group": "Loner",
 		"gender": "She-cat",
-		"disambiguator": "BrS"
+		"disambiguator": "BrS",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/0172-coriander/coriander-shadedsights.png",
+				"credit": "shadedsights"
+			}
+		]
 	},
 	{
 		"id": 173,
@@ -9612,6 +9619,10 @@
 				"credit": "foxy9461"
 			},
 			{
+				"url": "$ART_URL_BASE$/0946-tall-shadow/tall-shadow-shadedsights.png",
+				"credit": "shadedsights"
+			},
+			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/d/d9/Shadowstar.FG-6.png/revision/latest?cb=20240526085246",
 				"credit": "Wayne McLoughlin / Official art"
 			},
@@ -12357,6 +12368,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/e/ef/Violetshine.VOS-2.png/revision/latest?cb=20181127174038",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/1218-violetshine/violetshine-shadedsights.png",
+				"credit": "shadedsights"
 			}
 		]
 	},
