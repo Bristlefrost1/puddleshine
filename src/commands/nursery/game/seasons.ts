@@ -9,6 +9,17 @@ enum Season {
 
 const SEASON_EPOCH_TIMESTAMP = 1724025600; // Monday, 19 August 2024 00:00:00 UTC
 
+function getSeasonInfo(timestamp: number) {
+	const secondsSinceEpoch = timestamp - SEASON_EPOCH_TIMESTAMP;
+	const seasonIndex = Math.floor(secondsSinceEpoch / config.NURSERY_SEASON_SECONDS) % Object.values(Season).length;
+	const season = Object.values(Season)[seasonIndex];
+	const nextSeasonStart =
+		SEASON_EPOCH_TIMESTAMP +
+		(Math.floor(secondsSinceEpoch / config.NURSERY_SEASON_SECONDS) + 1) * config.NURSERY_SEASON_SECONDS;
+
+	return { season, nextSeasonStart };
+}
+
 function getSeasonOnDate(date: Date): Season {
 	const dateTimestamp = Math.floor(date.getTime() / 1000);
 
@@ -57,30 +68,18 @@ function getSeasonsBetweenDates(date1: Date, date2: Date): { season: Season; tim
 			},
 		];
 	} else {
-		const seasons = [];
-		const numberOfSeasons = Math.abs(date2SeasonsSinceEpoch - date1SeasonsSinceEpoch);
+		const seasons: { season: Season; time: number }[] = [];
+		let timestamp = date1Timestamp;
 
-		for (let i = 0; i < numberOfSeasons; i++) {
-			const seasonNumber = date1SeasonsSinceEpoch + i;
+		while (timestamp < date2Timestamp) {
+			const { season, nextSeasonStart } = getSeasonInfo(timestamp);
 
-			let startTimestamp: number;
-			let endTimestamp: number;
+			const endOfCurrentSeason = Math.min(nextSeasonStart, date2Timestamp);
+			const timeInCurrentSeason = endOfCurrentSeason - timestamp;
 
-			if (seasonNumber === date1SeasonsSinceEpoch) {
-				startTimestamp = date1Timestamp;
-				endTimestamp = Math.floor(getNextSeasonOnDate(date1).nextSeasonStartsAt.getTime() / 1000);
-			} else if (seasonNumber === date2SeasonsSinceEpoch) {
-				startTimestamp = SEASON_EPOCH_TIMESTAMP + seasonNumber * config.NURSERY_SEASON_SECONDS;
-				endTimestamp = date2Timestamp;
-			} else {
-				startTimestamp = SEASON_EPOCH_TIMESTAMP + seasonNumber * config.NURSERY_SEASON_SECONDS;
-				endTimestamp = SEASON_EPOCH_TIMESTAMP + (seasonNumber + 1) * config.NURSERY_SEASON_SECONDS;
-			}
+			seasons.push({ season, time: timeInCurrentSeason });
 
-			seasons.push({
-				season: seasonValues[seasonNumber % seasonValues.length],
-				time: Math.abs(endTimestamp - startTimestamp),
-			});
+			timestamp = endOfCurrentSeason;
 		}
 
 		return seasons;
