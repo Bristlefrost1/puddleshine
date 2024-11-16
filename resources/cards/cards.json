@@ -1531,6 +1531,10 @@
 			{
 				"url": "$ART_URL_BASE$/0117-bristlefrost/bristlefrost-chibi.png",
 				"credit": "Chibi"
+			},
+			{
+				"url": "$ART_URL_BASE$/0117-bristlefrost/bristlefrost-shadedsights.png",
+				"credit": "shadedsights"
 			}
 		],
 
@@ -4122,7 +4126,7 @@
 				"credit": "Owen Richardson / Official art"
 			},
 			{
-				"url": "$ART_URL_BASE$/0378-frostdawn/frostdawn-shadedsights.png",
+				"url": "$ART_URL_BASE$/0378-frostdawn/frostdawn-shadedsights-2.png",
 				"credit": "shadedsights"
 			}
 		]
@@ -10384,6 +10388,10 @@
 			{
 				"url": "$ART_URL_BASE$/1025-birchpaw/birchpaw-chibi.png",
 				"credit": "Chibi"
+			},
+			{
+				"url": "$ART_URL_BASE$/1025-birchpaw/birchfeather-shadedsights.png",
+				"credit": "shadedsights"
 			}
 		]
 	},
@@ -10901,6 +10909,10 @@
 			{
 				"url": "$ART_URL_BASE$/1074-spottedleaf/spottedleaf-blyth3xd.png",
 				"credit": "jvn1p3r7"
+			},
+			{
+				"url": "$ART_URL_BASE$/1074-spottedleaf/spottedleaf-shadedsights.png",
+				"credit": "shadedsights"
 			},
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/7/78/Spottedleaf.FG-6.png/revision/latest?cb=20240526114317",
