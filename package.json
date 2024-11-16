@@ -28,7 +28,7 @@
 		"eslint": "^9.8.0",
 		"eslint-config-prettier": "^9.1.0",
 		"prettier": "3.3.3",
-		"prisma": "latest",
+		"prisma": "^5.22.0",
 		"ts-loader": "^9.5.1",
 		"tsconfig-paths": "^4.2.0",
 		"typescript": "^5.4.5",
@@ -37,10 +37,10 @@
 		"wrangler": "^3.72.2"
 	},
 	"dependencies": {
-		"@prisma/adapter-d1": "^5.15.0",
-		"@prisma/client": "latest",
+		"@prisma/adapter-d1": "^5.22.0",
+		"@prisma/client": "^5.22.0",
 		"cron-schedule": "^5.0.1",
-		"discord-api-types": "^0.37.92",
+		"discord-api-types": "^0.37.105",
 		"discord-interactions": "^3.4.0"
 	},
 	"imports": {

@@ -177,6 +177,7 @@ async function processTradeRequest(
 			// We don't want anyone to find any crazy card duplication exploits so a card can only be in
 			// one pending trade at a time.
 			if (card.card.pendingTradeUuid1 !== null || card.card.pendingTradeUuid2 !== null) {
+				/*
 				return messageResponse({
 					embeds: [
 						errorEmbed(
@@ -184,6 +185,7 @@ async function processTradeRequest(
 						),
 					],
 				});
+				*/
 			}
 
 			if (card.card.untradeable) {
