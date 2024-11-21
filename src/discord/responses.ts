@@ -11,7 +11,7 @@ function messageResponse(options: {
 	allowedMentions?: DAPI.APIAllowedMentions;
 
 	update?: boolean;
-}): DAPI.APIInteractionResponse {
+}): DAPI.APIInteractionResponseChannelMessageWithSource | DAPI.APIInteractionResponseUpdateMessage {
 	if (options.update) {
 		return {
 			type: DAPI.InteractionResponseType.UpdateMessage,
