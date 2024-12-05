@@ -1,5 +1,6 @@
 import * as DAPI from 'discord-api-types/v10';
 
+import { deferMessage, editInteractionResponse } from '#discord/responses-deferred.js';
 import { simpleEphemeralResponse } from '#discord/responses.js';
 import { parseCommandOptions } from '#discord/parse-options.js';
 import { parseList } from '#utils/parse-list.js';
@@ -35,68 +36,106 @@ const ComfortSubcommand: Subcommand = {
 	},
 
 	async execute(options) {
-		const { kits: kitsOption } = parseCommandOptions(options.commandOptions);
+		const deferredExecute = async () => {
+			try {
+				const appId = options.env.DISCORD_APPLICATION_ID;
+				const discordToken = options.env.DISCORD_TOKEN;
+				const interactionToken = options.interaction.token;
 
-		if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No kits option provided.');
+				const { kits: kitsOption } = parseCommandOptions(options.commandOptions);
 
-		const kitNames = parseList(kitsOption.value) as string[];
-		const nursery = await nurseryManager.getNursery(options.user, options.env);
+				if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String) return;
 
-		if (nursery.isPaused)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'home',
-				messages: ['Your nursery is currently paused.'],
-			});
+				const kitNames = parseList(kitsOption.value) as string[];
+				const nursery = await nurseryManager.getNursery(options.user, options.env);
 
-		if (nursery.kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'home',
-				messages: ["You don't have any kits to comfort."],
-			});
+				if (nursery.isPaused) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'home',
+							messages: ['Your nursery is currently paused.'],
+						}).data!,
+					);
 
-		const kits = nurseryManager.locateKits(nursery, kitNames);
+					return;
+				}
 
-		if (kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'status',
-				messages: ["Couldn't find kits with the provided input."],
-			});
+				if (nursery.kits.length < 1) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'home',
+							messages: ["You don't have any kits to comfort."],
+						}).data!,
+					);
 
-		const comfortMessages: string[] = [];
-		const comfortTime = new Date();
+					return;
+				}
 
-		const newKitTemperatures = kits.map((kit, index) => {
-			if (kit.wanderingSince !== undefined) {
-				comfortMessages.push(`You can't see ${kit.fullName} anywhere.`);
+				const kits = nurseryManager.locateKits(nursery, kitNames);
 
-				return;
+				if (kits.length < 1) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'status',
+							messages: ["Couldn't find kits with the provided input."],
+						}).data!,
+					);
+
+					return;
+				}
+
+				const comfortMessages: string[] = [];
+				const comfortTime = new Date();
+
+				const newKitTemperatures = kits.map((kit, index) => {
+					if (kit.wanderingSince !== undefined) {
+						comfortMessages.push(`You can't see ${kit.fullName} anywhere.`);
+
+						return;
+					}
+
+					const newTemperature = kit.temperature + config.NURSERY_COMFORT_TEMPERATURE;
+
+					nursery.kits[index].temperature = newTemperature;
+					nursery.kits[index].temperatureClass = getTemperatureClass(newTemperature);
+
+					comfortMessages.push(`You've comforted ${kit.fullName}.`);
+					addNewEventToKit(kit, KitEventType.Comfort, '{{KIT_FULL_NAME}} was comforted.', comfortTime);
+
+					return { uuid: kit.uuid, newTemperature, events: JSON.stringify(kit.events) };
+				});
+
+				const newTemperatures = newKitTemperatures.filter((kit) => kit !== undefined);
+
+				if (newTemperatures.length > 0)
+					await nurseryDB.updateKitTemperatures(options.env.PRISMA, newTemperatures as any, comfortTime);
+
+				await editInteractionResponse(
+					appId,
+					discordToken,
+					interactionToken,
+					nurseryViews.nurseryMessageResponse(nursery, {
+						view: 'status',
+						messages: comfortMessages,
+					}).data!,
+				);
+			} catch (error) {
+				console.error(error);
 			}
+		};
 
-			const newTemperature = kit.temperature + config.NURSERY_COMFORT_TEMPERATURE;
+		options.ctx.waitUntil(deferredExecute());
 
-			nursery.kits[index].temperature = newTemperature;
-			nursery.kits[index].temperatureClass = getTemperatureClass(newTemperature);
-
-			comfortMessages.push(`You've comforted ${kit.fullName}.`);
-			addNewEventToKit(kit, KitEventType.Comfort, '{{KIT_FULL_NAME}} was comforted.', comfortTime);
-
-			return { uuid: kit.uuid, newTemperature, events: JSON.stringify(kit.events) };
-		});
-
-		const newTemperatures = newKitTemperatures.filter((kit) => kit !== undefined);
-		if (newTemperatures.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'status',
-				messages: comfortMessages,
-			});
-
-		await nurseryDB.updateKitTemperatures(options.env.PRISMA, newTemperatures as any, comfortTime);
-
-		return nurseryViews.nurseryMessageResponse(nursery, {
-			view: 'status',
-			messages: comfortMessages,
-		});
+		return deferMessage();
 	},
 };
 

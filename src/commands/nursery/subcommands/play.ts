@@ -1,5 +1,6 @@
 import * as DAPI from 'discord-api-types/v10';
 
+import { deferMessage, editInteractionResponse } from '#discord/responses-deferred.js';
 import { simpleEphemeralResponse } from '#discord/responses.js';
 import { parseCommandOptions } from '#discord/parse-options.js';
 import { parseList } from '#utils/parse-list.js';
@@ -44,74 +45,124 @@ const PlaySubcommand: Subcommand = {
 	},
 
 	async execute(options) {
-		const { kits: kitsOption } = parseCommandOptions(options.commandOptions);
+		const deferredExecute = async () => {
+			try {
+				const appId = options.env.DISCORD_APPLICATION_ID;
+				const discordToken = options.env.DISCORD_TOKEN;
+				const interactionToken = options.interaction.token;
 
-		if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No kits option provided.');
+				const { kits: kitsOption } = parseCommandOptions(options.commandOptions);
 
-		const kitNames = parseList(kitsOption.value) as string[];
-		const nursery = await nurseryManager.getNursery(options.user, options.env);
+				if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String) return;
 
-		if (nursery.isPaused)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'home',
-				messages: ['Your nursery is currently paused.'],
-			});
+				const kitNames = parseList(kitsOption.value) as string[];
+				const nursery = await nurseryManager.getNursery(options.user, options.env);
 
-		if (nursery.kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'home',
-				messages: ["You don't have any kits to play with."],
-			});
+				if (nursery.isPaused) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'home',
+							messages: ['Your nursery is currently paused.'],
+						}).data!,
+					);
 
-		const kits = nurseryManager.locateKits(nursery, kitNames);
+					return;
+				}
 
-		if (kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'status',
-				messages: ["Couldn't find kits with the provided input."],
-			});
+				if (nursery.kits.length < 1) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'home',
+							messages: ["You don't have any kits to play with."],
+						}).data!,
+					);
 
-		const playMessages: string[] = [];
-		const playTime = new Date();
+					return;
+				}
 
-		const newKitTemperatures = kits.map((kit, index) => {
-			if (kit.wanderingSince !== undefined) {
-				playMessages.push(`You can't see ${kit.fullName} anywhere.`);
+				const kits = nurseryManager.locateKits(nursery, kitNames);
 
-				return;
+				if (kits.length < 1) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'status',
+							messages: ["Couldn't find kits with the provided input."],
+						}).data!,
+					);
+
+					return;
+				}
+
+				const playMessages: string[] = [];
+				const playTime = new Date();
+
+				const newKitTemperatures = kits.map((kit, index) => {
+					if (kit.wanderingSince !== undefined) {
+						playMessages.push(`You can't see ${kit.fullName} anywhere.`);
+
+						return;
+					}
+
+					const newTemperature = kit.temperature + config.NURSERY_PLAY_TEMPERATURE;
+
+					nursery.kits[index].temperature = newTemperature;
+					nursery.kits[index].temperatureClass = getTemperatureClass(newTemperature);
+
+					const pronouns = getPronouns(kit.gender);
+					const randomMessage = messages[Math.floor(Math.random() * messages.length)]
+						.replaceAll('{{fullName}}', kit.fullName)
+						.replaceAll('{{prefix}}', kit.prefix)
+						.replaceAll('{{subject}}', pronouns.subject);
+
+					playMessages.push(randomMessage);
+					addNewEventToKit(kit, KitEventType.Play, randomMessage, playTime);
+
+					return { uuid: kit.uuid, newTemperature, events: JSON.stringify(kit.events) };
+				});
+
+				const newTemperatures = newKitTemperatures.filter((kit) => kit !== undefined);
+				if (newTemperatures.length < 1) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'status',
+							messages: playMessages,
+						}).data!,
+					);
+
+					return;
+				}
+
+				await nurseryDB.updateKitTemperatures(options.env.PRISMA, newTemperatures as any, playTime);
+
+				await editInteractionResponse(
+					appId,
+					discordToken,
+					interactionToken,
+					nurseryViews.nurseryMessageResponse(nursery, {
+						view: 'status',
+						messages: playMessages,
+					}).data!,
+				);
+			} catch (error) {
+				console.log(error);
 			}
+		};
 
-			const newTemperature = kit.temperature + config.NURSERY_PLAY_TEMPERATURE;
+		options.ctx.waitUntil(deferredExecute());
 
-			nursery.kits[index].temperature = newTemperature;
-			nursery.kits[index].temperatureClass = getTemperatureClass(newTemperature);
-
-			const pronouns = getPronouns(kit.gender);
-			const randomMessage = messages[Math.floor(Math.random() * messages.length)]
-				.replaceAll('{{fullName}}', kit.fullName)
-				.replaceAll('{{prefix}}', kit.prefix)
-				.replaceAll('{{subject}}', pronouns.subject);
-
-			playMessages.push(randomMessage);
-			addNewEventToKit(kit, KitEventType.Play, randomMessage, playTime);
-
-			return { uuid: kit.uuid, newTemperature, events: JSON.stringify(kit.events) };
-		});
-
-		const newTemperatures = newKitTemperatures.filter((kit) => kit !== undefined);
-		if (newTemperatures.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'status',
-				messages: playMessages,
-			});
-
-		await nurseryDB.updateKitTemperatures(options.env.PRISMA, newTemperatures as any, playTime);
-
-		return nurseryViews.nurseryMessageResponse(nursery, {
-			view: 'status',
-			messages: playMessages,
-		});
+		return deferMessage();
 	},
 };
 

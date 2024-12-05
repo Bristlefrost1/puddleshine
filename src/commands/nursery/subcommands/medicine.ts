@@ -1,6 +1,6 @@
 import * as DAPI from 'discord-api-types/v10';
 
-import { simpleEphemeralResponse } from '#discord/responses.js';
+import { deferMessage, editInteractionResponse } from '#discord/responses-deferred.js';
 import { parseCommandOptions } from '#discord/parse-options.js';
 import { parseList } from '#utils/parse-list.js';
 import { getPronouns } from '#cat/gender.js';
@@ -36,83 +36,121 @@ const MedicineSubcommand: Subcommand = {
 	},
 
 	async execute(options) {
-		const { kits: kitsOption } = parseCommandOptions(options.commandOptions);
+		const deferredExecute = async () => {
+			try {
+				const appId = options.env.DISCORD_APPLICATION_ID;
+				const discordToken = options.env.DISCORD_TOKEN;
+				const interactionToken = options.interaction.token;
 
-		if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No kits option provided.');
+				const { kits: kitsOption } = parseCommandOptions(options.commandOptions);
 
-		const kitNames = parseList(kitsOption.value) as string[];
-		const nursery = await nurseryManager.getNursery(options.user, options.env);
+				if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String) return;
 
-		if (nursery.isPaused)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'home',
-				messages: ['Your nursery is currently paused.'],
-			});
+				const kitNames = parseList(kitsOption.value) as string[];
+				const nursery = await nurseryManager.getNursery(options.user, options.env);
 
-		if (nursery.kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'home',
-				messages: ["You don't have any kits to take to the medicine cat."],
-			});
+				if (nursery.isPaused) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'home',
+							messages: ['Your nursery is currently paused.'],
+						}).data!,
+					);
 
-		const kits = nurseryManager.locateKits(nursery, kitNames);
+					return;
+				}
 
-		if (kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'home',
-				messages: ["Couldn't find kits with the provided input."],
-			});
+				if (nursery.kits.length < 1) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'home',
+							messages: ["You don't have any kits to take to the medicine den."],
+						}).data!,
+					);
 
-		const messages: string[] = [];
-		const treatKits: Kit[] = [];
+					return;
+				}
 
-		for (const kit of kits) {
-			const pronouns = getPronouns(kit.gender);
+				const kits = nurseryManager.locateKits(nursery, kitNames);
 
-			if (kit.sickSince === undefined) {
-				messages.push(`${kit.fullName} is feeling well and doesn't need to be taken to the medicine den.`);
-				continue;
+				if (kits.length < 1) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'status',
+							messages: ["Couldn't find kits with the provided input."],
+						}).data!,
+					);
+
+					return;
+				}
+
+				const messages: string[] = [];
+				const treatKits: Kit[] = [];
+
+				for (const kit of kits) {
+					const pronouns = getPronouns(kit.gender);
+
+					if (kit.sickSince === undefined) {
+						messages.push(
+							`${kit.fullName} is feeling well and doesn't need to be taken to the medicine den.`,
+						);
+						continue;
+					}
+
+					if (kit.wanderingSince !== undefined) {
+						messages.push(`You can't see ${kit.fullName} anywhere to take them to the medicine den.`);
+						continue;
+					}
+
+					kit.sickSince = undefined;
+					kit.bond -= config.NURSERY_MEDICINE_BOND_DECREASE;
+					if (kit.bond < 0) kit.bond = 0;
+
+					addNewEventToKit(
+						kit,
+						KitEventType.Medicine,
+						'{{KIT_FULL_NAME}} was treated for sickness in the medicine den.',
+					);
+
+					treatKits.push(kit);
+					messages.push(
+						`You took ${kit.fullName} to see the medicine cat, who immediately treated ${pronouns.object} for sickness.`,
+					);
+
+					nursery.kits[kit.index] = kit;
+					nursery.kitsNeedingAttention = nursery.kitsNeedingAttention.filter(
+						(kitNeedingAttention) => kitNeedingAttention.uuid !== kit.uuid,
+					);
+				}
+
+				if (treatKits.length > 0) await nurseryDB.setKitsSickSince(options.env.PRISMA, treatKits, null);
+
+				await editInteractionResponse(
+					appId,
+					discordToken,
+					interactionToken,
+					nurseryViews.nurseryMessageResponse(nursery, {
+						view: 'status',
+						messages: messages,
+					}).data!,
+				);
+			} catch (error) {
+				console.error(error);
 			}
+		};
 
-			if (kit.wanderingSince !== undefined) {
-				messages.push(`You can't see ${kit.fullName} anywhere to take them to the medicine den.`);
-				continue;
-			}
+		options.ctx.waitUntil(deferredExecute());
 
-			kit.sickSince = undefined;
-			kit.bond -= config.NURSERY_MEDICINE_BOND_DECREASE;
-			if (kit.bond < 0) kit.bond = 0;
-
-			addNewEventToKit(
-				kit,
-				KitEventType.Medicine,
-				'{{KIT_FULL_NAME}} was treated for sickness in the medicine den.',
-			);
-
-			treatKits.push(kit);
-			messages.push(
-				`You took ${kit.fullName} to see the medicine cat, who immediately treated ${pronouns.object} for sickness.`,
-			);
-
-			nursery.kits[kit.index] = kit;
-			nursery.kitsNeedingAttention = nursery.kitsNeedingAttention.filter(
-				(kitNeedingAttention) => kitNeedingAttention.uuid !== kit.uuid,
-			);
-		}
-
-		if (treatKits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'status',
-				messages: messages,
-			});
-
-		await nurseryDB.setKitsSickSince(options.env.PRISMA, treatKits, null);
-
-		return nurseryViews.nurseryMessageResponse(nursery, {
-			view: 'status',
-			messages: messages,
-		});
+		return deferMessage();
 	},
 };
 

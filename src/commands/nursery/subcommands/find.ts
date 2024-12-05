@@ -1,6 +1,6 @@
 import * as DAPI from 'discord-api-types/v10';
 
-import { simpleEphemeralResponse } from '#discord/responses.js';
+import { deferMessage, editInteractionResponse } from '#discord/responses-deferred.js';
 import { parseCommandOptions } from '#discord/parse-options.js';
 import { parseList } from '#utils/parse-list.js';
 import { pickRandomWeighted, WeightedValue } from '#utils/random-utils.js';
@@ -51,78 +51,132 @@ const FindSubcommand: Subcommand = {
 	},
 
 	async execute(options) {
-		const { kits: kitsOption } = parseCommandOptions(options.commandOptions);
+		const deferredExecute = async () => {
+			try {
+				const appId = options.env.DISCORD_APPLICATION_ID;
+				const discordToken = options.env.DISCORD_TOKEN;
+				const interactionToken = options.interaction.token;
 
-		if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No kits option provided.');
+				const { kits: kitsOption } = parseCommandOptions(options.commandOptions);
 
-		const kitNames = parseList(kitsOption.value) as string[];
-		const nursery = await nurseryManager.getNursery(options.user, options.env);
+				if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String) return;
 
-		if (nursery.isPaused)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'home',
-				messages: ['Your nursery is currently paused.'],
-			});
+				const kitNames = parseList(kitsOption.value) as string[];
+				const nursery = await nurseryManager.getNursery(options.user, options.env);
 
-		if (nursery.kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'home',
-				messages: ["You don't have any kits to search for."],
-			});
+				if (nursery.isPaused) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'home',
+							messages: ['Your nursery is currently paused.'],
+						}).data!,
+					);
 
-		const kits = nurseryManager.locateKits(nursery, kitNames);
+					return;
+				}
 
-		if (kits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'home',
-				messages: ["Couldn't find kits with the provided input."],
-			});
+				if (nursery.kits.length < 1) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'home',
+							messages: ["You don't have any kits to search for."],
+						}).data!,
+					);
 
-		const messages: string[] = [];
-		const foundKits: Kit[] = [];
+					return;
+				}
 
-		for (const kit of kits) {
-			if (kit.wanderingSince === undefined) {
-				messages.push(`${kit.fullName} is thankfully safe with you in the nursery.`);
-				continue;
+				const kits = nurseryManager.locateKits(nursery, kitNames);
+
+				if (kits.length < 1) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'home',
+							messages: ["Couldn't find kits with the provided input."],
+						}).data!,
+					);
+
+					return;
+				}
+
+				const messages: string[] = [];
+				const foundKits: Kit[] = [];
+
+				for (const kit of kits) {
+					if (kit.wanderingSince === undefined) {
+						messages.push(`${kit.fullName} is thankfully safe with you in the nursery.`);
+						continue;
+					}
+
+					const kitFoundOdds: WeightedValue<boolean>[] = [
+						{ value: true, probability: 0.8 },
+						{ value: false, probability: '*' },
+					];
+					const kitFound = pickRandomWeighted(kitFoundOdds);
+
+					if (!kitFound) {
+						messages.push(`Despite looking hard, you can't find ${kit.fullName} anywhere.`);
+						continue;
+					}
+
+					kit.wanderingSince = undefined;
+					kit.bond -= config.NURSERY_WANDER_BOND_DECREASE;
+					if (kit.bond < 0) kit.bond = 0;
+
+					addNewEventToKit(
+						kit,
+						KitEventType.Found,
+						'{{KIT_FULL_NAME}} was found after having gone wandering.',
+					);
+
+					foundKits.push(kit);
+					messages.push(pickRandomWeighted(kitFoundMessages).replaceAll('{{KIT_FULL_NAME}}', kit.fullName));
+
+					nursery.kits[kit.index] = kit;
+				}
+
+				if (foundKits.length < 1) {
+					await editInteractionResponse(
+						appId,
+						discordToken,
+						interactionToken,
+						nurseryViews.nurseryMessageResponse(nursery, {
+							view: 'status',
+							messages: messages,
+						}).data!,
+					);
+
+					return;
+				}
+
+				await nurseryDB.setKitsWanderingSince(options.env.PRISMA, foundKits, null);
+
+				await editInteractionResponse(
+					appId,
+					discordToken,
+					interactionToken,
+					nurseryViews.nurseryMessageResponse(nursery, {
+						view: 'status',
+						messages: messages,
+					}).data!,
+				);
+			} catch (error) {
+				console.error(error);
 			}
+		};
 
-			const kitFoundOdds: WeightedValue<boolean>[] = [
-				{ value: true, probability: 0.8 },
-				{ value: false, probability: '*' },
-			];
-			const kitFound = pickRandomWeighted(kitFoundOdds);
+		options.ctx.waitUntil(deferredExecute());
 
-			if (!kitFound) {
-				messages.push(`Despite looking hard, you can't find ${kit.fullName} anywhere.`);
-				continue;
-			}
-
-			kit.wanderingSince = undefined;
-			kit.bond -= config.NURSERY_WANDER_BOND_DECREASE;
-			if (kit.bond < 0) kit.bond = 0;
-
-			addNewEventToKit(kit, KitEventType.Found, '{{KIT_FULL_NAME}} was found after having gone wandering.');
-
-			foundKits.push(kit);
-			messages.push(pickRandomWeighted(kitFoundMessages).replaceAll('{{KIT_FULL_NAME}}', kit.fullName));
-
-			nursery.kits[kit.index] = kit;
-		}
-
-		if (foundKits.length < 1)
-			return nurseryViews.nurseryMessageResponse(nursery, {
-				view: 'status',
-				messages: messages,
-			});
-
-		await nurseryDB.setKitsWanderingSince(options.env.PRISMA, foundKits, null);
-
-		return nurseryViews.nurseryMessageResponse(nursery, {
-			view: 'status',
-			messages: messages,
-		});
+		return deferMessage();
 	},
 };
 
