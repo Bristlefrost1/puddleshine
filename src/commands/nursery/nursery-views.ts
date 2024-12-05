@@ -103,14 +103,14 @@ function buildKitList(nursery: Nursery, view: 'status' | 'home') {
 function stringifyNurseryFooter(nursery: Nursery) {
 	if (nursery.kitsNeedingAttention.length > 0) {
 		if (nursery.kitsNeedingAttention.length === 1) {
-			return `\u001b[2;41m\u001b[2;37m[!] ${nursery.kitsNeedingAttention[0].fullName} needs your attention.\u001b[0m\u001b[2;41m\u001b[0m`;
+			return `\n\u001b[2;41m\u001b[2;37m[!] ${nursery.kitsNeedingAttention[0].fullName} needs your attention.\u001b[0m\u001b[2;41m\u001b[0m`;
 		} else if (nursery.kitsNeedingAttention.length === 2) {
-			return `\u001b[2;41m\u001b[2;37m[!] ${nursery.kitsNeedingAttention[0].fullName} and ${nursery.kitsNeedingAttention[1].fullName} need your attention.\u001b[0m\u001b[2;41m\u001b[0m`;
+			return `\n\u001b[2;41m\u001b[2;37m[!] ${nursery.kitsNeedingAttention[0].fullName} and ${nursery.kitsNeedingAttention[1].fullName} need your attention.\u001b[0m\u001b[2;41m\u001b[0m`;
 		} else {
 			const namesNeedingAttention = nursery.kitsNeedingAttention.map((kit) => kit.fullName);
 			const last = namesNeedingAttention.pop();
 
-			return `\u001b[2;41m\u001b[2;37m[!] ${namesNeedingAttention.join(', ')}, and ${last} need your attention.\u001b[0m\u001b[2;41m\u001b[0m`;
+			return `\n\u001b[2;41m\u001b[2;37m[!] ${namesNeedingAttention.join(', ')}, and ${last} need your attention.\u001b[0m\u001b[2;41m\u001b[0m`;
 		}
 	}
 
