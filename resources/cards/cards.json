@@ -1382,7 +1382,7 @@
 		"id": 103,
 		"rarity": 1,
 		"name": "Breezeheart",
-		"group": "RiverClan",
+		"group": "Rogue",
 		"gender": "She-cat",
 		"disambiguator": ""
 	},
@@ -3919,7 +3919,7 @@
 		"id": 357,
 		"rarity": 2,
 		"name": "Fognose",
-		"group": "RiverClan",
+		"group": "Rogue",
 		"gender": "She-cat",
 		"disambiguator": ""
 	},
