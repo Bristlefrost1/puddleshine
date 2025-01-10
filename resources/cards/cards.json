@@ -1403,7 +1403,7 @@
 	},
 	{
 		"id": 105,
-		"rarity": 5,
+		"rarity": 4,
 		"name": "Briarlight",
 		"group": "ThunderClan",
 		"gender": "She-cat",
@@ -3507,7 +3507,7 @@
 	},
 	{
 		"id": 315,
-		"rarity": 2,
+		"rarity": 3,
 		"name": "Finchlight",
 		"group": "ThunderClan",
 		"gender": "She-cat",
@@ -3917,7 +3917,7 @@
 	},
 	{
 		"id": 357,
-		"rarity": 2,
+		"rarity": 1,
 		"name": "Fognose",
 		"group": "Rogue",
 		"gender": "She-cat",
@@ -5113,7 +5113,7 @@
 	},
 	{
 		"id": 479,
-		"rarity": 5,
+		"rarity": 4,
 		"name": "Icestar",
 		"group": "RiverClan",
 		"gender": "She-cat",
@@ -7121,7 +7121,7 @@
 	},
 	{
 		"id": 682,
-		"rarity": 1,
+		"rarity": 2,
 		"name": "Myrtlebloom",
 		"group": "ThunderClan",
 		"gender": "She-cat",
@@ -7247,7 +7247,7 @@
 	},
 	{
 		"id": 696,
-		"rarity": 2,
+		"rarity": 4,
 		"name": "Nightstar",
 		"group": "RiverClan",
 		"gender": "She-cat",
@@ -10327,7 +10327,7 @@
 	},
 	{
 		"id": 1019,
-		"rarity": 5,
+		"rarity": 4,
 		"name": "Snow",
 		"group": "The Sisters",
 		"gender": "She-cat",
@@ -12571,7 +12571,7 @@
 	},
 	{
 		"id": 1239,
-		"rarity": 5,
+		"rarity": 4,
 		"name": "Whistlebreeze",
 		"group": "WindClan",
 		"gender": "She-cat",
@@ -14410,7 +14410,7 @@
 	},
 	{
 		"id": 1409,
-		"rarity": 2,
+		"rarity": 3,
 		"name": "Mist",
 		"group": "RiverClan",
 		"gender": "Tom",
@@ -14598,6 +14598,16 @@
 		"disambiguator": "",
 
 		"onlyServers": ["634816554948755486"],
+
+		"art": []
+	},
+	{
+		"id": 1426,
+		"rarity": 1,
+		"name": "Emberstar",
+		"group": "RiverClan",
+		"gender": "She-cat",
+		"disambiguator": "",
 
 		"art": []
 	}
