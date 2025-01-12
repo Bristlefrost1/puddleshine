@@ -3123,7 +3123,7 @@
 		"name": "Emberstar",
 		"group": "RiverClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "CotC"
 	},
 	{
 		"id": 276,
@@ -14594,7 +14594,7 @@
 		"rarity": 1,
 		"name": "Emberstar",
 		"group": "RiverClan",
-		"gender": "She-cat",
+		"gender": "",
 		"disambiguator": "ASC",
 
 		"art": []
