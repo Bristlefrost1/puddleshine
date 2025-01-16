@@ -8681,6 +8681,10 @@
 
 		"art": [
 			{
+				"url": "$ART_URL_BASE$/0852-ravenpaw/ravenpaw-viperdown.png",
+				"credit": "viperdown"
+			},
+			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/3/33/Ravenpaw.FG-6.png/revision/latest?cb=20240614230312",
 				"credit": "Wayne McLoughlin / Official art"
 			},
@@ -11586,7 +11590,7 @@
 
 		"art": [
 			{
-				"url": "$ART_URL_BASE$/1142-swiftpaw/swiftpaw-falloutragez.png",
+				"url": "$ART_URL_BASE$/1142-swiftpaw/swiftpaw-viperdown.png",
 				"credit": "viperdown"
 			}
 		],
