@@ -3580,6 +3580,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/a/ac/Firestar.OS-1-RR.png/revision/latest?cb=20181127174819",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/0320-firestar/firestar-shadedsights.png",
+				"credit": "shadedsights"
 			}
 		]
 	},
@@ -10391,6 +10395,10 @@
 			},
 			{
 				"url": "$ART_URL_BASE$/1025-birchpaw/birchfeather-shadedsights.png",
+				"credit": "shadedsights"
+			},
+			{
+				"url": "$ART_URL_BASE$/1025-birchpaw/birchfeather-shadedsights-2.png",
 				"credit": "shadedsights"
 			}
 		]
