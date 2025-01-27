@@ -12488,7 +12488,14 @@
 		"name": "Ridgekit",
 		"group": "SkyClan",
 		"gender": "She-cat",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "$ART_URL_BASE$/1228-ridgeglow/ridgeglow-shadedsights.png",
+				"credit": "shadedsights"
+			}
+		]
 	},
 	{
 		"id": 1229,
