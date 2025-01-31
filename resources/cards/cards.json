@@ -7964,7 +7964,7 @@
 	{
 		"id": 772,
 		"rarity": 1,
-		"name": "Beepaw",
+		"name": "Beesting",
 		"group": "SkyClan",
 		"gender": "She-cat",
 		"disambiguator": "",
@@ -8118,7 +8118,7 @@
 	{
 		"id": 789,
 		"rarity": 1,
-		"name": "Beetlepaw",
+		"name": "Beetleshine",
 		"group": "SkyClan",
 		"gender": "Tom",
 		"disambiguator": ""
@@ -9946,7 +9946,7 @@
 	{
 		"id": 978,
 		"rarity": 1,
-		"name": "Bristlepaw",
+		"name": "Bristleclaw",
 		"group": "ThunderClan",
 		"gender": "She-cat",
 		"disambiguator": ""
@@ -9954,7 +9954,7 @@
 	{
 		"id": 979,
 		"rarity": 1,
-		"name": "Stempaw",
+		"name": "Stemtail",
 		"group": "ThunderClan",
 		"gender": "Tom",
 		"disambiguator": ""
@@ -10170,7 +10170,7 @@
 	{
 		"id": 1000,
 		"rarity": 1,
-		"name": "Graypaw",
+		"name": "Graywhisker",
 		"group": "ThunderClan",
 		"gender": "Tom",
 		"disambiguator": ""
@@ -10386,9 +10386,9 @@
 	},
 	{
 		"id": 1025,
-		"rarity": 1,
-		"name": "Birchpaw",
-		"group": "ShadowClan",
+		"rarity": 2,
+		"name": "Birchfeather",
+		"group": "SkyClan",
 		"gender": "Tom",
 		"disambiguator": "",
 
@@ -10866,7 +10866,7 @@
 	{
 		"id": 1070,
 		"rarity": 1,
-		"name": "Firkit",
+		"name": "Firbark",
 		"group": "ShadowClan",
 		"gender": "Tom",
 		"disambiguator": ""
@@ -11424,7 +11424,7 @@
 	{
 		"id": 1121,
 		"rarity": 1,
-		"name": "Streamkit",
+		"name": "Streamripple",
 		"group": "ShadowClan",
 		"gender": "She-cat",
 		"disambiguator": ""
@@ -11629,7 +11629,7 @@
 	{
 		"id": 1143,
 		"rarity": 1,
-		"name": "Bloomkit",
+		"name": "Bloompetal",
 		"group": "ShadowClan",
 		"gender": "She-cat",
 		"disambiguator": ""
@@ -11967,7 +11967,7 @@
 	{
 		"id": 1176,
 		"rarity": 1,
-		"name": "Whisperkit",
+		"name": "Whisperbreeze",
 		"group": "ShadowClan",
 		"gender": "Tom",
 		"disambiguator": ""
@@ -12485,7 +12485,7 @@
 	{
 		"id": 1228,
 		"rarity": 1,
-		"name": "Ridgekit",
+		"name": "Ridgeglow",
 		"group": "SkyClan",
 		"gender": "She-cat",
 		"disambiguator": "",
@@ -12711,7 +12711,7 @@
 	{
 		"id": 1250,
 		"rarity": 1,
-		"name": "Duskkit",
+		"name": "Duskshine",
 		"group": "SkyClan",
 		"gender": "Tom",
 		"disambiguator": ""
@@ -13033,7 +13033,7 @@
 	{
 		"id": 1283,
 		"rarity": 1,
-		"name": "Stripekit",
+		"name": "Stripeheart",
 		"group": "WindClan",
 		"gender": "Tom",
 		"disambiguator": ""
@@ -13041,7 +13041,7 @@
 	{
 		"id": 1284,
 		"rarity": 1,
-		"name": "Brookkit",
+		"name": "Brookripple",
 		"group": "WindClan",
 		"gender": "Tom",
 		"disambiguator": ""
@@ -13169,7 +13169,7 @@
 	{
 		"id": 1300,
 		"rarity": 3,
-		"name": "Wafflepaw",
+		"name": "Wafflepelt",
 		"group": "ThunderClan",
 		"gender": "Tom",
 		"disambiguator": "",
@@ -13200,7 +13200,7 @@
 	{
 		"id": 1303,
 		"rarity": 1,
-		"name": "Branchkit",
+		"name": "Branchleap",
 		"group": "WindClan",
 		"gender": "",
 		"disambiguator": ""
@@ -13208,7 +13208,7 @@
 	{
 		"id": 1304,
 		"rarity": 1,
-		"name": "Grasskit",
+		"name": "Grassfur",
 		"group": "WindClan",
 		"gender": "",
 		"disambiguator": ""
@@ -13216,7 +13216,7 @@
 	{
 		"id": 1305,
 		"rarity": 1,
-		"name": "Leafkit",
+		"name": "Leafcurl",
 		"group": "WindClan",
 		"gender": "She-cat",
 		"disambiguator": ""
@@ -13224,15 +13224,15 @@
 	{
 		"id": 1306,
 		"rarity": 1,
-		"name": "Floatkit",
+		"name": "Floatshimmer",
 		"group": "RiverClan",
-		"gender": "",
+		"gender": "She-cat",
 		"disambiguator": ""
 	},
 	{
 		"id": 1307,
 		"rarity": 1,
-		"name": "Rapidkit",
+		"name": "Rapidsplash",
 		"group": "RiverClan",
 		"gender": "",
 		"disambiguator": ""
@@ -13240,7 +13240,7 @@
 	{
 		"id": 1308,
 		"rarity": 1,
-		"name": "Troutkit",
+		"name": "Troutshine",
 		"group": "RiverClan",
 		"gender": "",
 		"disambiguator": ""
@@ -14623,6 +14623,196 @@
 		"group": "RiverClan",
 		"gender": "",
 		"disambiguator": "ASC",
+
+		"art": []
+	},
+	{
+		"id": 1427,
+		"rarity": 1,
+		"name": "Goldenpaw",
+		"group": "ThunderClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1428,
+		"rarity": 1,
+		"name": "Shinepaw",
+		"group": "ThunderClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1429,
+		"rarity": 1,
+		"name": "Sunkit",
+		"group": "ThunderClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1430,
+		"rarity": 1,
+		"name": "Oakkit",
+		"group": "ThunderClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1431,
+		"rarity": 1,
+		"name": "Hazelkit",
+		"group": "ThunderClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1432,
+		"rarity": 1,
+		"name": "Redpaw",
+		"group": "ShadowClan",
+		"gender": "Tom",
+		"disambiguator": "ThunderClan",
+
+		"art": []
+	},
+	{
+		"id": 1433,
+		"rarity": 1,
+		"name": "Sprucepaw",
+		"group": "ShadowClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1434,
+		"rarity": 1,
+		"name": "Poolkit",
+		"group": "ShadowClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1435,
+		"rarity": 1,
+		"name": "Beechkit",
+		"group": "ShadowClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1436,
+		"rarity": 1,
+		"name": "Quickkit",
+		"group": "ShadowClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1437,
+		"rarity": 1,
+		"name": "Starlingpaw",
+		"group": "SkyClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1438,
+		"rarity": 1,
+		"name": "Robinpaw",
+		"group": "SkyClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1439,
+		"rarity": 1,
+		"name": "Fluffpaw",
+		"group": "WindClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1440,
+		"rarity": 1,
+		"name": "Silkypaw",
+		"group": "WindClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1441,
+		"rarity": 1,
+		"name": "Stretchkit",
+		"group": "WindClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1442,
+		"rarity": 1,
+		"name": "Rustlekit",
+		"group": "WindClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1443,
+		"rarity": 1,
+		"name": "Eelkit",
+		"group": "RiverClan",
+		"gender": "Tom",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1444,
+		"rarity": 1,
+		"name": "Heronkit",
+		"group": "RiverClan",
+		"gender": "She-cat",
+		"disambiguator": "",
+
+		"art": []
+	},
+	{
+		"id": 1445,
+		"rarity": 3,
+		"name": "Moonpaw's Sister",
+		"group": "Ghost Residence",
+		"gender": "She-cat",
+		"disambiguator": "",
 
 		"art": []
 	}
