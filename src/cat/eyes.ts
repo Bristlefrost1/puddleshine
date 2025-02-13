@@ -42,7 +42,7 @@ type Eyes = NormalEyes | HeterochromicEyes;
 
 function randomizeEyes(): Eyes {
 	const heterochromiaOdds: WeightedValue<boolean>[] = [
-		{ value: true, probability: 0.005 },
+		{ value: true, probability: 0.025 },
 		{ value: false, probability: '*' },
 	];
 
