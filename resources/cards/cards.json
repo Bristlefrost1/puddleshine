@@ -5959,6 +5959,10 @@
 			{
 				"url": "$ART_URL_BASE$/0378-frostdawn/frostdawn-shadedsights-2.png",
 				"credit": "birchglow"
+			},
+			{
+				"url": "$ART_URL_BASE$/0378-frostdawn/frostdawn-oiyll.jpg",
+				"credit": "Oiyll"
 			}
 		]
 	},
@@ -12516,6 +12520,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/a/ab/Podlight.warrior.png/revision/latest?cb=20241228220610",
 				"credit": "Warriors Wiki"
+			},
+			{
+				"url": "$ART_URL_BASE$/0797-podlight/podlight-oiyll.jpg",
+				"credit": "Oiyll"
 			}
 		]
 	},
@@ -16771,6 +16779,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/9/9a/Splashtail.ASC-5.png/revision/latest?cb=20240627062648",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "$ART_URL_BASE$/1069-splashtail/splashtail-oiyll.jpg",
+				"credit": "Oiyll"
 			}
 		]
 	},
