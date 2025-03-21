@@ -91,7 +91,7 @@ async function getHistoryCats(discordId: string, env: Env) {
 			if (cat.ageMoons >= config.HISTORY_PROMOTE_AGE) {
 				let newSuffix = generateRandomSuffix();
 
-				while (newSuffix.toLowerCase() === 'paw') {
+				while (newSuffix.toLowerCase() === 'paw' || newSuffix.toLowerCase() === 'kit') {
 					newSuffix = generateRandomSuffix();
 				}
 
