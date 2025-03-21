@@ -89,7 +89,12 @@ async function getHistoryCats(discordId: string, env: Env) {
 
 		if (cat.rank === ClanRank.WarriorApprentice || cat.rank === ClanRank.MedicineCatApprentice) {
 			if (cat.ageMoons >= config.HISTORY_PROMOTE_AGE) {
-				const newSuffix = generateRandomSuffix();
+				let newSuffix = generateRandomSuffix();
+
+				while (newSuffix.toLowerCase() === 'paw') {
+					newSuffix = generateRandomSuffix();
+				}
+
 				const newRank = cat.rank === ClanRank.MedicineCatApprentice ? ClanRank.MedicineCat : ClanRank.Warrior;
 
 				cat.suffix = newSuffix;
