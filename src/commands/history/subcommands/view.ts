@@ -87,7 +87,7 @@ Rank: ${ClanRankDisplay[cat.rank]}
 				{
 					title: cat.fullName,
 					description: `\`\`\`${details}\`\`\``,
-					footer: { text: 'Time of storage' },
+					footer: { text: `${cat.uuid} • Time of storage` },
 					timestamp: cat.dateStored.toISOString(),
 				},
 			],
