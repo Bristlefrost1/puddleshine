@@ -1,14 +1,5 @@
 {
-	"editor.insertSpaces": false,
-	"editor.tabSize": 4,
-	"files.eol": "\n",
-
-	"[javascript]": {
-		"editor.formatOnSave": true,
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-	},
-	"[typescript]": {
-		"editor.formatOnSave": true,
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-	},
+	"files.associations": {
+		"wrangler.json": "jsonc"
+	}
 }

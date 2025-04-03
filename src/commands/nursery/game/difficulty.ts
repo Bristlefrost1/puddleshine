@@ -1,5 +1,3 @@
-enum NurseryDifficulty {
+export enum NurseryDifficulty {
 	Normal = 'Normal',
 }
-
-export { NurseryDifficulty };

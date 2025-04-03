@@ -1,8 +1,8 @@
-import type { Kit } from './kit.js';
+import { type Kit } from './kit'
 
-import * as config from '#config.js';
+import * as config from '@/config'
 
-enum KitEventType {
+export enum KitEventType {
 	Feed = 'Feed',
 	Comfort = 'Comfort',
 	Groom = 'Groom',
@@ -11,31 +11,28 @@ enum KitEventType {
 	Found = 'Found',
 }
 
-type KitEvent = {
-	type: KitEventType;
-	timestamp: number; // Unix timestamp
-	description: string;
-};
+export type KitEvent = {
+	type: KitEventType
+	timestamp: number // Unix timestamp
+	description: string
+}
 
-function addNewEventToKit(kit: Kit, type: KitEventType, description: string, date?: Date) {
-	const eventTimestamp = Math.floor((date?.getTime() ?? new Date().getTime()) / 1000);
+export function addNewEventToKit(kit: Kit, type: KitEventType, description: string, date?: Date) {
+	const eventTimestamp = Math.floor((date?.getTime() ?? new Date().getTime()) / 1000)
 
 	const newEvent: KitEvent = {
 		type,
 		timestamp: eventTimestamp,
 		description,
-	};
+	}
 
-	kit.events.push(newEvent);
-	kit.events.sort((a, b) => b.timestamp - a.timestamp);
-	kit.events = kit.events.slice(undefined, config.NURSERY_MAX_KIT_EVENTS);
+	kit.events.push(newEvent)
+	kit.events.sort((a, b) => b.timestamp - a.timestamp)
+	kit.events = kit.events.slice(undefined, config.NURSERY_MAX_KIT_EVENTS)
 }
 
-function findLastEventofType(kit: Kit, type: KitEventType) {
+export function findLastEventofType(kit: Kit, type: KitEventType) {
 	for (const event of kit.events) {
-		if (event.type === type) return event;
+		if (event.type === type) return event
 	}
 }
-
-export { KitEventType, addNewEventToKit, findLastEventofType };
-export type { KitEvent };

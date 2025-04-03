@@ -1,0 +1,123 @@
+{
+	"events": [
+		{
+			"event": "1Stars",
+			"eventText": "*The odds of rolling one-star cards have been increased!*",
+
+			"increase": {
+				"rarity": 1
+			},
+			"increaseBy": 0.03
+		},
+		{
+			"event": "2Stars",
+			"eventText": "*The odds of rolling two-star cards have been increased!*",
+
+			"increase": {
+				"rarity": 2
+			},
+			"increaseBy": 0.02
+		},
+		{
+			"event": "3Stars",
+			"eventText": "*The odds of rolling three-star cards have been increased!*",
+
+			"increase": {
+				"rarity": 3
+			},
+			"increaseBy": 0.012
+		},
+		{
+			"event": "4Stars",
+			"eventText": "*The odds of rolling four-star cards have been increased!*",
+
+			"increase": {
+				"rarity": 4
+			},
+			"increaseBy": 0.01
+		},
+		{
+			"event": "5Stars",
+			"eventText": "*The odds of rolling five-star cards have been increased!*",
+
+			"increase": {
+				"rarity": 5
+			},
+			"increaseBy": 0.005
+		},
+
+		{
+			"event": "ThunderClan",
+			"eventText": "*The odds of rolling ThunderClan cats have been increased!*",
+
+			"increase": {
+				"group": "ThunderClan"
+			},
+			"increaseBy": 0.05
+		},
+		{
+			"event": "SkyClan",
+			"eventText": "*The odds of rolling SkyClan cats have been increased!*",
+
+			"increase": {
+				"group": "SkyClan"
+			},
+			"increaseBy": 0.05
+		},
+		{
+			"event": "ShadowClan",
+			"eventText": "*The odds of rolling ShadowClan cats have been increased!*",
+
+			"increase": {
+				"group": "ShadowClan"
+			},
+			"increaseBy": 0.05
+		},
+		{
+			"event": "WindClan",
+			"eventText": "*The odds of rolling WindClan cats have been increased!*",
+
+			"increase": {
+				"group": "WindClan"
+			},
+			"increaseBy": 0.05
+		},
+		{
+			"event": "RiverClan",
+			"eventText": "*The odds of rolling RiverClan cats have been increased!*",
+
+			"increase": {
+				"group": "RiverClan"
+			},
+			"increaseBy": 0.05
+		},
+
+		{
+			"event": "Kittypet",
+			"eventText": "*The odds of rolling kittypets have been increased!*",
+
+			"increase": {
+				"group": "Kittypet"
+			},
+			"increaseBy": 0.05
+		},
+		{
+			"event": "Loner",
+			"eventText": "*The odds of rolling loners have been increased!*",
+
+			"increase": {
+				"group": "Loner"
+			},
+			"increaseBy": 0.05
+		},
+		{
+			"event": "Rogue",
+			"eventText": "*The odds of rolling rogues have been increased!*",
+
+			"increase": {
+				"group": "Rogue"
+			},
+			"increaseBy": 0.05
+		}
+	]
+}

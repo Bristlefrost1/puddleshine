@@ -1,42 +1,40 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import * as listMessage from '#discord/list-message.js';
-import { parseCommandOptions } from '#discord/parse-options.js';
-import { messageResponse, embedMessageResponse, errorEmbed } from '#discord/responses.js';
+import * as listMessage from '@/discord/list-message'
+import { parseCommandOptions } from '@/discord/parse-options'
+import { messageResponse, embedMessageResponse, errorEmbed } from '@/discord/responses'
 
-import { getHistoryCats } from '#commands/history/history-cat/history-cat.js';
+import { getHistoryCats } from '@/commands/history/history-cat/history-cat'
 
-import type { Subcommand } from '#commands/subcommand.js';
+import { type Subcommand } from '@/commands/command'
 
-const SUBCOMMAND_NAME = 'list';
+const SUBCOMMAND_NAME = 'list'
 
-async function listHistoryCats(discordUserId: string, env: Env): Promise<string[]> {
-	const returnArray: string[] = [];
-	const historyCats = await getHistoryCats(discordUserId, env);
+async function listHistoryCats(discordUserId: string): Promise<string[]> {
+	const returnArray: string[] = []
+	const historyCats = await getHistoryCats(discordUserId)
 
-	if (historyCats.length === 0) return [];
+	if (historyCats.length === 0) return []
 
-	const descendingHistoryCats = historyCats.toReversed();
-
-	for (const historyCat of descendingHistoryCats) {
-		let gender = historyCat.gender.toLowerCase();
-		if (gender === '') gender = 'cat';
+	for (const historyCat of historyCats) {
+		let gender = historyCat.gender.toLowerCase()
+		if (gender === '') gender = 'cat'
 
 		if (historyCat.isDead) {
 			returnArray.push(
 				`[${historyCat.position}] ${historyCat.fullName}, a ${gender}, died at ${Math.floor(historyCat.ageMoons)} moons`,
-			);
+			)
 		} else {
 			returnArray.push(
 				`[${historyCat.position}] ${historyCat.fullName}, a ${gender}, is ${Math.floor(historyCat.ageMoons)} moons`,
-			);
+			)
 		}
 	}
 
-	return returnArray;
+	return returnArray
 }
 
-const ListSubcommand: Subcommand = {
+export default {
 	name: SUBCOMMAND_NAME,
 
 	subcommand: {
@@ -55,21 +53,21 @@ const ListSubcommand: Subcommand = {
 		],
 	},
 
-	async execute(options) {
-		let listUserId = options.user.id;
-		const { user: userOption } = parseCommandOptions(options.commandOptions);
+	async onApplicationCommand({ interaction, user, options }) {
+		let listUserId = user.id
+		const { user: userOption } = parseCommandOptions(options)
 
 		if (userOption && userOption.type === DAPI.ApplicationCommandOptionType.User) {
-			listUserId = userOption.value;
+			listUserId = userOption.value
 		}
 
-		const listOfCats = await listHistoryCats(listUserId, options.env);
+		const listOfCats = await listHistoryCats(listUserId)
 
 		if (listOfCats.length === 0) {
-			if (listUserId === options.user.id) {
-				return embedMessageResponse(errorEmbed('Nothing found in your history.'));
+			if (listUserId === user.id) {
+				return embedMessageResponse(errorEmbed('Nothing found in your history.'))
 			} else {
-				return embedMessageResponse(errorEmbed("Nothing found in this user's history."));
+				return embedMessageResponse(errorEmbed("Nothing found in this user's history."))
 			}
 		}
 
@@ -80,7 +78,7 @@ const ListSubcommand: Subcommand = {
 			items: listOfCats,
 
 			title: 'History',
-		});
+		})
 
 		return messageResponse({
 			embeds: [list.embed],
@@ -89,14 +87,14 @@ const ListSubcommand: Subcommand = {
 				users: [],
 				roles: [],
 			},
-		});
+		})
 	},
 
-	async handleMessageComponent(options) {
-		const pageData = options.parsedCustomId[2];
-		const discordId = options.parsedCustomId[3];
+	async onMessageComponent({ interaction, user, parsedCustomId }) {
+		const pageData = parsedCustomId[2]
+		const discordId = parsedCustomId[3]
 
-		const listOfCats = await listHistoryCats(discordId, options.env);
+		const listOfCats = await listHistoryCats(discordId)
 
 		const newList = listMessage.scrollListMessage({
 			action: 'history/list',
@@ -106,7 +104,7 @@ const ListSubcommand: Subcommand = {
 			items: listOfCats,
 
 			title: 'History',
-		});
+		})
 
 		return messageResponse({
 			embeds: [newList.embed],
@@ -116,8 +114,6 @@ const ListSubcommand: Subcommand = {
 				roles: [],
 			},
 			update: true,
-		});
+		})
 	},
-};
-
-export default ListSubcommand;
+} as Subcommand

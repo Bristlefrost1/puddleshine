@@ -1,17 +1,15 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import { messageResponse } from '#discord/responses.js';
+import { messageResponse } from '@/discord/responses'
+import * as nurseryManager from '@/commands/nursery/game/nursery-manager'
+import { getNextSeason } from '../game/seasons'
+import { type Subcommand } from '@/commands'
 
-import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
-import { getNextSeason } from '../game/seasons.js';
+import * as config from '@/config'
 
-import * as config from '#config.js';
+const SUBCOMMAND_NAME = 'cooldowns'
 
-import type { Subcommand } from '#commands/subcommand.js';
-
-const SUBCOMMAND_NAME = 'cooldowns';
-
-const CooldownsSubcommand: Subcommand = {
+export default {
 	name: SUBCOMMAND_NAME,
 
 	subcommand: {
@@ -22,22 +20,22 @@ const CooldownsSubcommand: Subcommand = {
 		options: [],
 	},
 
-	async execute(options) {
-		const nursery = await nurseryManager.getNursery(options.user, options.env, true);
-		const nextSeason = getNextSeason();
+	async onApplicationCommand(options) {
+		const nursery = await nurseryManager.getNursery(options.user, true)
+		const nextSeason = getNextSeason()
 
-		const cooldowns: string[] = [];
+		const cooldowns: string[] = []
 
 		if (nursery.lastBredAt) {
-			const lastBreedTimestamp = Math.floor(nursery.lastBredAt.getTime() / 1000);
-			const canBreedAt = lastBreedTimestamp + config.NURSERY_BREED_COOLDOWN;
+			const lastBreedTimestamp = Math.floor(nursery.lastBredAt.getTime() / 1000)
+			const canBreedAt = lastBreedTimestamp + config.NURSERY_BREED_COOLDOWN
 
 			if (canBreedAt > Math.floor(new Date().getTime() / 1000)) {
-				cooldowns.push(`Breed cooldown: You can next breed on <t:${canBreedAt}:F> (<t:${canBreedAt}:R>).`);
+				cooldowns.push(`Breed cooldown: You can next breed on <t:${canBreedAt}:F> (<t:${canBreedAt}:R>).`)
 			}
 		}
 
-		if (cooldowns.length === 0) cooldowns.push("You don't have any active cooldowns.");
+		if (cooldowns.length === 0) cooldowns.push("You don't have any active cooldowns.")
 
 		return messageResponse({
 			embeds: [
@@ -55,8 +53,6 @@ const CooldownsSubcommand: Subcommand = {
 					],
 				},
 			],
-		});
+		})
 	},
-};
-
-export default CooldownsSubcommand;
+} as Subcommand

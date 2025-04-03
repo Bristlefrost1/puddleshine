@@ -1,7 +1,7 @@
-import { D1PrismaClient } from '#db/database.js';
-import { ClanRank } from '#utils/clans.js';
+import { D1PrismaClient } from '@/db/database'
+import { ClanRank } from '@/cat'
 
-async function findHistoryCats(prisma: D1PrismaClient, userUuid: string) {
+export async function findHistoryCats(prisma: D1PrismaClient, userUuid: string) {
 	return await prisma.historyCat.findMany({
 		where: {
 			userUuid: userUuid,
@@ -9,10 +9,10 @@ async function findHistoryCats(prisma: D1PrismaClient, userUuid: string) {
 		orderBy: {
 			dateStored: 'asc',
 		},
-	});
+	})
 }
 
-async function promoteApprentices(
+export async function promoteApprentices(
 	prisma: D1PrismaClient,
 	apprentices: { uuid: string; newSuffix: string; newRank: ClanRank }[],
 ) {
@@ -26,9 +26,7 @@ async function promoteApprentices(
 					nameSuffix: apprentice.newSuffix,
 					rank: apprentice.newRank,
 				},
-			});
+			})
 		}),
-	]);
+	])
 }
-
-export { findHistoryCats, promoteApprentices };

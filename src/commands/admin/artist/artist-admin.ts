@@ -1,106 +1,105 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import { parseCommandOptions } from '#discord/parse-options.js';
-import { simpleEphemeralResponse, simpleMessageResponse } from '#discord/responses.js';
+import { parseCommandOptions } from '@/discord/parse-options'
+import { simpleEphemeralResponse, simpleMessageResponse } from '@/discord/responses'
+import { bot } from '@/bot'
 
-import * as artistDB from '#commands/catcha/art/artist-db.js';
+import * as artistDB from '@/commands/catcha/artist/artist-db'
 
-import { AdminAccessLevel } from '../admin.js';
+import { AdminAccessLevel } from '../admin'
 
-async function handleArtistAdminCommand(
+export async function handleArtistAdminCommand(
 	interaction: DAPI.APIApplicationCommandInteraction,
 	user: DAPI.APIUser,
 	accessLevel: AdminAccessLevel,
 	subcommand: DAPI.APIApplicationCommandInteractionDataSubcommandOption,
 	options: DAPI.APIApplicationCommandInteractionDataBasicOption[] | undefined,
-	env: Env,
-	ctx: ExecutionContext,
 ): Promise<DAPI.APIInteractionResponse> {
-	if (subcommand.name === 'initialize') {
-		const { artist, user: userOption } = parseCommandOptions(options);
+	if (subcommand.name === 'initialise') {
+		const { artist, user: userOption } = parseCommandOptions(options)
 
 		if (!artist || artist.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No artist option provided');
+			return simpleEphemeralResponse('No artist option provided')
 
 		if (!userOption || userOption.type !== DAPI.ApplicationCommandOptionType.User)
-			return simpleEphemeralResponse('No user option provided');
+			return simpleEphemeralResponse('No user option provided')
 
-		const artistProfile = await artistDB.findArtistProfile(artist.value, env.PRISMA);
-		if (artistProfile) return simpleMessageResponse('This artist profile has already been initialized.');
+		const artistProfile = await artistDB.findArtistProfile(artist.value, bot.prisma)
+		if (artistProfile) return simpleMessageResponse('This artist profile has already been initialised.')
 
-		await artistDB.initializeArtistProfile(artist.value, userOption.value, env.PRISMA);
+		await artistDB.initializeArtistProfile(artist.value, userOption.value, bot.prisma)
 
-		return simpleMessageResponse('Artist profile initialized.');
+		return simpleMessageResponse('Artist profile initialised.')
 	} else if (subcommand.name === 'link_user') {
-		const { artist, user: userOption } = parseCommandOptions(options);
+		const { artist, user: userOption } = parseCommandOptions(options)
 
 		if (!artist || artist.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No artist option provided');
+			return simpleEphemeralResponse('No artist option provided')
 
 		if (!userOption || userOption.type !== DAPI.ApplicationCommandOptionType.User)
-			return simpleEphemeralResponse('No user option provided');
+			return simpleEphemeralResponse('No user option provided')
 
-		const artistProfile = await artistDB.findArtistProfile(artist.value, env.PRISMA);
-		if (!artistProfile) return simpleMessageResponse('No artist profile found.');
+		const artistProfile = await artistDB.findArtistProfile(artist.value, bot.prisma)
+		if (!artistProfile) return simpleMessageResponse('No artist profile found.')
 
-		await artistDB.linkArtistProfile(artist.value, userOption.value, env.PRISMA);
+		await artistDB.linkArtistProfile(artist.value, userOption.value, bot.prisma)
 
-		return simpleMessageResponse('Artist profile linked with user.');
+		return simpleMessageResponse('Artist profile linked with user.')
 	} else if (subcommand.name === 'rename') {
-		const { artist, new_name: newName } = parseCommandOptions(options);
+		const { artist, new_name: newName } = parseCommandOptions(options)
 
 		if (!artist || artist.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No artist option provided');
+			return simpleEphemeralResponse('No artist option provided')
 
 		if (!newName || newName.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No new name provided');
+			return simpleEphemeralResponse('No new name provided')
 
-		const renameTo = newName.value.trim();
+		const renameTo = newName.value.trim()
 
-		const artistProfile = await artistDB.findArtistProfile(artist.value, env.PRISMA);
-		if (!artistProfile) return simpleMessageResponse('No artist profile found.');
+		const artistProfile = await artistDB.findArtistProfile(artist.value, bot.prisma)
+		if (!artistProfile) return simpleMessageResponse('No artist profile found.')
 
-		const newNameProfile = await artistDB.findArtistProfile(renameTo, env.PRISMA);
+		const newNameProfile = await artistDB.findArtistProfile(renameTo, bot.prisma)
 		if (newNameProfile)
 			return simpleMessageResponse(`An artist profile with the name \`${renameTo}\` already exists.`, {
 				roles: [],
 				users: [],
-			});
+			})
 
-		await artistDB.renameArtist(artist.value, renameTo, env.PRISMA);
+		await artistDB.renameArtist(artist.value, renameTo, bot.prisma)
 
 		return simpleMessageResponse(`Artist profile \`${artist.value}\` renamed to \`${renameTo}\`.`, {
 			roles: [],
 			users: [],
-		});
+		})
 	} else if (subcommand.name === 'display_name') {
-		const { artist, display_name: displayName } = parseCommandOptions(options);
+		const { artist, display_name: displayName } = parseCommandOptions(options)
 
 		if (!artist || artist.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No artist option provided');
+			return simpleEphemeralResponse('No artist option provided')
 
 		if (!displayName || displayName.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No display name option provided');
+			return simpleEphemeralResponse('No display name option provided')
 
-		const artistProfile = await artistDB.findArtistProfile(artist.value, env.PRISMA);
-		if (!artistProfile) return simpleMessageResponse('No artist profile found.');
+		const artistProfile = await artistDB.findArtistProfile(artist.value, bot.prisma)
+		if (!artistProfile) return simpleMessageResponse('No artist profile found.')
 
-		await artistDB.updateDisplayName(artist.value, displayName.value, env.PRISMA);
+		await artistDB.updateDisplayName(artist.value, displayName.value, bot.prisma)
 
-		return simpleMessageResponse('Artist profile updated.');
+		return simpleMessageResponse('Artist profile updated.')
 	} else if (subcommand.name === 'description') {
-		const { artist } = parseCommandOptions(options);
+		const { artist } = parseCommandOptions(options)
 
 		if (!artist || artist.type !== DAPI.ApplicationCommandOptionType.String)
-			return simpleEphemeralResponse('No artist option provided');
+			return simpleEphemeralResponse('No artist option provided')
 
-		const artistProfile = await artistDB.findArtistProfile(artist.value, env.PRISMA);
-		if (!artistProfile) return simpleMessageResponse('No artist profile found.');
+		const artistProfile = await artistDB.findArtistProfile(artist.value, bot.prisma)
+		if (!artistProfile) return simpleMessageResponse('No artist profile found.')
 
 		if (!artistProfile.discordId)
-			return simpleMessageResponse("This artist profile isn't linked to any Discord account.");
+			return simpleMessageResponse("This artist profile isn't linked to any Discord account.")
 
-		const modalValue = artistProfile && artistProfile.description ? artistProfile.description : undefined;
+		const modalValue = artistProfile && artistProfile.description ? artistProfile.description : undefined
 
 		return {
 			type: DAPI.InteractionResponseType.Modal,
@@ -125,10 +124,8 @@ async function handleArtistAdminCommand(
 					},
 				],
 			},
-		};
+		}
 	}
 
-	return simpleEphemeralResponse('No command found.');
+	return simpleEphemeralResponse('No command found.')
 }
-
-export { handleArtistAdminCommand };

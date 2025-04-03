@@ -1,37 +1,36 @@
-import { PrismaClient } from '@prisma/client';
-import { PrismaD1 } from '@prisma/adapter-d1';
+import { PuddleshineBot } from '@/bot'
 
-type D1PrismaClient = PrismaClient<{ adapter: PrismaD1 }>;
+export type D1PrismaClient = InstanceType<typeof PuddleshineBot>['prisma']
 
-function createInitialUser(discordId: string) {
+export function createInitialUser(discordId: string) {
 	return {
 		uuid: crypto.randomUUID(),
 		discordId: discordId,
 		createdAt: new Date().toISOString(),
-	};
+	}
 }
 
-async function findUserWithUuid(prisma: D1PrismaClient, uuid: string) {
+export async function findUserWithUuid(prisma: D1PrismaClient, uuid: string) {
 	const result = await prisma.user.findUnique({
 		where: {
 			uuid: uuid,
 		},
-	});
+	})
 
-	return result;
+	return result
 }
 
-async function getUserWithDiscordId(prisma: D1PrismaClient, discordId: string) {
+export async function getUserWithDiscordId(prisma: D1PrismaClient, discordId: string) {
 	const result = await prisma.user.findUnique({
 		where: {
 			discordId: discordId,
 		},
-	});
+	})
 
-	return result;
+	return result
 }
 
-async function findProfileWithDiscordId(prisma: D1PrismaClient, discordId: string) {
+export async function findProfileWithDiscordId(prisma: D1PrismaClient, discordId: string) {
 	const result = await prisma.profile.findFirst({
 		where: {
 			user: {
@@ -41,12 +40,12 @@ async function findProfileWithDiscordId(prisma: D1PrismaClient, discordId: strin
 		include: {
 			user: true,
 		},
-	});
+	})
 
-	return result;
+	return result
 }
 
-async function initializeProfile(prisma: D1PrismaClient, discordId: string) {
+export async function initializeProfile(prisma: D1PrismaClient, discordId: string) {
 	const result = await prisma.profile.create({
 		data: {
 			user: {
@@ -58,12 +57,12 @@ async function initializeProfile(prisma: D1PrismaClient, discordId: string) {
 				},
 			},
 		},
-	});
+	})
 
-	return result;
+	return result
 }
 
-async function setProfileName(prisma: D1PrismaClient, userUuid: string, name: string) {
+export async function setProfileName(prisma: D1PrismaClient, userUuid: string, name: string) {
 	const updatedProfile = await prisma.profile.update({
 		where: {
 			userUuid,
@@ -71,19 +70,19 @@ async function setProfileName(prisma: D1PrismaClient, userUuid: string, name: st
 		data: {
 			name,
 		},
-	});
+	})
 
-	return updatedProfile;
+	return updatedProfile
 }
 
-async function setProfileBirthday(prisma: D1PrismaClient, userUuid: string, month: number, day: number) {
-	let monthString = month.toString();
-	let dayString = day.toString();
+export async function setProfileBirthday(prisma: D1PrismaClient, userUuid: string, month: number, day: number) {
+	let monthString = month.toString()
+	let dayString = day.toString()
 
-	if (monthString.length === 1) monthString = `0${monthString}`;
-	if (dayString.length === 1) dayString = `0${dayString}`;
+	if (monthString.length === 1) monthString = `0${monthString}`
+	if (dayString.length === 1) dayString = `0${dayString}`
 
-	const birthdayString = `${monthString}-${dayString}`;
+	const birthdayString = `${monthString}-${dayString}`
 
 	const updatedProfile = await prisma.profile.update({
 		where: {
@@ -92,18 +91,7 @@ async function setProfileBirthday(prisma: D1PrismaClient, userUuid: string, mont
 		data: {
 			birthday: birthdayString,
 		},
-	});
+	})
 
-	return updatedProfile;
+	return updatedProfile
 }
-
-export {
-	findUserWithUuid,
-	createInitialUser,
-	getUserWithDiscordId,
-	findProfileWithDiscordId,
-	initializeProfile,
-	setProfileName,
-	setProfileBirthday,
-};
-export type { D1PrismaClient };

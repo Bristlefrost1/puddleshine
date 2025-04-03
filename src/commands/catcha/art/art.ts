@@ -1,80 +1,57 @@
-import * as archive from '#commands/catcha/archive/archive.js';
+import { bot } from '@/bot'
+import * as archive from '@/commands/catcha/archive'
 
-type Art = {
-	artUrl?: string;
+export type Art = {
+	artUrl?: string
 
-	artCredit?: string;
-	artText: string;
+	artCredit?: string
+	artText: string
 
-	artNumber?: number;
-	totalArt?: number;
-};
-
-const NO_ART_PROVIDED = 'No art provided';
-
-function getVariantDataIndex(
-	cardDetails: NonNullable<ReturnType<typeof archive.getCardDetailsById>>,
-	variant?: string | number,
-) {
-	if (variant !== undefined && cardDetails.variants && cardDetails.variants.length > 0) {
-		if (typeof variant === 'string') {
-			const indexes = cardDetails.variantDataIndexes as {
-				[variant: string]: number | undefined;
-			};
-			const variantIndex = indexes[variant];
-
-			if (variantIndex !== undefined) return variantIndex;
-		} else {
-			return variant;
-		}
-	}
+	artNumber?: number
+	totalArt?: number
 }
 
-function createArtArray(
-	cardDetails: NonNullable<ReturnType<typeof archive.getCardDetailsById>>,
-	variantDataIndex?: number,
-) {
-	let artArray: typeof cardDetails.art;
+const NO_ART_PROVIDED = 'No art provided'
 
-	if (variantDataIndex !== undefined) {
-		if (!cardDetails.variants || !cardDetails.variants[variantDataIndex]) return;
-		if (!cardDetails.variants[variantDataIndex].art || cardDetails.variants[variantDataIndex].art.length < 1)
-			return;
+export function getArtArray(card: archive.ArchiveCard, variant?: string | number) {
+	let artArray: archive.ArchiveArt[] = []
 
-		artArray = cardDetails.variants![variantDataIndex].art;
+	if (variant !== undefined) {
+		const cardVariant = archive.getCardVariant(card, variant)
+		if (!cardVariant) return
+
+		if (cardVariant.art === undefined || cardVariant.art.length === 0) return
+
+		artArray = cardVariant.art
 	} else {
-		if (!cardDetails.art || cardDetails.art.length < 1) return;
-		artArray = cardDetails.art!;
+		if (card.art === undefined || card.art.length === 0) return
+		artArray = card.art
 	}
 
-	return artArray;
+	artArray = artArray.map((archiveArt) => {
+		archiveArt.url = archiveArt.url.replace('$ART_URL_BASE$', `${bot.env.PUBLIC_BUCKET_URL}/catcha-art`)
+		
+		return archiveArt
+	})
+
+	return artArray
 }
 
-function getArtCount(cardId: number, variant?: string | number) {
-	const cardDetails = archive.getCardDetailsById(cardId);
+export function getArtCount(card: archive.ArchiveCard, variant?: string | number): number {
+	const artArray = getArtArray(card, variant)
 
-	if (!cardDetails) return 0;
+	if (artArray === undefined) return 0
 
-	const variantDataIndex = getVariantDataIndex(cardDetails, variant);
-	const artArray = createArtArray(cardDetails, variantDataIndex);
-
-	if (artArray === undefined) return 0;
-
-	return artArray.length;
+	return artArray.length
 }
 
-function getArtNumbered(cardId: number, artNumber: number, variant?: string | number): Art {
-	const cardDetails = archive.getCardDetailsById(cardId);
+export function getArtNumbered(card: archive.ArchiveCard, artNumber: number, variant?: string | number): Art {
+	const artArray = getArtArray(card, variant)
 
-	if (!cardDetails) return { artText: NO_ART_PROVIDED };
+	if (!artArray) return { artText: NO_ART_PROVIDED }
 
-	const variantDataIndex = getVariantDataIndex(cardDetails, variant);
-	const artArray = createArtArray(cardDetails, variantDataIndex);
-
-	if (!artArray) return { artText: NO_ART_PROVIDED };
-
-	const artIndex = artNumber - 1;
-	const art = artArray[artIndex];
+	const artIndex = artNumber - 1
+	const art = artArray[artIndex]
 
 	return {
 		artUrl: art.url,
@@ -84,21 +61,16 @@ function getArtNumbered(cardId: number, artNumber: number, variant?: string | nu
 
 		artNumber: artIndex + 1,
 		totalArt: artArray.length,
-	};
+	}
 }
 
-function randomArt(cardId: number, inverted?: boolean, variant?: string | number): Art {
-	const cardDetails = archive.getCardDetailsById(cardId);
+export function randomArt(card: archive.ArchiveCard, inverted?: boolean, variant?: string | number): Art {
+	const artArray = getArtArray(card, variant)
 
-	if (!cardDetails) return { artText: NO_ART_PROVIDED };
+	if (!artArray) return { artText: NO_ART_PROVIDED }
 
-	const variantDataIndex = getVariantDataIndex(cardDetails, variant);
-	const artArray = createArtArray(cardDetails, variantDataIndex);
-
-	if (!artArray) return { artText: NO_ART_PROVIDED };
-
-	const randomArtIndex = Math.floor(Math.random() * artArray.length);
-	const randomArt = artArray[randomArtIndex];
+	const randomArtIndex = Math.floor(Math.random() * artArray.length)
+	const randomArt = artArray[randomArtIndex]
 
 	return {
 		artUrl: randomArt.url,
@@ -108,7 +80,5 @@ function randomArt(cardId: number, inverted?: boolean, variant?: string | number
 
 		artNumber: randomArtIndex + 1,
 		totalArt: artArray.length,
-	};
+	}
 }
-
-export { getVariantDataIndex, getArtCount, getArtNumbered, randomArt };

@@ -1,26 +1,4 @@
-enum Subcommand {
-	Roll = 'roll',
-	List = 'list',
-	Locate = 'locate',
-	Duplicates = 'duplicates',
-	Remaining = 'remaining',
-	View = 'view',
-	Archive = 'archive',
-	Stats = 'stats',
-	Event = 'event',
-	Burn = 'burn',
-	Birthday = 'birthday',
-
-	Trade = 'trade',
-	TradeRequest = 'request',
-	TradePending = 'pending',
-	TradeAccept = 'accept',
-	TradeDecline = 'decline',
-	TradeCancel = 'cancel',
-	TradeClear = 'clear',
-}
-
-enum RarityString {
+export enum RarityString {
 	OneStar = '1 star',
 	TwoStars = '2 stars',
 	ThreeStars = '3 stars',
@@ -28,7 +6,7 @@ enum RarityString {
 	FiveStars = '5 stars',
 }
 
-enum ListSubcommandOption {
+export enum ListSubcommandOption {
 	User = 'user',
 	Page = 'page',
 	Rarity = 'rarity',
@@ -36,9 +14,3 @@ enum ListSubcommandOption {
 	OnlyVariant = 'only_variant',
 	Sort = 'sort',
 }
-
-enum LocateSubcommandOption {
-	Card = 'card',
-}
-
-export { Subcommand, RarityString, ListSubcommandOption, LocateSubcommandOption };

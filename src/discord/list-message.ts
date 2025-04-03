@@ -1,23 +1,23 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import { errorEmbed } from '#discord/responses.js';
+import { errorEmbed } from './responses'
 
-import * as config from '#config.js';
+import * as config from '@/config'
 
 type ListMessage = {
-	embed: DAPI.APIEmbed;
-	content?: string;
-	scrollActionRow?: DAPI.APIActionRowComponent<DAPI.APIMessageActionRowComponent>;
-};
+	embed: DAPI.APIEmbed
+	content?: string
+	scrollActionRow?: DAPI.APIActionRowComponent<DAPI.APIMessageActionRowComponent>
+}
 
 function splitIntoPages(items: string[]) {
-	const pages: string[][] = [];
+	const pages: string[][] = []
 
 	for (let i = 0; i < items.length; i += config.CATCHA_LIST_PAGE_SIZE) {
-		pages.push(items.slice(i, i + config.CATCHA_LIST_PAGE_SIZE));
+		pages.push(items.slice(i, i + config.CATCHA_LIST_PAGE_SIZE))
 	}
 
-	return pages;
+	return pages
 }
 
 function buildScrollButtons(action: string, pageNumber: number, listDataString?: string): DAPI.APIButtonComponent[] {
@@ -34,44 +34,44 @@ function buildScrollButtons(action: string, pageNumber: number, listDataString?:
 			style: DAPI.ButtonStyle.Secondary,
 			custom_id: `${action}/next:${pageNumber}${listDataString !== undefined ? `/${listDataString}` : ''}`,
 		},
-	];
+	]
 }
 
-function scrollListMessage(options: {
-	action: string;
-	pageData: string; // (next or prev):(current page number)
-	listDataString?: string;
+export function scrollListMessage(options: {
+	action: string
+	pageData: string // (next or prev):(current page number)
+	listDataString?: string
 
-	items: string[];
+	items: string[]
 
-	title?: string;
-	author?: DAPI.APIEmbedAuthor;
-	description?: string;
+	title?: string
+	author?: DAPI.APIEmbedAuthor
+	description?: string
 
-	noEmbed?: boolean;
-	noEmbedFooter?: string;
+	noEmbed?: boolean
+	noEmbedFooter?: string
 }): ListMessage {
-	const pageData = options.pageData.split(':');
-	const nextOrPrev = pageData[0] as 'next' | 'prev';
-	const currentPageNumber = Number.parseInt(pageData[1]);
+	const pageData = options.pageData.split(':')
+	const nextOrPrev = pageData[0] as 'next' | 'prev'
+	const currentPageNumber = Number.parseInt(pageData[1])
 
-	const pages = splitIntoPages(options.items);
+	const pages = splitIntoPages(options.items)
 
-	let newPageNumber = currentPageNumber + (nextOrPrev === 'next' ? 1 : -1);
+	let newPageNumber = currentPageNumber + (nextOrPrev === 'next' ? 1 : -1)
 
 	if (newPageNumber < 1) {
-		newPageNumber = pages.length;
+		newPageNumber = pages.length
 	} else if (newPageNumber > pages.length) {
-		newPageNumber = 1;
+		newPageNumber = 1
 	}
 
-	const newPageIndex = newPageNumber - 1;
-	const newPage = pages[newPageIndex];
+	const newPageIndex = newPageNumber - 1
+	const newPage = pages[newPageIndex]
 
 	if (!newPage) {
 		return {
 			embed: errorEmbed(`No page numbered ${newPageNumber} found.`, options.title, options.author),
-		};
+		}
 	}
 
 	return {
@@ -93,39 +93,39 @@ function scrollListMessage(options: {
 					components: buildScrollButtons(options.action, newPageNumber, options.listDataString),
 				}
 			:	undefined,
-	};
+	}
 }
 
-function createListMessage(options: {
-	action: string;
-	listDataString?: string;
+export function createListMessage(options: {
+	action: string
+	listDataString?: string
 
-	items: string[];
-	pageNumber?: number;
+	items: string[]
+	pageNumber?: number
 
-	title?: string;
-	author?: DAPI.APIEmbedAuthor;
-	description?: string;
+	title?: string
+	author?: DAPI.APIEmbedAuthor
+	description?: string
 
-	noEmbed?: boolean;
-	noEmbedFooter?: string;
+	noEmbed?: boolean
+	noEmbedFooter?: string
 }): ListMessage {
 	if (options.items.length === 0) {
 		return {
 			embed: errorEmbed('This list is empty.', options.title, options.author),
-		};
+		}
 	}
 
-	const pages = splitIntoPages(options.items);
-	const pageNumber = options.pageNumber ?? 1;
-	const pageIndex = pageNumber - 1;
+	const pages = splitIntoPages(options.items)
+	const pageNumber = options.pageNumber ?? 1
+	const pageIndex = pageNumber - 1
 
-	const page = pages[pageIndex];
+	const page = pages[pageIndex]
 
 	if (!page) {
 		return {
 			embed: errorEmbed(`No page numbered ${pageNumber} found.`, options.title, options.author),
-		};
+		}
 	}
 
 	return {
@@ -150,7 +150,5 @@ function createListMessage(options: {
 					components: buildScrollButtons(options.action, pageNumber, options.listDataString),
 				}
 			:	undefined,
-	};
+	}
 }
-
-export { createListMessage, scrollListMessage };

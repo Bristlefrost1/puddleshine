@@ -1,18 +1,16 @@
-import * as database from '#db/database.js';
+import * as database from '@/db/database'
+import { type D1PrismaClient } from '@/db/database'
+import { KitGender, Gender } from '@/cat/gender'
+import { type Pelt } from '@/cat/pelts'
+import { type Eyes } from '@/cat/eyes'
+import { NurseryDifficulty } from '@/commands/nursery/game/difficulty'
+import { Kit } from '@/commands/nursery/game/kit'
+import { ClanRank } from '@/cat/clan-rank'
+import { Nursery } from '@/commands/nursery/game/nursery-manager'
 
-import { KitGender, Gender } from '#cat/gender.js';
-import { NurseryDifficulty } from '#commands/nursery/game/difficulty.js';
-import { Kit } from '#commands/nursery/game/kit.js';
-import { ClanRank } from '#utils/clans.js';
+import * as config from '@/config'
 
-import type { D1PrismaClient } from '#/db/database.js';
-import type { Pelt } from '#cat/pelts.js';
-import type { Eyes } from '#cat/eyes.js';
-
-import * as config from '#config.js';
-import { Nursery } from '../game/nursery-manager.js';
-
-async function findNursery(prisma: D1PrismaClient, discordId: string) {
+export async function findNursery(prisma: D1PrismaClient, discordId: string) {
 	return await prisma.nursery.findFirst({
 		where: {
 			user: {
@@ -22,10 +20,10 @@ async function findNursery(prisma: D1PrismaClient, discordId: string) {
 		include: {
 			user: true,
 		},
-	});
+	})
 }
 
-async function findNurseryByUuid(prisma: D1PrismaClient, uuid: string) {
+export async function findNurseryByUuid(prisma: D1PrismaClient, uuid: string) {
 	return await prisma.nursery.findUnique({
 		where: {
 			uuid,
@@ -33,10 +31,10 @@ async function findNurseryByUuid(prisma: D1PrismaClient, uuid: string) {
 		include: {
 			user: true,
 		},
-	});
+	})
 }
 
-async function initializeNurseryForUser(prisma: D1PrismaClient, discordId: string) {
+export async function initialiseNurseryForUser(prisma: D1PrismaClient, discordId: string) {
 	const creationTime = new Date();
 
 	return await prisma.nursery.create({
@@ -65,19 +63,19 @@ async function initializeNurseryForUser(prisma: D1PrismaClient, discordId: strin
 		include: {
 			user: true,
 		},
-	});
+	})
 }
 
-async function getNursery(prisma: D1PrismaClient, discordId: string) {
-	const existingNursery = await findNursery(prisma, discordId);
+export async function getNursery(prisma: D1PrismaClient, discordId: string) {
+	const existingNursery = await findNursery(prisma, discordId)
 
-	if (existingNursery) return existingNursery;
+	if (existingNursery) return existingNursery
 
-	return await initializeNurseryForUser(prisma, discordId);
+	return await initialiseNurseryForUser(prisma, discordId)
 }
 
-async function updateFood(prisma: D1PrismaClient, userUuid: string, food: number) {
-	const updatedAt = new Date();
+export async function updateFood(prisma: D1PrismaClient, userUuid: string, food: number) {
+	const updatedAt = new Date()
 
 	return await prisma.nursery.update({
 		where: {
@@ -87,28 +85,28 @@ async function updateFood(prisma: D1PrismaClient, userUuid: string, food: number
 			food,
 			foodUpdated: updatedAt,
 		},
-	});
+	})
 }
 
-async function findKits(prisma: D1PrismaClient, nurseryUuid: string) {
+export async function findKits(prisma: D1PrismaClient, nurseryUuid: string) {
 	return await prisma.nurseryKit.findMany({
 		where: {
 			nurseryUuid,
 		},
-	});
+	})
 }
 
-async function breedForKits(
+export async function breedForKits(
 	prisma: D1PrismaClient,
 	nurseryUuid: string,
 
 	breedTime: Date,
 
 	bredKits: {
-		prefix: string;
-		gender: KitGender;
-		pelt: Pelt;
-		eyes: Eyes;
+		prefix: string
+		gender: KitGender
+		pelt: Pelt
+		eyes: Eyes
 	}[],
 ) {
 	let i = 0;
@@ -124,7 +122,7 @@ async function breedForKits(
 		}),
 		prisma.nurseryKit.createMany({
 			data: bredKits.map((kit) => {
-				const kitBreedTime = new Date(breedTime.getTime() + i);
+				const kitBreedTime = new Date(breedTime.getTime() + i)
 
 				i++;
 
@@ -153,13 +151,13 @@ async function breedForKits(
 					events: JSON.stringify([]),
 
 					nurseryUuid,
-				};
+				}
 			}),
 		}),
-	]);
+	])
 }
 
-async function feedKits(
+export async function feedKits(
 	prisma: D1PrismaClient,
 	nurseryUuid: string,
 	feedTime: Date,
@@ -187,28 +185,28 @@ async function feedKits(
 					hunger: kitUpdate.hunger,
 					hungerUpdated: feedTime,
 				},
-			});
+			})
 		}),
-	]);
+	])
 }
 
-async function promoteKit(
+export async function promoteKit(
 	prisma: D1PrismaClient,
 	userUuid: string,
 	kit: Kit,
 	options: {
-		clan: string;
-		apprenticeRank: ClanRank.WarriorApprentice | ClanRank.MedicineCatApprentice;
+		clan: string
+		apprenticeRank: ClanRank.WarriorApprentice | ClanRank.MedicineCatApprentice
 	},
 ) {
-	const timeOfStorage = new Date();
+	const timeOfStorage = new Date()
 
-	let gender: Gender = Gender.Other;
+	let gender: Gender = Gender.Other
 
 	if (kit.gender === KitGender.TomKit) {
-		gender = Gender.Tom;
+		gender = Gender.Tom
 	} else if (kit.gender === KitGender.SheKit) {
-		gender = Gender.SheCat;
+		gender = Gender.SheCat
 	}
 
 	return await prisma.$transaction([
@@ -257,15 +255,15 @@ async function promoteKit(
 				},
 			},
 		}),
-	]);
+	])
 }
 
-async function coolNursery(
+export async function coolNursery(
 	prisma: D1PrismaClient,
 	userUuid: string,
 	kitsToCool: { uuid: string; newTemperature: number }[],
 ) {
-	const coolTime = new Date();
+	const coolTime = new Date()
 
 	return await prisma.$transaction([
 		prisma.nursery.update({
@@ -285,12 +283,12 @@ async function coolNursery(
 					temperature: kit.newTemperature,
 					temperatureUpdated: coolTime,
 				},
-			});
+			})
 		}),
-	]);
+	])
 }
 
-async function updateKitTemperatures(
+export async function updateKitTemperatures(
 	prisma: D1PrismaClient,
 	kits: { uuid: string; newTemperature: number; events?: string }[],
 	updateTime: Date,
@@ -306,30 +304,30 @@ async function updateKitTemperatures(
 					temperatureUpdated: updateTime,
 					events: kit.events,
 				},
-			});
+			})
 		}),
-	]);
+	])
 }
 
-async function updateNurseryAlerts(prisma: D1PrismaClient, uuid: string, alerts: string) {
+export async function updateNurseryAlerts(prisma: D1PrismaClient, uuid: string, alerts: string) {
 	return await prisma.nursery.update({
 		where: {
 			uuid,
 		},
 		data: { alerts },
-	});
+	})
 }
 
-async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, kits: Kit[], alerts: string) {
-	const timeOfStorage = new Date();
-	const tradeUuidsToCancel: string[] = [];
+export async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, kits: Kit[], alerts: string) {
+	const timeOfStorage = new Date()
+	const tradeUuidsToCancel: string[] = []
 
 	for (const kit of kits) {
 		if (kit.pendingTradeUuid1 && !tradeUuidsToCancel.includes(kit.pendingTradeUuid1))
-			tradeUuidsToCancel.push(kit.pendingTradeUuid1);
+			tradeUuidsToCancel.push(kit.pendingTradeUuid1)
 
 		if (kit.pendingTradeUuid2 && !tradeUuidsToCancel.includes(kit.pendingTradeUuid2))
-			tradeUuidsToCancel.push(kit.pendingTradeUuid2);
+			tradeUuidsToCancel.push(kit.pendingTradeUuid2)
 	}
 
 	if (tradeUuidsToCancel.length > 0) {
@@ -339,7 +337,7 @@ async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, 
 					return { tradeUuid };
 				}),
 			},
-		});
+		})
 	}
 
 	return await prisma.$transaction([
@@ -398,11 +396,11 @@ async function kitsDied(prisma: D1PrismaClient, userUuid: string, clan: string, 
 				},
 			},
 		}),
-	]);
+	])
 }
 
-async function pauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Kit[]) {
-	const pauseTime = new Date();
+export async function pauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Kit[]) {
+	const pauseTime = new Date()
 
 	return await prisma.$transaction([
 		...kits.map((kit) => {
@@ -426,7 +424,7 @@ async function pauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Kit[
 					temperature: kit.temperature,
 					temperatureUpdated: pauseTime,
 				},
-			});
+			})
 		}),
 		prisma.nursery.update({
 			where: {
@@ -438,11 +436,11 @@ async function pauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Kit[
 				isPaused: true,
 			},
 		}),
-	]);
+	])
 }
 
-async function unpauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Kit[]) {
-	const unpauseTime = new Date();
+export async function unpauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Kit[]) {
+	const unpauseTime = new Date()
 
 	return await prisma.$transaction([
 		...kits.map((kit) => {
@@ -460,7 +458,7 @@ async function unpauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Ki
 					sickSince: kit.sickSince !== undefined ? unpauseTime : null,
 					wanderingSince: kit.wanderingSince !== undefined ? unpauseTime : null,
 				},
-			});
+			})
 		}),
 		prisma.nursery.update({
 			where: {
@@ -471,11 +469,11 @@ async function unpauseNursery(prisma: D1PrismaClient, nursery: Nursery, kits: Ki
 				isPaused: false,
 			},
 		}),
-	]);
+	])
 }
 
-async function setKitsSickSince(prisma: D1PrismaClient, kits: Kit[], sickSince: Date | null) {
-	const updatedAt = new Date();
+export async function setKitsSickSince(prisma: D1PrismaClient, kits: Kit[], sickSince: Date | null) {
+	const updatedAt = new Date()
 
 	return await prisma.$transaction([
 		...kits.map((kit) => {
@@ -494,13 +492,13 @@ async function setKitsSickSince(prisma: D1PrismaClient, kits: Kit[], sickSince: 
 
 					events: JSON.stringify(kit.events),
 				},
-			});
+			})
 		}),
-	]);
+	])
 }
 
-async function setKitsWanderingSince(prisma: D1PrismaClient, kits: Kit[], wanderingSince: Date | null) {
-	const updatedAt = new Date();
+export async function setKitsWanderingSince(prisma: D1PrismaClient, kits: Kit[], wanderingSince: Date | null) {
+	const updatedAt = new Date()
 
 	return await prisma.$transaction([
 		...kits.map((kit) => {
@@ -516,27 +514,7 @@ async function setKitsWanderingSince(prisma: D1PrismaClient, kits: Kit[], wander
 
 					events: JSON.stringify(kit.events),
 				},
-			});
+			})
 		}),
-	]);
+	])
 }
-
-export {
-	findNursery,
-	findNurseryByUuid,
-	initializeNurseryForUser,
-	getNursery,
-	updateFood,
-	findKits,
-	breedForKits,
-	feedKits,
-	promoteKit,
-	coolNursery,
-	updateKitTemperatures,
-	updateNurseryAlerts,
-	kitsDied,
-	pauseNursery,
-	unpauseNursery,
-	setKitsSickSince,
-	setKitsWanderingSince,
-};

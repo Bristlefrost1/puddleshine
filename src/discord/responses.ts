@@ -1,16 +1,16 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import * as config from '#config.js';
+import * as config from '@/config'
 
-function messageResponse(options: {
-	content?: string;
-	embeds?: DAPI.APIEmbed[];
-	components?: DAPI.APIActionRowComponent<DAPI.APIMessageActionRowComponent>[];
+export function messageResponse(options: {
+	content?: string
+	embeds?: DAPI.APIEmbed[]
+	components?: DAPI.APIActionRowComponent<DAPI.APIMessageActionRowComponent>[]
 
-	ephemeral?: boolean;
-	allowedMentions?: DAPI.APIAllowedMentions;
+	ephemeral?: boolean
+	allowedMentions?: DAPI.APIAllowedMentions
 
-	update?: boolean;
+	update?: boolean
 }): DAPI.APIInteractionResponseChannelMessageWithSource | DAPI.APIInteractionResponseUpdateMessage {
 	if (options.update) {
 		return {
@@ -21,7 +21,7 @@ function messageResponse(options: {
 				components: options.components,
 				allowed_mentions: options.allowedMentions,
 			},
-		};
+		}
 	} else {
 		return {
 			type: DAPI.InteractionResponseType.ChannelMessageWithSource,
@@ -32,18 +32,18 @@ function messageResponse(options: {
 				components: options.components,
 				allowed_mentions: options.allowedMentions,
 			},
-		};
+		}
 	}
 }
 
-function confirmationResponse(options: {
-	action: string;
-	actionData?: string;
+export function confirmationResponse(options: {
+	action: string
+	actionData?: string
 
-	question: string;
+	question: string
 
-	allowedMentions?: DAPI.APIAllowedMentions;
-	ephemeral?: boolean;
+	allowedMentions?: DAPI.APIAllowedMentions
+	ephemeral?: boolean
 }): DAPI.APIInteractionResponse {
 	return {
 		type: DAPI.InteractionResponseType.ChannelMessageWithSource,
@@ -76,10 +76,10 @@ function confirmationResponse(options: {
 			],
 			allowed_mentions: options.allowedMentions,
 		},
-	};
+	}
 }
 
-function cancelConfirmationResponse(
+export function cancelConfirmationResponse(
 	reason?: string,
 	additionalOptions?: { oldEmbed?: DAPI.APIEmbed },
 ): DAPI.APIInteractionResponse {
@@ -90,7 +90,7 @@ function cancelConfirmationResponse(
 			embeds: additionalOptions && additionalOptions.oldEmbed ? [additionalOptions.oldEmbed] : undefined,
 			components: [],
 		},
-	};
+	}
 }
 
 /**
@@ -99,7 +99,7 @@ function cancelConfirmationResponse(
  * @param message The message text.
  * @returns A message interaction response that is the given `message`.
  */
-function simpleMessageResponse(
+export function simpleMessageResponse(
 	message: string,
 	allowedMentions?: DAPI.APIAllowedMentions,
 ): DAPI.APIInteractionResponse {
@@ -109,7 +109,7 @@ function simpleMessageResponse(
 			content: message,
 			allowed_mentions: allowedMentions,
 		},
-	};
+	}
 }
 
 /**
@@ -118,33 +118,33 @@ function simpleMessageResponse(
  * @param message The message text.
  * @returns An ephemeral message interaction response that is the given `message`.
  */
-function simpleEphemeralResponse(message: string): DAPI.APIInteractionResponse {
+export function simpleEphemeralResponse(message: string): DAPI.APIInteractionResponse {
 	return {
 		type: DAPI.InteractionResponseType.ChannelMessageWithSource,
 		data: {
 			flags: DAPI.MessageFlags.Ephemeral,
 			content: message,
 		},
-	};
+	}
 }
 
 /**
- * Constructs an embed with the error color and specified message.
+ * Constructs an embed with the error colour and specified message.
  *
  * @param message The error message.
  * @returns An error embed.
  */
-function errorEmbed(message: string, title?: string, author?: DAPI.APIEmbedAuthor): DAPI.APIEmbed {
+export function errorEmbed(message: string, title?: string, author?: DAPI.APIEmbedAuthor): DAPI.APIEmbed {
 	return {
 		title: title,
 		author: author,
-		color: config.ERROR_COLOR,
+		color: config.ERROR_COLOUR,
 
 		description: message,
-	};
+	}
 }
 
-function embedMessageResponse(
+export function embedMessageResponse(
 	embed: DAPI.APIEmbed,
 	ephemeral?: boolean,
 	components?: DAPI.APIActionRowComponent<DAPI.APIMessageActionRowComponent>[],
@@ -156,15 +156,5 @@ function embedMessageResponse(
 			embeds: [embed],
 			components,
 		},
-	};
+	}
 }
-
-export {
-	messageResponse,
-	confirmationResponse,
-	cancelConfirmationResponse,
-	simpleMessageResponse,
-	simpleEphemeralResponse,
-	errorEmbed,
-	embedMessageResponse,
-};

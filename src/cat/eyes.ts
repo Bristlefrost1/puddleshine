@@ -1,20 +1,19 @@
-import * as randomUtils from '#utils/random-utils.js';
+import * as randomUtils from '@/utils/random-utils'
+import { type WeightedValue } from '@/utils/random-utils'
 
-import type { WeightedValue } from '#utils/random-utils.js';
-
-enum EyesType {
+export enum EyesType {
 	Normal = 'Normal',
 	Heterochromia = 'Heterochromia',
 }
 
-enum EyeColor {
+export enum EyeColour {
 	Blue = 'Blue',
 	DarkBlue = 'Dark Blue',
 	Cyan = 'Cyan',
 	Teal = 'Teal',
 	PaleBlue = 'Pale Blue',
 	Lavender = 'Lavender',
-	Gray = 'Gray',
+	Grey = 'Grey',
 	Yellow = 'Yellow',
 	Amber = 'Amber',
 	PaleYellow = 'Pale Yellow',
@@ -25,66 +24,71 @@ enum EyeColor {
 	PaleGreen = 'Pale Green',
 }
 
-type NormalEyes = {
-	type: EyesType.Normal;
+export type NormalEyes = {
+	type: EyesType.Normal
 
-	eyeColor: EyeColor;
-};
+	eyeColour: EyeColour
+}
 
-type HeterochromicEyes = {
-	type: EyesType.Heterochromia;
+export type HeterochromicEyes = {
+	type: EyesType.Heterochromia
 
-	leftEyeColor: EyeColor;
-	rightEyeColor: EyeColor;
-};
+	leftEyeColour: EyeColour
+	rightEyeColour: EyeColour
+}
 
-type Eyes = NormalEyes | HeterochromicEyes;
+export type Eyes = NormalEyes | HeterochromicEyes
 
-function randomizeEyes(): Eyes {
+export function randomiseEyes(): Eyes {
 	const heterochromiaOdds: WeightedValue<boolean>[] = [
 		{ value: true, probability: 0.025 },
 		{ value: false, probability: '*' },
-	];
+	]
 
-	const hasHeterochromia = randomUtils.pickRandomWeighted(heterochromiaOdds);
+	const hasHeterochromia = randomUtils.pickRandomWeighted(heterochromiaOdds)
 
 	if (hasHeterochromia) {
-		const leftIndex = Math.floor(Math.random() * Object.keys(EyeColor).length);
-		let rightIndex = Math.floor(Math.random() * Object.keys(EyeColor).length);
+		const leftIndex = Math.floor(Math.random() * Object.keys(EyeColour).length)
+		let rightIndex = Math.floor(Math.random() * Object.keys(EyeColour).length)
 
 		while (rightIndex === leftIndex) {
-			rightIndex = Math.floor(Math.random() * Object.keys(EyeColor).length);
+			rightIndex = Math.floor(Math.random() * Object.keys(EyeColour).length)
 		}
 
-		const leftEyeColor = Object.values(EyeColor)[leftIndex];
-		const rightEyeColor = Object.values(EyeColor)[rightIndex];
+		const leftEyeColour = Object.values(EyeColour)[leftIndex]
+		const rightEyeColour = Object.values(EyeColour)[rightIndex]
 
 		return {
 			type: EyesType.Heterochromia,
-			leftEyeColor,
-			rightEyeColor,
-		};
+			leftEyeColour: leftEyeColour,
+			rightEyeColour: rightEyeColour,
+		}
 	} else {
-		const eyeColorIndex = Math.floor(Math.random() * Object.keys(EyeColor).length);
-		const randomEyeColor = Object.values(EyeColor)[eyeColorIndex];
+		const eyeColorIndex = Math.floor(Math.random() * Object.keys(EyeColour).length)
+		const randomEyeColour = Object.values(EyeColour)[eyeColorIndex]
 
 		return {
 			type: EyesType.Normal,
-			eyeColor: randomEyeColor,
-		};
+			eyeColour: randomEyeColour,
+		}
 	}
 }
 
-function stringifyEyes(eyes: Eyes): string {
+export function stringifyEyes(eyes: Eyes): string {
 	switch (eyes.type) {
 		case EyesType.Normal:
-			return `${eyes.eyeColor.toLowerCase()} eyes`;
+			if ((eyes as any).eyeColor !== undefined)
+				return `${(eyes as unknown as { eyeColor: string }).eyeColor.toLowerCase()} eyes`
+
+			return `${eyes.eyeColour.toLowerCase()} eyes`
+
 		case EyesType.Heterochromia:
-			return `${eyes.leftEyeColor.toLowerCase()} left & ${eyes.rightEyeColor.toLowerCase()} right eye`;
+			if ((eyes as any).leftEyeColor !== undefined)
+				return `${(eyes as any).leftEyeColor.toLowerCase()} left & ${(eyes as any).rightEyeColor.toLowerCase()} right eye`
+
+			return `${eyes.leftEyeColour.toLowerCase()} left & ${eyes.rightEyeColour.toLowerCase()} right eye`
+
 		default:
-			return '';
+			return ''
 	}
 }
-
-export { EyesType, EyeColor, randomizeEyes, stringifyEyes };
-export type { Eyes };

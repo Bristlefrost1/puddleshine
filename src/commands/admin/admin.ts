@@ -1,49 +1,50 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import { embedMessageResponse, simpleEphemeralResponse } from '#discord/responses.js';
+import { embedMessageResponse, simpleEphemeralResponse } from '@/discord/responses'
+import { bot } from '@/bot'
 
-import * as userAdminCommands from './user/user.js';
-import * as catchaAdminCommands from './catcha/catcha-admin.js';
-import * as artistAdminCommands from './artist/artist-admin.js';
-import * as tradeAdminCommands from './trade/trade-admin.js';
-import { getArtistAutocompleChoices } from '#commands/catcha/art/artist-autocomplete.js';
+import * as userAdminCommands from './user/user'
+import * as catchaAdminCommands from './catcha/catcha-admin'
+import * as artistAdminCommands from './artist/artist-admin'
+import * as tradeAdminCommands from './trade/trade-admin'
+import { getArtistAutocompleChoices } from '@/commands/catcha/artist/autocomplete-artist'
 
-import type { Command } from '../command.js';
+import type { Command } from '@/commands'
 
-import adminServers from '#resources/admin-servers.json' with { type: 'json' };
+import adminGuilds from './admin-guilds.json'
 
-enum AdminAccessLevel {
+export enum AdminAccessLevel {
 	SuperAdmin = 'SuperAdmin',
 	Admin = 'Admin',
 	None = 'None',
 }
 
-async function getAdminAccessLevel(env: Env, userId: string): Promise<AdminAccessLevel> {
-	const superAdminDiscordIdKV = await env.KV.get('BotSuperAdminDiscordId');
-	const adminDiscordIdsKV = await env.KV.get('BotAdminDiscordIds');
+async function getAdminAccessLevel(userId: string): Promise<AdminAccessLevel> {
+	const superAdminDiscordIdKV = await bot.env.KV.get('BotSuperAdminDiscordId')
+	const adminDiscordIdsKV = await bot.env.KV.get('BotAdminDiscordIds')
 
-	let superAdminDiscordId: string | undefined;
-	let adminDiscordIds: string[] = [];
+	let superAdminDiscordId: string | undefined
+	let adminDiscordIds: string[] = []
 
-	if (superAdminDiscordIdKV) superAdminDiscordId = superAdminDiscordIdKV;
+	if (superAdminDiscordIdKV) superAdminDiscordId = superAdminDiscordIdKV
 
 	if (adminDiscordIdsKV) {
-		adminDiscordIds = adminDiscordIdsKV.split(',');
+		adminDiscordIds = adminDiscordIdsKV.split(',')
 	}
 
 	if (userId === superAdminDiscordId) {
-		return AdminAccessLevel.SuperAdmin;
+		return AdminAccessLevel.SuperAdmin
 	} else if (adminDiscordIds.includes(userId)) {
-		return AdminAccessLevel.Admin;
+		return AdminAccessLevel.Admin
 	} else {
-		return AdminAccessLevel.None;
+		return AdminAccessLevel.None
 	}
 }
 
-const AdminCommand: Command = {
+export default {
 	name: 'admin',
 
-	onlyGuilds: adminServers,
+	onlyGuilds: adminGuilds,
 
 	commandData: {
 		type: DAPI.ApplicationCommandType.ChatInput,
@@ -257,14 +258,14 @@ const AdminCommand: Command = {
 				options: [
 					{
 						type: DAPI.ApplicationCommandOptionType.Subcommand,
-						name: 'initialize',
-						description: 'Initialize an artist profile with the given name and link it to a user',
+						name: 'initialise',
+						description: 'Initialise an artist profile with the given name and link it to a user',
 
 						options: [
 							{
 								type: DAPI.ApplicationCommandOptionType.String,
 								name: 'artist',
-								description: 'The artist whose profile to initialize',
+								description: 'The artist whose profile to initialise',
 								required: true,
 								autocomplete: true,
 							},
@@ -359,13 +360,13 @@ const AdminCommand: Command = {
 		],
 	},
 
-	async execute({ interaction, user, subcommandGroup, subcommand, options, env, ctx }) {
-		if (!subcommand) throw 'No subcommand provided';
+	async onApplicationCommand({ interaction, user, subcommandGroup, subcommand, options }) {
+		if (!subcommand) throw 'No subcommand provided'
 
-		const accessLevel = await getAdminAccessLevel(env, user.id);
+		const accessLevel = await getAdminAccessLevel(user.id)
 
 		if (accessLevel === AdminAccessLevel.None)
-			return simpleEphemeralResponse("You don't have access to admin commands.");
+			return simpleEphemeralResponse("You don't have access to admin commands.")
 
 		if (subcommandGroup) {
 			switch (subcommandGroup.name) {
@@ -376,9 +377,8 @@ const AdminCommand: Command = {
 						accessLevel,
 						subcommand,
 						options,
-						env,
-						ctx,
-					);
+					)
+
 				case 'catcha':
 					return await catchaAdminCommands.handleCatchaAdminCommand(
 						interaction,
@@ -386,9 +386,8 @@ const AdminCommand: Command = {
 						accessLevel,
 						subcommand,
 						options,
-						env,
-						ctx,
-					);
+					)
+
 				case 'artist':
 					return await artistAdminCommands.handleArtistAdminCommand(
 						interaction,
@@ -396,9 +395,8 @@ const AdminCommand: Command = {
 						accessLevel,
 						subcommand,
 						options,
-						env,
-						ctx,
-					);
+					)
+
 				case 'trade':
 					return await tradeAdminCommands.handleTradeAdminCommand(
 						interaction,
@@ -406,24 +404,23 @@ const AdminCommand: Command = {
 						accessLevel,
 						subcommand,
 						options,
-						env,
-						ctx,
-					);
+					)
+
 				default:
-					return simpleEphemeralResponse('An error occured.');
+					return simpleEphemeralResponse('An error occured.')
 			}
 		}
 
 		return embedMessageResponse({
 			description: 'Hello, World!',
-		});
+		})
 	},
 
-	async onMessageComponent({ interaction, user, componentType, parsedCustomId, env, ctx }) {
-		const accessLevel = await getAdminAccessLevel(env, user.id);
+	async onMessageComponent({ interaction, user, parsedCustomId }) {
+		const accessLevel = await getAdminAccessLevel(user.id)
 
 		if (accessLevel === AdminAccessLevel.None)
-			return simpleEphemeralResponse("You don't have access to admin commands.");
+			return simpleEphemeralResponse("You don't have access to admin commands.")
 
 		switch (parsedCustomId[1]) {
 			case 'trade':
@@ -432,17 +429,16 @@ const AdminCommand: Command = {
 					user,
 					accessLevel,
 					parsedCustomId,
-					env,
-					ctx,
-				);
+				)
+
 			default:
-			// Do nothing
+				// Do nothing
 		}
 	},
 
-	async onAutocomplete({ interaction, user, subcommandGroup, subcommand, options, focusedOption, env, ctx }) {
+	async onAutocomplete({ interaction, user, subcommandGroup, subcommand, options, focusedOption }) {
 		if (focusedOption.name === 'artist' && focusedOption.type === DAPI.ApplicationCommandOptionType.String) {
-			return { choices: getArtistAutocompleChoices(focusedOption.value) };
+			return { choices: await getArtistAutocompleChoices(focusedOption.value) }
 		}
 
 		// Unknown focused option. Return a default error message.
@@ -453,9 +449,6 @@ const AdminCommand: Command = {
 					value: 'Error',
 				},
 			],
-		};
+		}
 	},
-};
-
-export default AdminCommand;
-export { AdminAccessLevel };
+} as Command

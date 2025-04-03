@@ -1,15 +1,16 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import { deferMessage, editInteractionResponse } from '#discord/responses-deferred.js';
-import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
-import * as nurseryViews from '#commands/nursery/nursery-views.js';
-import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
+import { deferMessage, editInteractionResponse } from '@/discord/responses-deferred'
+import { bot } from '@/bot'
+import * as nurseryManager from '@/commands/nursery/game/nursery-manager'
+import * as nurseryViews from '@/commands/nursery/nursery-views'
+import * as nurseryDB from '@/commands/nursery/db/nursery-db'
 
-import type { Subcommand } from '#commands/subcommand.js';
+import { type Subcommand } from '@/commands'
 
-const SUBCOMMAND_NAME = 'pause';
+const SUBCOMMAND_NAME = 'pause'
 
-const PauseSubcommand: Subcommand = {
+export default {
 	name: SUBCOMMAND_NAME,
 
 	subcommand: {
@@ -20,37 +21,31 @@ const PauseSubcommand: Subcommand = {
 		options: [],
 	},
 
-	async execute(options) {
+	async onApplicationCommand(options) {
 		const deferredExecute = async () => {
 			try {
-				const appId = options.env.DISCORD_APPLICATION_ID;
-				const discordToken = options.env.DISCORD_TOKEN;
-				const interactionToken = options.interaction.token;
+				const interactionToken = options.interaction.token
 
-				const nursery = await nurseryManager.getNursery(options.user, options.env);
+				const nursery = await nurseryManager.getNursery(options.user)
 
 				if (nursery.isPaused) {
-					await nurseryDB.unpauseNursery(options.env.PRISMA, nursery, nursery.kits);
+					await nurseryDB.unpauseNursery(bot.prisma, nursery, nursery.kits)
 
-					nursery.isPaused = false;
+					nursery.isPaused = false
 
 					await editInteractionResponse(
-						appId,
-						discordToken,
 						interactionToken,
 						nurseryViews.nurseryMessageResponse(nursery, {
 							view: 'home',
 							messages: ["You've returned to take care of your kits."],
 						}).data!,
-					);
+					)
 				} else {
-					await nurseryDB.pauseNursery(options.env.PRISMA, nursery, nursery.kits);
+					await nurseryDB.pauseNursery(bot.prisma, nursery, nursery.kits)
 
-					nursery.isPaused = true;
+					nursery.isPaused = true
 
 					await editInteractionResponse(
-						appId,
-						discordToken,
 						interactionToken,
 						nurseryViews.nurseryMessageResponse(nursery, {
 							view: 'home',
@@ -59,17 +54,15 @@ const PauseSubcommand: Subcommand = {
 								'Do [pause] again to resume.',
 							],
 						}).data!,
-					);
+					)
 				}
 			} catch (error) {
-				console.log(error);
+				console.log(error)
 			}
-		};
+		}
 
-		options.ctx.waitUntil(deferredExecute());
+		bot.ctx.waitUntil(deferredExecute())
 
-		return deferMessage();
+		return deferMessage()
 	},
-};
-
-export default PauseSubcommand;
+} as Subcommand

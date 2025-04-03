@@ -1,26 +1,28 @@
-import * as randomUtils from '#utils/random-utils.js';
+import * as randomUtils from '@/utils/random-utils'
+import { type WeightedValue } from '@/utils/random-utils'
 
-import type { WeightedValue } from '#utils/random-utils.js';
-
-enum PeltType {
+export enum PeltType {
+	SolidColour = 'SolidColour',
 	SolidColor = 'SolidColor',
+	Bicolour = 'Bicolour',
 	Bicolor = 'Bicolor',
 	Tabby = 'Tabby',
 	Tortoiseshell = 'Tortoiseshell',
 	Calico = 'Calico',
+	Colourpoint = 'Colourpoint',
 	Colorpoint = 'Colorpoint',
 }
 
-enum PeltColor {
+export enum PeltColour {
 	White = 'White',
 	Black = 'Black',
 
 	Blue = 'Blue',
 
-	Gray = 'Gray',
-	LightGray = 'Light Gray',
-	DarkGray = 'Dark Gray',
-	PaleGray = 'Pale Gray',
+	Grey = 'Grey',
+	LightGrey = 'Light Grey',
+	DarkGrey = 'Dark Grey',
+	PaleGrey = 'Pale Grey',
 	Silver = 'Silver',
 
 	Orange = 'Orange',
@@ -41,11 +43,11 @@ enum PeltColor {
 	DarkBrown = 'Dark Brown',
 }
 
-enum ColorpointColor {
+export enum ColourpointColour {
 	Black = 'Black',
 
-	Gray = 'Gray',
-	LightGray = 'Light Gray',
+	Grey = 'Grey',
+	LightGrey = 'Light Grey',
 	DarkGrey = 'Dark Grey',
 
 	Cream = 'Cream',
@@ -58,7 +60,7 @@ enum ColorpointColor {
 	Brown = 'Brown',
 }
 
-enum FurLength {
+export enum FurLength {
 	Long = 'Long',
 	Medium = 'Medium',
 	Short = 'Short',
@@ -66,88 +68,88 @@ enum FurLength {
 
 type PeltBase = {
 	furLength?: FurLength;
-};
+}
 
-type SolidColorPelt = {
-	type: PeltType.SolidColor;
+type SolidColourPelt = {
+	type: PeltType.SolidColour | PeltType.SolidColor
 
-	color: PeltColor;
-};
+	colour: PeltColour
+}
 
-type BicolorPelt = {
-	type: PeltType.Bicolor;
+type BicolourPelt = {
+	type: PeltType.Bicolour | PeltType.Bicolor
 
-	color1: PeltColor;
-	color2: PeltColor;
-};
+	colour1: PeltColour
+	colour2: PeltColour
+}
 
-type TabbyPeltPattern = 'Mackerel' | 'Classic' | 'Spotted' | 'Ticked' | undefined;
+type TabbyPeltPattern = 'Mackerel' | 'Classic' | 'Spotted' | 'Ticked' | undefined
 
 type TabbyPelt = {
-	type: PeltType.Tabby;
+	type: PeltType.Tabby
 
-	color: PeltColor;
-	tabbyPattern: TabbyPeltPattern;
-};
+	colour: PeltColour
+	tabbyPattern: TabbyPeltPattern
+}
 
 type TortoiseshellPelt = {
-	type: PeltType.Tortoiseshell;
+	type: PeltType.Tortoiseshell
 
-	dilute: boolean;
-	chimeraFace?: boolean;
-};
+	dilute: boolean
+	chimeraFace?: boolean
+}
 
 type CalicoPelt = {
-	type: PeltType.Calico;
+	type: PeltType.Calico
 
-	dilute: boolean;
-};
+	dilute: boolean
+}
 
-type ColorpointPelt = {
-	type: PeltType.Colorpoint;
+type ColourpointPelt = {
+	type: PeltType.Colourpoint | PeltType.Colorpoint
 
-	color: ColorpointColor;
-};
+	colour: ColourpointColour
+}
 
-type Pelt = PeltBase & (SolidColorPelt | BicolorPelt | TabbyPelt | TortoiseshellPelt | CalicoPelt | ColorpointPelt);
+export type Pelt = PeltBase & (SolidColourPelt | BicolourPelt | TabbyPelt | TortoiseshellPelt | CalicoPelt | ColourpointPelt)
 
-function randomizePelt(): Pelt {
+export function randomisePelt(): Pelt {
 	const peltTypeOdds: WeightedValue<PeltType>[] = [
-		{ value: PeltType.Bicolor, probability: 0.2 },
+		{ value: PeltType.Bicolour, probability: 0.2 },
 		{ value: PeltType.Tabby, probability: 0.25 },
 		{ value: PeltType.Tortoiseshell, probability: 0.1 },
 		{ value: PeltType.Calico, probability: 0.1 },
-		{ value: PeltType.Colorpoint, probability: 0.1 },
-		{ value: PeltType.SolidColor, probability: '*' },
-	];
-	const peltType = randomUtils.pickRandomWeighted(peltTypeOdds);
+		{ value: PeltType.Colourpoint, probability: 0.1 },
+		{ value: PeltType.SolidColour, probability: '*' },
+	]
+	const peltType = randomUtils.pickRandomWeighted(peltTypeOdds)
 
 	const furLengthOdds: WeightedValue<FurLength | undefined>[] = [
 		{ value: FurLength.Long, probability: 0.166 },
 		{ value: FurLength.Medium, probability: 0.166 },
 		{ value: FurLength.Short, probability: 0.166 },
 		{ value: undefined, probability: '*' },
-	];
-	const furLength = randomUtils.pickRandomWeighted(furLengthOdds);
+	]
+	const furLength = randomUtils.pickRandomWeighted(furLengthOdds)
 
-	if (peltType === PeltType.SolidColor) {
-		const randomPeltColor = Object.values(PeltColor)[Math.floor(Math.random() * Object.keys(PeltColor).length)];
+	if (peltType === PeltType.SolidColour) {
+		const randomPeltColour = Object.values(PeltColour)[Math.floor(Math.random() * Object.keys(PeltColour).length)]
 
-		return { type: PeltType.SolidColor, furLength, color: randomPeltColor };
-	} else if (peltType === PeltType.Bicolor) {
-		const randomPeltColor1 = Object.values(PeltColor)[Math.floor(Math.random() * Object.keys(PeltColor).length)];
-		let randomPeltColor2 = Object.values(PeltColor)[Math.floor(Math.random() * Object.keys(PeltColor).length)];
+		return { type: PeltType.SolidColour, furLength, colour: randomPeltColour }
+	} else if (peltType === PeltType.Bicolour) {
+		const randomPeltColour1 = Object.values(PeltColour)[Math.floor(Math.random() * Object.keys(PeltColour).length)]
+		let randomPeltColour2 = Object.values(PeltColour)[Math.floor(Math.random() * Object.keys(PeltColour).length)]
 
 		while (
-			randomPeltColor2 === randomPeltColor1 ||
-			(randomPeltColor2.split(' ')[1] && randomPeltColor1.endsWith(` ${randomPeltColor2.split(' ')[1]}`))
+			randomPeltColour2 === randomPeltColour1 ||
+			(randomPeltColour2.split(' ')[1] && randomPeltColour1.endsWith(` ${randomPeltColour2.split(' ')[1]}`))
 		) {
-			randomPeltColor2 = Object.values(PeltColor)[Math.floor(Math.random() * Object.keys(PeltColor).length)];
+			randomPeltColour2 = Object.values(PeltColour)[Math.floor(Math.random() * Object.keys(PeltColour).length)]
 		}
 
-		return { type: PeltType.Bicolor, furLength, color1: randomPeltColor1, color2: randomPeltColor2 };
+		return { type: PeltType.Bicolour, furLength, colour1: randomPeltColour1, colour2: randomPeltColour2 }
 	} else if (peltType === PeltType.Tabby) {
-		const randomPeltColor = Object.values(PeltColor)[Math.floor(Math.random() * Object.keys(PeltColor).length)];
+		const randomPeltColour = Object.values(PeltColour)[Math.floor(Math.random() * Object.keys(PeltColour).length)]
 
 		const patternOdds: WeightedValue<TabbyPeltPattern>[] = [
 			{ value: undefined, probability: 0.7 },
@@ -155,101 +157,135 @@ function randomizePelt(): Pelt {
 			{ value: 'Classic', probability: '*' },
 			{ value: 'Spotted', probability: '*' },
 			{ value: 'Ticked', probability: '*' },
-		];
-		const pattern = randomUtils.pickRandomWeighted(patternOdds);
+		]
+		const pattern = randomUtils.pickRandomWeighted(patternOdds)
 
-		return { type: PeltType.Tabby, furLength, color: randomPeltColor, tabbyPattern: pattern };
+		return { type: PeltType.Tabby, furLength, colour: randomPeltColour, tabbyPattern: pattern }
 	} else if (peltType === PeltType.Tortoiseshell) {
 		const diluteOdds: WeightedValue<boolean>[] = [
 			{ value: true, probability: 0.33 },
 			{ value: false, probability: '*' },
-		];
-		const isDilute = randomUtils.pickRandomWeighted(diluteOdds);
+		]
+		const isDilute = randomUtils.pickRandomWeighted(diluteOdds)
 
 		const chimeraOdds: WeightedValue<boolean>[] = [
 			{ value: true, probability: 0.005 },
 			{ value: false, probability: '*' },
-		];
-		const isChimera = randomUtils.pickRandomWeighted(chimeraOdds);
+		]
+		const isChimera = randomUtils.pickRandomWeighted(chimeraOdds)
 
 		return {
 			type: PeltType.Tortoiseshell,
 			furLength,
 			dilute: isDilute,
 			chimeraFace: isChimera === false ? undefined : true,
-		};
+		}
 	} else if (peltType === PeltType.Colorpoint) {
-		const randomColorpointColor =
-			Object.values(ColorpointColor)[Math.floor(Math.random() * Object.keys(ColorpointColor).length)];
+		const randomColourpointColour =
+			Object.values(ColourpointColour)[Math.floor(Math.random() * Object.keys(ColourpointColour).length)]
 
-		return { type: PeltType.Colorpoint, furLength, color: randomColorpointColor };
+		return { type: PeltType.Colourpoint, furLength, colour: randomColourpointColour }
 	} else if (peltType === PeltType.Calico) {
 		const diluteOdds: WeightedValue<boolean>[] = [
 			{ value: true, probability: 0.33 },
 			{ value: false, probability: '*' },
-		];
-		const isDilute = randomUtils.pickRandomWeighted(diluteOdds);
+		]
+		const isDilute = randomUtils.pickRandomWeighted(diluteOdds)
 
-		return { type: PeltType.Calico, furLength, dilute: isDilute };
+		return { type: PeltType.Calico, furLength, dilute: isDilute }
 	}
 
-	return { type: PeltType.SolidColor, furLength, color: PeltColor.Gray };
+	return { type: PeltType.SolidColour, furLength, colour: PeltColour.Grey }
 }
 
-function stringifyPelt(pelt: Pelt, long?: boolean): string {
-	let peltString = '';
+export function stringifyPelt(pelt: Pelt, long?: boolean): string {
+	let peltString = ''
 
 	if (long && pelt.furLength) {
-		peltString += `${FurLength[pelt.furLength].toLowerCase()}hair `;
+		peltString += `${FurLength[pelt.furLength].toLowerCase()}hair `
 	}
 
 	switch (pelt.type) {
 		case PeltType.SolidColor:
-			peltString += pelt.color.toLowerCase();
-			break;
+		case PeltType.SolidColour:
+			if (typeof (pelt as any).color === 'string') {
+				peltString += ((pelt as any).color as string).toLowerCase()
+			} else {
+				peltString += pelt.colour.toLowerCase()
+			}
+			
+			break
 
 		case PeltType.Bicolor:
-			peltString += `${pelt.color1.toLowerCase()} and ${pelt.color2.toLowerCase()}`;
-			break;
+		case PeltType.Bicolour:
+			if (typeof (pelt as any).color1 === 'string') {
+				peltString += (pelt as any).color1.toLowerCase()
+			} else {
+				peltString += pelt.colour1.toLowerCase()
+			}
+
+			peltString += ' and '
+
+			if (typeof (pelt as any).color2 === 'string') {
+				peltString += (pelt as any).color2.toLowerCase()
+			} else {
+				peltString += pelt.colour2.toLowerCase()
+			}
+
+			break
 
 		case PeltType.Tabby:
-			if (!pelt.tabbyPattern) {
-				peltString += `${pelt.color.toLowerCase()} tabby`;
+			if (typeof (pelt as any).color === 'string') {
+				peltString += ((pelt as any).color as string).toLowerCase()
 			} else {
-				peltString += `${pelt.color.toLowerCase()} ${pelt.tabbyPattern.toLowerCase()} tabby`;
+				peltString += pelt.colour.toLowerCase()
 			}
-			break;
+
+			if (!pelt.tabbyPattern) {
+				peltString += ` tabby`
+			} else {
+				peltString += ` ${pelt.tabbyPattern.toLowerCase()} tabby`
+			}
+
+			break
 
 		case PeltType.Tortoiseshell:
 			if (pelt.chimeraFace) {
-				peltString += 'two-faced ';
+				peltString += 'two-faced '
 			}
 
 			if (pelt.dilute) {
-				peltString += 'dilute tortoiseshell';
+				peltString += 'dilute tortoiseshell'
 			} else {
-				peltString += 'tortoiseshell';
+				peltString += 'tortoiseshell'
 			}
-			break;
+
+			break
 
 		case PeltType.Calico:
 			if (pelt.dilute) {
-				peltString += 'dilute calico';
+				peltString += 'dilute calico'
 			} else {
-				peltString += 'calico';
+				peltString += 'calico'
 			}
-			break;
+
+			break
 
 		case PeltType.Colorpoint:
-			peltString += `${pelt.color.toLowerCase()} colorpoint`;
-			break;
+		case PeltType.Colourpoint:
+			if (typeof (pelt as any).color === 'string') {
+				peltString += ((pelt as any).color as string).toLowerCase()
+			} else {
+				peltString += pelt.colour.toLowerCase()
+			}
+
+			peltString += ` colourpoint`
+
+			break
 
 		default:
-			return '';
+			return ''
 	}
 
-	return peltString;
+	return peltString
 }
-
-export { PeltType, PeltColor, randomizePelt, stringifyPelt };
-export type { Pelt };

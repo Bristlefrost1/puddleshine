@@ -1,19 +1,20 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import { deferMessage, editInteractionResponse } from '#discord/responses-deferred.js';
-import { parseCommandOptions } from '#discord/parse-options.js';
-import { parseList } from '#utils/parse-list.js';
-import { pickRandomWeighted, WeightedValue } from '#utils/random-utils.js';
+import { deferMessage, editInteractionResponse } from '@/discord/responses-deferred'
+import { parseCommandOptions } from '@/discord/parse-options'
+import { parseList } from '@/utils/parse-list'
+import { pickRandomWeighted, WeightedValue } from '@/utils/random-utils'
+import { bot } from '@/bot'
 
-import * as nurseryDB from '#commands/nursery/db/nursery-db.js';
-import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
-import * as nurseryViews from '#commands/nursery/nursery-views.js';
-import { addNewEventToKit, KitEventType } from '#commands/nursery/game/kit-events.js';
+import * as nurseryDB from '@/commands/nursery/db/nursery-db'
+import * as nurseryManager from '@/commands/nursery/game/nursery-manager'
+import * as nurseryViews from '@/commands/nursery/nursery-views'
+import { addNewEventToKit, KitEventType } from '@/commands/nursery/game/kit-events'
 
-import type { Subcommand } from '#commands/subcommand.js';
-import type { Kit } from '#commands/nursery/game/kit.js';
+import { type Subcommand } from '@/commands'
+import { type Kit } from '@/commands/nursery/game/kit'
 
-import * as config from '#config.js';
+import * as config from '@/config'
 
 const kitFoundMessages: WeightedValue<string>[] = [
 	{
@@ -28,11 +29,11 @@ const kitFoundMessages: WeightedValue<string>[] = [
 		value: '{{KIT_FULL_NAME}} was still in the nursery after all but out of sight.',
 		probability: '*',
 	},
-];
+]
 
-const SUBCOMMAND_NAME = 'find';
+const SUBCOMMAND_NAME = 'find'
 
-const FindSubcommand: Subcommand = {
+export default {
 	name: SUBCOMMAND_NAME,
 
 	subcommand: {
@@ -50,134 +51,120 @@ const FindSubcommand: Subcommand = {
 		],
 	},
 
-	async execute(options) {
+	async onApplicationCommand(options) {
 		const deferredExecute = async () => {
 			try {
-				const appId = options.env.DISCORD_APPLICATION_ID;
-				const discordToken = options.env.DISCORD_TOKEN;
-				const interactionToken = options.interaction.token;
+				const interactionToken = options.interaction.token
 
-				const { kits: kitsOption } = parseCommandOptions(options.commandOptions);
+				const { kits: kitsOption } = parseCommandOptions(options.options)
 
-				if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String) return;
+				if (!kitsOption || kitsOption.type !== DAPI.ApplicationCommandOptionType.String) return
 
-				const kitNames = parseList(kitsOption.value) as string[];
-				const nursery = await nurseryManager.getNursery(options.user, options.env);
+				const kitNames = parseList(kitsOption.value) as string[]
+				const nursery = await nurseryManager.getNursery(options.user)
 
 				if (nursery.isPaused) {
 					await editInteractionResponse(
-						appId,
-						discordToken,
 						interactionToken,
 						nurseryViews.nurseryMessageResponse(nursery, {
 							view: 'home',
 							messages: ['Your nursery is currently paused.'],
 						}).data!,
-					);
+					)
 
-					return;
+					return
 				}
 
 				if (nursery.kits.length < 1) {
 					await editInteractionResponse(
-						appId,
-						discordToken,
 						interactionToken,
 						nurseryViews.nurseryMessageResponse(nursery, {
 							view: 'home',
 							messages: ["You don't have any kits to search for."],
 						}).data!,
-					);
+					)
 
-					return;
+					return
 				}
 
-				const kits = nurseryManager.locateKits(nursery, kitNames);
+				const kits = nurseryManager.locateKits(nursery, kitNames)
 
 				if (kits.length < 1) {
 					await editInteractionResponse(
-						appId,
-						discordToken,
 						interactionToken,
 						nurseryViews.nurseryMessageResponse(nursery, {
 							view: 'home',
 							messages: ["Couldn't find kits with the provided input."],
 						}).data!,
-					);
+					)
 
-					return;
+					return
 				}
 
-				const messages: string[] = [];
-				const foundKits: Kit[] = [];
+				const messages: string[] = []
+				const foundKits: Kit[] = []
 
 				for (const kit of kits) {
 					if (kit.wanderingSince === undefined) {
-						messages.push(`${kit.fullName} is thankfully safe with you in the nursery.`);
-						continue;
+						messages.push(`${kit.fullName} is thankfully safe with you in the nursery.`)
+						continue
 					}
 
 					const kitFoundOdds: WeightedValue<boolean>[] = [
 						{ value: true, probability: 0.8 },
 						{ value: false, probability: '*' },
-					];
-					const kitFound = pickRandomWeighted(kitFoundOdds);
+					]
+					const kitFound = pickRandomWeighted(kitFoundOdds)
 
 					if (!kitFound) {
-						messages.push(`Despite looking hard, you can't find ${kit.fullName} anywhere.`);
-						continue;
+						messages.push(`Despite looking hard, you can't find ${kit.fullName} anywhere.`)
+						continue
 					}
 
-					kit.wanderingSince = undefined;
-					kit.bond -= config.NURSERY_WANDER_BOND_DECREASE;
-					if (kit.bond < 0) kit.bond = 0;
+					kit.wanderingSince = undefined
+					kit.bond -= config.NURSERY_WANDER_BOND_DECREASE
+					if (kit.bond < 0) kit.bond = 0
 
 					addNewEventToKit(
 						kit,
 						KitEventType.Found,
 						'{{KIT_FULL_NAME}} was found after having gone wandering.',
-					);
+					)
 
-					foundKits.push(kit);
-					messages.push(pickRandomWeighted(kitFoundMessages).replaceAll('{{KIT_FULL_NAME}}', kit.fullName));
+					foundKits.push(kit)
+					messages.push(pickRandomWeighted(kitFoundMessages).replaceAll('{{KIT_FULL_NAME}}', kit.fullName))
 
-					nursery.kits[kit.index] = kit;
+					nursery.kits[kit.index] = kit
 				}
 
 				if (foundKits.length < 1) {
 					await editInteractionResponse(
-						appId,
-						discordToken,
 						interactionToken,
 						nurseryViews.nurseryMessageResponse(nursery, {
 							view: 'status',
 							messages: messages,
 						}).data!,
-					);
+					)
 
-					return;
+					return
 				}
 
-				await nurseryDB.setKitsWanderingSince(options.env.PRISMA, foundKits, null);
+				await nurseryDB.setKitsWanderingSince(bot.prisma, foundKits, null)
 
 				await editInteractionResponse(
-					appId,
-					discordToken,
 					interactionToken,
 					nurseryViews.nurseryMessageResponse(nursery, {
 						view: 'status',
 						messages: messages,
 					}).data!,
-				);
+				)
 			} catch (error) {
-				console.error(error);
+				console.error(error)
 			}
-		};
+		}
 
-		options.ctx.waitUntil(deferredExecute());
+		bot.ctx.waitUntil(deferredExecute())
 
-		return deferMessage();
+		return deferMessage()
 	},
-};
-
-export default FindSubcommand;
+} as Subcommand

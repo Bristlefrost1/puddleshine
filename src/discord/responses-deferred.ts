@@ -1,178 +1,144 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import { wait } from '#utils/wait.js';
-import * as config from '#config.js';
+import { bot } from '@/bot'
+import { botHeaders } from './api/api-utils'
+import * as config from '@/config'
 
-function deferMessage(options?: { ephemeral?: boolean }): DAPI.APIInteractionResponse {
+export function deferMessage(options?: { ephemeral?: boolean }): DAPI.APIInteractionResponse {
 	return {
 		type: DAPI.InteractionResponseType.DeferredChannelMessageWithSource,
 		data: {
 			flags: options?.ephemeral ? DAPI.MessageFlags.Ephemeral : undefined,
 		},
-	};
+	}
 }
 
-function deferMessageUpdate(): DAPI.APIInteractionResponse {
+export function deferMessageUpdate(): DAPI.APIInteractionResponse {
 	return {
 		type: DAPI.InteractionResponseType.DeferredMessageUpdate,
-	};
+	}
 }
 
-async function getOriginalInteractionResponse(applicationId: string, discordToken: string, interactionToken: string) {
-	const url = `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`;
+export async function getOriginalInteractionResponse(interactionToken: string) {
+	const applicationId = bot.env.DISCORD_APPLICATION_ID
+	const discordToken = bot.env.DISCORD_TOKEN
+
+	const url = `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`
 
 	const response = await fetch(url, {
-		headers: {
-			Accept: 'application/json',
-			Authorization: `Bot ${discordToken}`,
-		},
+		headers: botHeaders(discordToken, null),
 		method: 'GET',
-	});
+	})
 
 	if (!response.ok) {
 		throw {
 			statusCode: response.status,
 			body: await response.json(),
-		};
+		}
 	}
 
-	return await response.json();
+	return await response.json()
 }
 
-async function createInteractionResponse(
-	applicationId: string,
-	discordToken: string,
+export async function createInteractionResponse(
 	interactionToken: string,
 	webhookBody: DAPI.RESTPostAPIWebhookWithTokenJSONBody,
 ) {
-	const url = `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}`;
+	const applicationId = bot.env.DISCORD_APPLICATION_ID
+	const discordToken = bot.env.DISCORD_TOKEN
+
+	const url = `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}`
 
 	const response = await fetch(url, {
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bot ${discordToken}`,
-		},
+		headers: botHeaders(discordToken),
 		method: 'POST',
 		body: JSON.stringify(webhookBody),
-	});
+	})
 
 	if (!response.ok) {
 		throw {
 			statusCode: response.status,
 			body: await response.json(),
-		};
+		}
 	}
 
 	if (response.status === 204) {
-		return null;
+		return null
 	}
 
-	const result = (await response.json()) as DAPI.APIMessage;
+	const result = (await response.json()) as DAPI.APIMessage
 
-	return result;
+	return result
 }
 
-async function editInteractionResponse(
-	applicationId: string,
-	discordToken: string,
+export async function editInteractionResponse(
 	interactionToken: string,
 	webhookBody: DAPI.RESTPatchAPIWebhookWithTokenMessageJSONBody,
 ) {
-	const url = `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`;
-	const jsonPaylod = JSON.stringify(webhookBody);
+	const applicationId = bot.env.DISCORD_APPLICATION_ID
+	const discordToken = bot.env.DISCORD_TOKEN
+
+	const url = `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`
+	const jsonPaylod = JSON.stringify(webhookBody)
 
 	const response = await fetch(url, {
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bot ${discordToken}`,
-		},
+		headers: botHeaders(discordToken),
 		method: 'PATCH',
 		body: jsonPaylod,
-	});
+	})
 
 	if (!response.ok) {
-		let json = '';
+		let json = ''
 
 		try {
-			json = JSON.stringify(await response.json());
+			json = JSON.stringify(await response.json())
 		} catch {
-			json = 'No JSON in the response';
+			json = 'No JSON in the response'
 		}
 
-		console.error(`HTTP ERROR ${response.status}: ${json}`);
+		console.error(`HTTP ERROR ${response.status}: ${json}`)
 	}
 
-	return response;
-
-	/*
-	for (let attempt = 1; attempt <= 3; attempt++) {
-		if (response.ok) {
-			break;
-		} else {
-			if (attempt === 3) {
-				throw {
-					statusCode: response.status,
-					statusText: response.statusText,
-					headers: response.headers,
-				};
-			} else {	
-				await wait(1500);
-				continue;
-			}
-		}
-	}
-	*/
+	return response
 }
 
-async function deleteInteractionResponse(applicationId: string, discordToken: string, interactionToken: string) {
-	const url = `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`;
-
-	const response = await fetch(url, {
-		headers: {
-			Accept: 'application/json',
-			Authorization: `Bot ${discordToken}`,
-		},
-		method: 'DELETE',
-	});
-
-	if (!response.ok) {
-		throw {
-			statusCode: response.status,
-			body: await response.json(),
-		};
-	}
-
-	return null;
-}
-
-async function editInteractionResponseError(
-	applicationId: string,
-	discordToken: string,
+export async function editInteractionResponseError(
 	interactionToken: string,
 	error: string,
 	author?: DAPI.APIEmbedAuthor,
 ) {
 	try {
-		await editInteractionResponse(applicationId, discordToken, interactionToken, {
+		await editInteractionResponse(interactionToken, {
 			embeds: [
 				{
-					color: config.ERROR_COLOR,
+					color: config.ERROR_COLOUR,
 					author: author,
 					description: error,
 				},
 			],
-		});
+		})
 	} catch {
-		console.error("Couldn't edit interaction response.");
+		console.error("Couldn't edit interaction response.")
 	}
 }
 
-export {
-	deferMessage,
-	deferMessageUpdate,
-	getOriginalInteractionResponse,
-	createInteractionResponse,
-	editInteractionResponse,
-	deleteInteractionResponse,
-	editInteractionResponseError,
-};
+export async function deleteInteractionResponse(interactionToken: string) {
+	const applicationId = bot.env.DISCORD_APPLICATION_ID
+	const discordToken = bot.env.DISCORD_TOKEN
+
+	const url = `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`
+
+	const response = await fetch(url, {
+		headers: botHeaders(discordToken, null),
+		method: 'DELETE',
+	})
+
+	if (!response.ok) {
+		throw {
+			statusCode: response.status,
+			body: await response.json(),
+		}
+	}
+
+	return null
+}

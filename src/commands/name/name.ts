@@ -1,11 +1,11 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import * as clanNames from '#utils/clan-names.js';
-import { messageResponse } from '#discord/responses.js';
+import * as clanNames from '@/cat/clan-names'
+import { messageResponse } from '@/discord/responses'
 
-import type { Command } from '../command.js';
+import { type Command } from '../command'
 
-const NameCommand: Command = {
+export default {
 	name: 'name',
 
 	commandData: {
@@ -57,16 +57,16 @@ const NameCommand: Command = {
 		],
 	},
 
-	async execute({ interaction, user, subcommandGroup, subcommand, options, env, ctx }) {
-		if (!subcommand) return;
+	async onApplicationCommand({ interaction, user, subcommandGroup, subcommand, options }) {
+		if (!subcommand) return
 
 		if (subcommand.name === 'validate') {
-			const nameOption = options![0].value as string;
+			const nameOption = options![0].value as string
 
-			const firstCharacter = nameOption.slice(undefined, 1).toLocaleUpperCase('en');
-			const rest = nameOption.slice(1).toLocaleLowerCase('en');
+			const firstCharacter = nameOption.slice(undefined, 1).toLocaleUpperCase('en')
+			const rest = nameOption.slice(1).toLocaleLowerCase('en')
 
-			const name = firstCharacter + rest;
+			const name = firstCharacter + rest
 
 			if (clanNames.validateName(name)) {
 				return messageResponse({
@@ -75,7 +75,7 @@ const NameCommand: Command = {
 						users: [],
 						roles: [],
 					},
-				});
+				})
 			} else {
 				return messageResponse({
 					content: `${name} is not a valid Clan name.`,
@@ -83,44 +83,44 @@ const NameCommand: Command = {
 						users: [],
 						roles: [],
 					},
-				});
+				})
 			}
 		} else if (subcommand.name === 'generate') {
-			const randomName = clanNames.generateRandomName();
+			const randomName = clanNames.generateRandomName()
 
 			return messageResponse({
 				content: `Generated a random Clan name: ${randomName}`,
-			});
+			})
 		} else if (subcommand.name === 'inspect_affix') {
-			const affix = options![0].value as string;
+			const affix = options![0].value as string
 
-			let isAValidPrefix = false;
-			let isAValidSuffix = false;
+			let isAValidPrefix = false
+			let isAValidSuffix = false
 
 			for (const prefix of clanNames.prefixes) {
 				if (prefix.toLowerCase() === affix.toLowerCase()) {
-					isAValidPrefix = true;
-					break;
+					isAValidPrefix = true
+					break
 				}
 			}
 
 			for (const suffix of clanNames.suffixes) {
 				if (suffix.toLowerCase() === affix.toLowerCase()) {
-					isAValidSuffix = true;
-					break;
+					isAValidSuffix = true
+					break
 				}
 			}
 
-			let content = '';
+			let content = ''
 
 			if (isAValidPrefix && isAValidSuffix) {
-				content = `${affix} is both a canonically-valid prefix and a suffix.`;
+				content = `${affix} is both a canonically-valid prefix and a suffix.`
 			} else if (isAValidPrefix) {
-				content = `${affix} is a canonically-valid prefix.`;
+				content = `${affix} is a canonically-valid prefix.`
 			} else if (isAValidSuffix) {
-				content = `${affix} is a canonically-valid suffix.`;
+				content = `${affix} is a canonically-valid suffix.`
 			} else {
-				content = `${affix} is neither a canonically-valid prefix nor a suffix.`;
+				content = `${affix} is neither a canonically-valid prefix nor a suffix.`
 			}
 
 			return messageResponse({
@@ -129,9 +129,7 @@ const NameCommand: Command = {
 					users: [],
 					roles: [],
 				},
-			});
+			})
 		}
 	},
-};
-
-export default NameCommand;
+} as Command

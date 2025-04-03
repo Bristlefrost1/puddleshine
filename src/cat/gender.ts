@@ -1,28 +1,28 @@
-enum Gender {
+export enum Gender {
 	Tom = 'Tom',
 	SheCat = 'She-cat',
 	Other = '',
 }
 
-enum KitGender {
+export enum KitGender {
 	TomKit = 'Tom-kit',
 	SheKit = 'She-kit',
 	Other = '',
 }
 
-type Pronouns = {
-	subject: string;
-	subjectU: string;
+export type Pronouns = {
+	subject: string
+	subjectU: string
 
-	object: string;
-	objectU: string;
+	object: string
+	objectU: string
 
-	possessive: string;
-	possessiveU: string;
+	possessive: string
+	possessiveU: string
 
-	reflexive: string;
-	reflexiveU: string;
-};
+	reflexive: string
+	reflexiveU: string
+}
 
 const nonBinary: Pronouns = {
 	subject: 'they',
@@ -36,7 +36,7 @@ const nonBinary: Pronouns = {
 
 	reflexive: 'themselves',
 	reflexiveU: 'Themselves',
-};
+}
 
 const masculine: Pronouns = {
 	subject: 'he',
@@ -50,7 +50,7 @@ const masculine: Pronouns = {
 
 	reflexive: 'himself',
 	reflexiveU: 'himself',
-};
+}
 
 const feminine: Pronouns = {
 	subject: 'she',
@@ -64,24 +64,21 @@ const feminine: Pronouns = {
 
 	reflexive: 'herself',
 	reflexiveU: 'Herself',
-};
+}
 
-function getPronouns(gender?: Gender | KitGender): Pronouns {
-	if (!gender) return nonBinary;
+export function getPronouns(gender?: Gender | KitGender): Pronouns {
+	if (!gender) return nonBinary
 
 	switch (gender) {
 		case Gender.Tom:
 		case KitGender.TomKit:
-			return masculine;
+			return masculine
 
 		case Gender.SheCat:
 		case KitGender.SheKit:
-			return feminine;
+			return feminine
 
 		default:
-			return nonBinary;
+			return nonBinary
 	}
 }
-
-export { Gender, KitGender, getPronouns };
-export type { Pronouns };

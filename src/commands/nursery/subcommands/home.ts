@@ -1,15 +1,15 @@
-import * as DAPI from 'discord-api-types/v10';
+import * as DAPI from 'discord-api-types/v10'
 
-import { messageResponse } from '#discord/responses.js';
+import { messageResponse } from '@/discord/responses'
 
-import * as nurseryManager from '#commands/nursery/game/nursery-manager.js';
-import * as nurseryViews from '#commands/nursery/nursery-views.js';
+import * as nurseryManager from '@/commands/nursery/game/nursery-manager'
+import * as nurseryViews from '@/commands/nursery/nursery-views'
 
-import type { Subcommand } from '#commands/subcommand.js';
+import { type Subcommand } from '@/commands'
 
-const SUBCOMMAND_NAME = 'home';
+const SUBCOMMAND_NAME = 'home'
 
-const HomeSubcommand: Subcommand = {
+export default {
 	name: SUBCOMMAND_NAME,
 
 	subcommand: {
@@ -20,11 +20,9 @@ const HomeSubcommand: Subcommand = {
 		options: [],
 	},
 
-	async execute(options) {
-		const nursery = await nurseryManager.getNursery(options.user, options.env, true);
+	async onApplicationCommand(options) {
+		const nursery = await nurseryManager.getNursery(options.user, true)
 
-		return nurseryViews.nurseryMessageResponse(nursery, { view: 'home' });
+		return nurseryViews.nurseryMessageResponse(nursery, { view: 'home' })
 	},
-};
-
-export default HomeSubcommand;
+} as Subcommand
