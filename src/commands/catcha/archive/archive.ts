@@ -183,7 +183,7 @@ export function getCardShortName(options: {
 			isVariant = true
 		} else {
 			for (const variantData of card.variants) {
-				if (variantData.variant.toLowerCase() === variant.toLowerCase()) {
+				if (variantData.variant.toLowerCase() === variant.toLowerCase() || variantData.name.toLowerCase() === variant.toLowerCase()) {
 					name = variantData.name
 					isVariant = true
 				}
