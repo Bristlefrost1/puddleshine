@@ -233,7 +233,7 @@ export function getCardVariant(card: ArchiveCard, variant?: string | number): Ar
 
 	if (typeof variant === 'string') {
 		card.variants.forEach((cardVariant, index) => {
-			if (cardVariant.name.toLowerCase() === variant.toLowerCase()) {
+			if (cardVariant.variant.toLowerCase() === variant.toLowerCase() || cardVariant.name.toLowerCase() === variant.toLowerCase()) {
 				variantIndex = index
 			}
 		})
