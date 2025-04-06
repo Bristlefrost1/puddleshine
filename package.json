@@ -4,20 +4,25 @@
 	"private": true,
 	"packageManager": "yarn@4.7.0",
 	"scripts": {
-		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
 		"test": "vitest",
-		"cf-typegen": "wrangler types"
+		"cf-typegen": "wrangler types",
+		"deploy-dev": "wrangler deploy -e development",
+		"deploy-prod": "wrangler deploy -e production",
+		"migration-create": "wrangler d1 migrations create puddleshine-development migration -e development",
+		"migrate": "prisma migrate diff --from-schema-datamodel ./prisma/schema-old.prisma --to-schema-datamodel ./prisma/schema.prisma --script --output migrations/0001_migration.sql",
+		"apply-migrations-dev": "wrangler d1 migrations apply puddleshine-development --remote -e development",
+		"apply-migrations-prod": "wrangler d1 migrations apply puddleshine --remote -e production"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.6.4",
-		"@cloudflare/workers-types": "^4.20250321.0",
+		"@cloudflare/workers-types": "^4.20250406.0",
 		"@types/node": "^22.13.13",
 		"prisma": "^6.5.0",
 		"typescript": "^5.8.2",
 		"vitest": "~2.1.9",
-		"wrangler": "^4.5.0"
+		"wrangler": "^4.7.2"
 	},
 	"dependencies": {
 		"@prisma/adapter-d1": "^6.5.0",
