@@ -358,3 +358,7 @@ export async function getCardHistoryEvents(prisma: D1PrismaClient, cardUuid: str
 
 	return results
 }
+
+export async function assignTagsToCards(prisma: D1PrismaClient, cardUuids: string[], tags: string | null) {
+	
+}

@@ -189,7 +189,7 @@ resources/admin-servers.json
 prisma/schema1.prisma
 prisma/schema2.prisma
 prisma/schema3.prisma
-prisma/schema_from.prisma
+prisma/schema-old.prisma
 
 cards.txt
 cards.sql

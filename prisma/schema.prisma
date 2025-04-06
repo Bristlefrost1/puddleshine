@@ -80,6 +80,7 @@ model CatchaCard {
 	variant     String?
 
 	burned  Boolean?
+	tags    String?
 
 	untradeable  Boolean?
 
