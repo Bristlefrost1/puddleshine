@@ -45,15 +45,15 @@ export async function generateCachedRoll(userDiscordId: string, guildId?: string
 	const cardCounts = cardCountsOption ?? await collection.getCardCounts(userDiscordId)
 
 	const randomCard = await randomiser.randomiseCard(guildId)
-	let cardsAlreadyInCollection = cardCounts.get(collection.getCardKey(randomCard.card.id, false, randomCard.variant?.name)) ?? 0
+	let cardsAlreadyInCollection = cardCounts.get(collection.getCardKey(randomCard.card.id, false, randomCard.variant?.variant)) ?? 0
 	const isInverted = randomiser.randomiseInverted(cardsAlreadyInCollection)
 
-	cardsAlreadyInCollection = cardCounts.get(collection.getCardKey(randomCard.card.id, isInverted, randomCard.variant?.name)) ?? 0
+	cardsAlreadyInCollection = cardCounts.get(collection.getCardKey(randomCard.card.id, isInverted, randomCard.variant?.variant)) ?? 0
 
 	return {
 		randomCard: randomCard.card,
 		isInverted,
-		variant: randomCard.variant?.name,
+		variant: randomCard.variant?.variant,
 		variantDataIndex: randomCard.variantIndex,
 		alreadyInCollection: cardsAlreadyInCollection,
 	}
