@@ -1718,7 +1718,7 @@
 				"credit": "Jędrzej Chełmiński"
 			},
 			{
-				"url": "https://i.postimg.cc/wvCfsJCZ/breezepelt.jpg",
+				"url": "https://i.postimg.cc/rpNb1FSQ/breezepelt2.jpg",
 				"credit": "lionblazed420"
 			}
 		]
@@ -2473,6 +2473,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/6/6e/Cloud_Spots.FG-8.png/revision/latest?cb=20240713064516",
 				"credit": "Owen Richardson / Official art"
+			},
+			{
+				"url": "https://i.postimg.cc/kg3qwGbm/IMG-1014.png",
+				"credit": "birchglow"
 			}
 		]
 	},
@@ -5081,6 +5085,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/9/96/Finchstar.FG-3.png/revision/latest/scale-to-width-down/1000?cb=20240614024437",
 				"credit": "Wayne McLoughlin / Official art"
+			},
+			{
+				"url": "https://i.postimg.cc/HxShNZvM/finchstar-1.png",
+				"credit": "avisionofshadow"
 			}
 		]
 	},
@@ -7517,7 +7525,7 @@
 				"credit": "orbitflight"
 			},
 			{
-				"url": "https://i.postimg.cc/Y0QXN0k9/hollyleafs.png",
+				"url": "https://i.postimg.cc/4xCFjhPW/hollylaf3.png",
 				"credit": "lionblazed420"
 			}
 		]
@@ -9740,7 +9748,14 @@
 		"name": "Meadowpelt",
 		"group": "RiverClan",
 		"gender": "Tom",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "https://i.postimg.cc/zvVcYC4c/meadowpelt-1.png",
+				"credit": "sollareclipse"
+			}
+		]
 	},
 	{
 		"id": 597,
@@ -9874,6 +9889,10 @@
 			{
 				"url": "https://static.wikia.nocookie.net/warriors/images/4/4f/Milkfur_%28YS%29.mc.png/revision/latest?cb=20200403223545",
 				"credit": "Warriors Wiki"
+			},
+			{
+				"url": "https://i.postimg.cc/rFRPh91d/milkfurys-1.png",
+				"credit": "sollareclipse"
 			}
 		]
 	},
@@ -11686,7 +11705,14 @@
 		"name": "Oatspeckle",
 		"group": "ThunderClan",
 		"gender": "",
-		"disambiguator": ""
+		"disambiguator": "",
+
+		"art": [
+			{
+				"url": "https://i.postimg.cc/QdpnDxnh/oatspeckle.png",
+				"credit": "sollareclipse"
+			}
+		]
 	},
 	{
 		"id": 722,
@@ -16509,7 +16535,7 @@
 				"credit": "birchglow"
 			},
 			{
-				"url": "https://r2.puddleshine.bristlefrost.net/catcha-art/1025-birchpaw/birchfeather-shadedsights-2.png",
+				"url": "https://i.postimg.cc/QCwn8B3x/IMG-1011-1.png",
 				"credit": "birchglow"
 			},
 			{
