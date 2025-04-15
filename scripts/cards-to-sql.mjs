@@ -14,7 +14,7 @@ let importedCardNumber = 1
 for (const line of lines) {
 	const splitLine = line.split(' ')
 
-	const cardId = Number.parseInt(splitLine[1].replace('[', '').replace(']', '').replace('#', ''))
+	let cardId = Number.parseInt(splitLine[1].replace('[', '').replace(']', '').replace('#', ''))
 	let isInverted = false
 
 	if (isNaN(cardId)) {
@@ -43,7 +43,17 @@ for (const line of lines) {
 		variant = 'Angel'
 	} else if (splitLine[2] === 'Pridestar') {
 		variant = 'Pride'
-	}
+	} else if (splitLine[2] === 'Wee' && splitLine[3] === 'Chick') {
+		// Splahpaw is our equivalent of Wee Chick
+		cardId = 1418
+		variant = 'Mistake'
+	}/* else if (splitLine[2] === 'Lilian' && splitLine[3] === 'Ivypool') { // TEMP STUFF FOR ONE MIGRATION
+		cardId = 208
+		variant = 'Dirt'
+	} else if (splitLine[2] === 'Benedict' && splitLine[3] === 'Graystripe') {
+		cardId = 433
+		variant = 'Mistake'
+	}*/
 
 	const randomCardUuid = crypto.randomUUID()
 	const obtainedAt = new Date(importStartedMs + importedCardNumber).toISOString()
